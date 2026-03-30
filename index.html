@@ -271,6 +271,8 @@ var extraRulesData=[];
 var ruleCount=5;
 var colorMap={red:{c:'r-red',n:'rn-red',b:'badge-ban'},orange:{c:'r-orange',n:'rn-orange',b:'badge-warn'},yellow:{c:'r-yellow',n:'rn-yellow',b:'badge-warn'},fuchsia:{c:'r-fuchsia',n:'rn-fuchsia',b:'badge-strict'},blue:{c:'r-blue',n:'rn-blue',b:'badge-info'},green:{c:'r-green',n:'rn-green',b:'badge-info'}};
 var saving=false;
+var userRefreshInterval=null;
+var adminRefreshInterval=null;
 
 function getTime(){var d=new Date();return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');}
 
@@ -328,11 +330,37 @@ function openChat(name){
   renderUserChat();
   document.getElementById('chatOverlay').classList.add('active');
   document.getElementById('chatInput').focus();
+  // Start auto-refresh for user chat
+  startUserRefresh();
 }
-function closeChat(){document.getElementById('chatOverlay').classList.remove('active');}
+function closeChat(){
+  document.getElementById('chatOverlay').classList.remove('active');
+  stopUserRefresh();
+}
+
+function startUserRefresh(){
+  stopUserRefresh();
+  userRefreshInterval=setInterval(function(){
+    if(chatTarget){
+      loadBin(CHATS_BIN,function(data){
+        if(data&&data.chats){
+          convos=data.chats;
+          renderUserChat();
+        }
+      });
+    }
+  },4000); // Refresh every 4 seconds
+}
+function stopUserRefresh(){
+  if(userRefreshInterval){
+    clearInterval(userRefreshInterval);
+    userRefreshInterval=null;
+  }
+}
 
 function renderUserChat(){
   var el=document.getElementById('chatMsgs');
+  var oldCount=el.children.length;
   el.innerHTML='';
   var msgs=convos[chatTarget]||[];
   for(var i=0;i<msgs.length;i++){
@@ -346,7 +374,10 @@ function renderUserChat(){
     div.innerHTML=h;
     el.appendChild(div);
   }
-  el.scrollTop=el.scrollHeight;
+  // Only scroll if new messages
+  if(msgs.length>oldCount||oldCount===0){
+    el.scrollTop=el.scrollHeight;
+  }
 }
 
 function sendUserMsg(){
@@ -413,12 +444,37 @@ function openAdmin(){
     if(data&&data.chats){convos=data.chats;}
     updateInbox();
   });
+  // Start auto-refresh for admin
+  startAdminRefresh();
 }
 function closeAdmin(){
   document.getElementById('adminPanel').classList.remove('active');
   document.body.style.overflow='';
   currentAdmin=null;viewingChat=null;
+  stopAdminRefresh();
 }
+
+function startAdminRefresh(){
+  stopAdminRefresh();
+  adminRefreshInterval=setInterval(function(){
+    loadBin(CHATS_BIN,function(data){
+      if(data&&data.chats){
+        convos=data.chats;
+        updateInbox();
+        if(viewingChat){
+          renderAdminChat();
+        }
+      }
+    });
+  },4000); // Refresh every 4 seconds
+}
+function stopAdminRefresh(){
+  if(adminRefreshInterval){
+    clearInterval(adminRefreshInterval);
+    adminRefreshInterval=null;
+  }
+}
+
 function switchTab(tab){
   var tabs=document.querySelectorAll('.ap-tab');
   tabs[0].classList.toggle('active',tab==='chats');
@@ -468,6 +524,7 @@ function backToInbox(){
 }
 function renderAdminChat(){
   var el=document.getElementById('acMsgs');
+  var oldCount=el.children.length;
   el.innerHTML='';
   var msgs=convos[viewingChat]||[];
   for(var i=0;i<msgs.length;i++){
@@ -481,7 +538,10 @@ function renderAdminChat(){
     div.innerHTML=h;
     el.appendChild(div);
   }
-  el.scrollTop=el.scrollHeight;
+  // Only scroll if new messages
+  if(msgs.length>oldCount||oldCount===0){
+    el.scrollTop=el.scrollHeight;
+  }
 }
 function sendAdminReply(){
   var inp=document.getElementById('acInput');
