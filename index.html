@@ -96,6 +96,8 @@ footer .f-logo span{color:var(--accent)}
 .chat-input{flex:1;background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:10px 14px;color:var(--text);font-family:var(--font);font-size:.84rem;outline:none}.chat-input:focus{border-color:var(--accent)}.chat-input::placeholder{color:var(--text-dim)}
 .chat-attach{background:none;border:none;color:var(--text-dim);font-size:1.1rem;cursor:pointer;padding:6px}.chat-attach:hover{color:var(--accent)}
 .chat-send{background:var(--accent);color:var(--bg);border:none;width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.95rem}.chat-send:hover{transform:scale(1.05)}
+.chat-closed-msg{text-align:center;padding:20px;color:var(--text-dim);font-size:.85rem}
+.chat-closed-msg button{margin-top:12px;padding:10px 20px;background:var(--accent);color:var(--bg);border:none;border-radius:8px;font-family:var(--font);font-weight:700;cursor:pointer}
 .login-overlay{position:fixed;inset:0;z-index:5000;background:#0a0a0fdd;backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:opacity .35s,visibility .35s}
 .login-overlay.active{opacity:1;visibility:visible}
 .login-card{background:var(--bg-card);border:1px solid var(--border);border-radius:20px;padding:40px 36px;width:100%;max-width:400px;position:relative;animation:fsu .4s ease both}
@@ -119,20 +121,31 @@ footer .f-logo span{color:var(--accent)}
 .ap-content{max-width:700px;margin:32px auto;padding:0 24px}
 .ap-section{display:none}.ap-section.active{display:block}
 .inbox-empty{text-align:center;color:var(--text-dim);padding:60px 20px;font-size:.9rem}
-.inbox-item{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;margin-bottom:10px;cursor:pointer;transition:border-color .3s,background .3s;display:flex;align-items:center;gap:14px}
+.inbox-item{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;margin-bottom:10px;cursor:pointer;transition:border-color .3s,background .3s;display:flex;align-items:center;gap:14px;position:relative}
 .inbox-item:hover{border-color:var(--accent-glow);background:var(--bg-card-hover)}
+.inbox-item.closed{opacity:.6}
+.inbox-item .closed-badge{position:absolute;top:8px;left:8px;background:var(--red-dim);color:var(--red);font-size:.6rem;padding:2px 8px;border-radius:100px;font-weight:700}
 .inbox-av{width:40px;height:40px;min-width:40px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.9rem}
 .inbox-info{flex:1}.inbox-name{font-weight:700;font-size:.88rem;margin-bottom:2px}
 .inbox-preview{font-size:.75rem;color:var(--text-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:300px}
 .inbox-time{font-family:var(--mono);font-size:.65rem;color:var(--text-dim);direction:ltr}
+.inbox-actions{display:flex;gap:6px;margin-right:10px}
+.inbox-action-btn{background:var(--bg);border:1px solid var(--border);color:var(--text-dim);width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.75rem;transition:all .2s}
+.inbox-action-btn:hover{border-color:var(--accent);color:var(--accent)}
+.inbox-action-btn.delete:hover{border-color:var(--red);color:var(--red)}
 .admin-chat{display:none}.admin-chat.active{display:flex;flex-direction:column;height:calc(100vh - 140px)}
 .ac-header{display:flex;align-items:center;gap:12px;padding:16px 0;border-bottom:1px solid var(--border);margin-bottom:12px}
 .ac-back{background:none;border:none;color:var(--text-dim);font-size:.85rem;cursor:pointer;font-family:var(--font);font-weight:600}.ac-back:hover{color:var(--accent)}
-.ac-name{font-weight:800;font-size:1rem}
+.ac-name{font-weight:800;font-size:1rem;flex:1}
+.ac-close-btn{background:var(--red-dim);border:1px solid var(--red);color:var(--red);padding:6px 14px;border-radius:8px;font-family:var(--font);font-size:.75rem;font-weight:700;cursor:pointer;transition:all .2s}
+.ac-close-btn:hover{background:var(--red);color:#fff}
+.ac-closed-notice{background:var(--red-dim);border:1px solid var(--red);color:var(--red);padding:8px 14px;border-radius:8px;font-size:.8rem;text-align:center;margin-bottom:10px}
 .ac-msgs{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:8px 0}
 .ac-input-bar{display:flex;gap:8px;padding:12px 0;border-top:1px solid var(--border);margin-top:8px;align-items:center}
 .ac-input{flex:1;background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-family:var(--font);font-size:.86rem;outline:none}.ac-input:focus{border-color:var(--accent)}
+.ac-input:disabled{opacity:.5;cursor:not-allowed}
 .ac-send{background:var(--accent);color:var(--bg);border:none;padding:10px 20px;border-radius:10px;font-family:var(--font);font-size:.82rem;font-weight:700;cursor:pointer}
+.ac-send:disabled{opacity:.5;cursor:not-allowed}
 .ap-field{margin-bottom:16px}.ap-field label{display:block;font-size:.78rem;font-weight:700;color:var(--text-dim);margin-bottom:6px}
 .ap-field input,.ap-field textarea{width:100%;background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:14px 16px;color:var(--text);font-family:var(--font);font-size:.88rem;outline:none;resize:vertical}.ap-field input:focus,.ap-field textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim)}
 .ap-field textarea{min-height:90px;line-height:1.7}
@@ -140,6 +153,17 @@ footer .f-logo span{color:var(--accent)}
 .ap-color-opt{width:36px;height:36px;border-radius:8px;border:2px solid transparent;cursor:pointer}.ap-color-opt:hover{transform:scale(1.1)}.ap-color-opt.selected{border-color:var(--text)}
 .ap-add-btn{width:100%;padding:14px;background:var(--accent);color:var(--bg);border:none;border-radius:10px;font-family:var(--font);font-size:.9rem;font-weight:800;cursor:pointer;margin-top:8px}.ap-add-btn:hover{transform:translateY(-1px);box-shadow:0 6px 24px var(--accent-glow)}
 .ap-success{color:var(--green);font-size:.82rem;text-align:center;margin-top:12px;display:none}.ap-success.show{display:block}
+.confirm-overlay{position:fixed;inset:0;z-index:6000;background:#0a0a0fdd;backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:opacity .25s,visibility .25s}
+.confirm-overlay.active{opacity:1;visibility:visible}
+.confirm-box{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:28px;max-width:340px;text-align:center}
+.confirm-box h4{font-size:1.1rem;margin-bottom:8px}
+.confirm-box p{color:var(--text-dim);font-size:.85rem;margin-bottom:20px}
+.confirm-btns{display:flex;gap:10px;justify-content:center}
+.confirm-btns button{padding:10px 20px;border-radius:8px;font-family:var(--font);font-weight:700;cursor:pointer;font-size:.85rem}
+.confirm-cancel{background:var(--bg);border:1px solid var(--border);color:var(--text-dim)}
+.confirm-cancel:hover{border-color:var(--accent)}
+.confirm-delete{background:var(--red);border:none;color:#fff}
+.confirm-delete:hover{opacity:.9}
 @media(max-width:640px){nav{padding:14px 16px}.hero h1{letter-spacing:-1px}.hero-stats{gap:24px;flex-wrap:wrap;justify-content:center}.rule-card{flex-direction:column;gap:14px;padding:22px 18px}.rule-num{width:40px;height:40px;min-width:40px;font-size:.95rem}.admin-grid{grid-template-columns:1fr}.login-card{margin:20px;padding:32px 24px}.nav-badge{display:none}.chat-overlay{left:8px;right:8px;bottom:8px;width:auto}.scroll-hint{display:none}.ap-header{padding:12px 16px}}
 </style>
 </head>
@@ -197,7 +221,7 @@ footer .f-logo span{color:var(--accent)}
 <div class="chat-overlay" id="chatOverlay">
   <div class="chat-hdr"><div class="chat-hdr-av" id="chatAv">A</div><div class="chat-hdr-info"><div class="chat-hdr-name" id="chatName">Aziz</div><div class="chat-hdr-status">Online</div></div><button class="chat-x" onclick="closeChat()">&times;</button></div>
   <div class="chat-msgs" id="chatMsgs"></div>
-  <div class="chat-input-bar">
+  <div class="chat-input-bar" id="chatInputBar">
     <button class="chat-attach" onclick="document.getElementById('chatFile').click()">&#128206;</button>
     <input type="file" id="chatFile" accept="image/*" style="display:none" onchange="attachPhoto(this)">
     <input class="chat-input" id="chatInput" placeholder="اكتب رسالتك..." onkeydown="if(event.key==='Enter')sendUserMsg()">
@@ -230,9 +254,14 @@ footer .f-logo span{color:var(--accent)}
     <div class="ap-section active" id="tabChats">
       <div id="inboxList"><div class="inbox-empty">&#128237; لا توجد رسائل حالياً</div></div>
       <div class="admin-chat" id="adminChatView">
-        <div class="ac-header"><button class="ac-back" onclick="backToInbox()">&#8594; الرجوع</button><div class="ac-name" id="acName">-</div></div>
+        <div class="ac-header">
+          <button class="ac-back" onclick="backToInbox()">&#8594; الرجوع</button>
+          <div class="ac-name" id="acName">-</div>
+          <button class="ac-close-btn" id="acCloseBtn" onclick="closeTicket()">&#10006; إغلاق المحادثة</button>
+        </div>
+        <div class="ac-closed-notice" id="acClosedNotice" style="display:none">هذه المحادثة مغلقة</div>
         <div class="ac-msgs" id="acMsgs"></div>
-        <div class="ac-input-bar"><input class="ac-input" id="acInput" placeholder="رد على الرسالة..." onkeydown="if(event.key==='Enter')sendAdminReply()"><button class="ac-send" onclick="sendAdminReply()">إرسال</button></div>
+        <div class="ac-input-bar" id="acInputBar"><input class="ac-input" id="acInput" placeholder="رد على الرسالة..." onkeydown="if(event.key==='Enter')sendAdminReply()"><button class="ac-send" id="acSendBtn" onclick="sendAdminReply()">إرسال</button></div>
       </div>
     </div>
     <div class="ap-section" id="tabRules">
@@ -255,11 +284,23 @@ footer .f-logo span{color:var(--accent)}
   </div>
 </div>
 
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <h4 id="confirmTitle">تأكيد الحذف</h4>
+    <p id="confirmText">هل أنت متأكد؟</p>
+    <div class="confirm-btns">
+      <button class="confirm-cancel" onclick="closeConfirm()">إلغاء</button>
+      <button class="confirm-delete" id="confirmBtn" onclick="confirmAction()">حذف</button>
+    </div>
+  </div>
+</div>
+
 <script>
 var JSONBIN_KEY='$2a$10$.fB0Huz/g0NiVanHR.F03.B.ZdHkJEiaVZsYdFRZwzJKuf4qwQaxq';
 var CHATS_BIN='69caf1e036566621a863145a';
 var RULES_BIN='69caf1d9aaba882197ab92e2';
 var ADMINS={'Aziz':'The_Class_admin@Aziz.TCA','Echo':'The_Class_admin@Echo.TCA','ReverseCard':'The_Class_admin@ReverseCard.TCA','Reverse Card':'The_Class_admin@ReverseCard.TCA'};
+var OWNERS=['Echo','Aziz']; // Echo is owner, Aziz is co-owner - both can see closed chats and delete
 var greetings={'Echo':'هلا والله! أنا Echo. شلون أقدر أساعدك؟','Aziz':'هلا! أنا Aziz. قول لي شنو تبي وأساعدك إن شاء الله.','Reverse Card':'أهلين! أنا Reverse Card. شنو عندك؟'};
 var adminNames=['Echo','Aziz','Reverse Card'];
 var currentAdmin=null;
@@ -273,8 +314,13 @@ var colorMap={red:{c:'r-red',n:'rn-red',b:'badge-ban'},orange:{c:'r-orange',n:'r
 var saving=false;
 var userRefreshInterval=null;
 var adminRefreshInterval=null;
+var pendingDeleteKey=null;
+var userId=localStorage.getItem('theclass_userid');
+if(!userId){userId='user_'+Math.random().toString(36).substr(2,9);localStorage.setItem('theclass_userid',userId);}
 
 function getTime(){var d=new Date();return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');}
+
+function isOwner(){return OWNERS.indexOf(currentAdmin)!==-1;}
 
 // ===== JSONBIN HELPERS =====
 function loadBin(binId,callback){
@@ -320,17 +366,33 @@ function renderExtraRules(){
 }
 
 // ===== USER CHAT =====
+function getChatKey(adminName){return visitorId+'_'+adminName;}
+var visitorId=localStorage.getItem('theclass_visitorid');
+if(!visitorId){visitorId='v_'+Math.random().toString(36).substr(2,9)+Date.now().toString(36);localStorage.setItem('theclass_visitorid',visitorId);}
+
 function openRandomChat(){openChat(adminNames[Math.floor(Math.random()*adminNames.length)]);}
 
 function openChat(name){
   chatTarget=name;
+  var chatKey=getChatKey(name);
   document.getElementById('chatAv').textContent=name.charAt(0);
   document.getElementById('chatName').textContent=name;
-  if(!convos[name]){convos[name]=[{from:'admin',text:greetings[name],time:getTime()}];saveChats();}
+  
+  // Check if chat exists and is closed - if so, create new chat
+  if(convos[chatKey]&&convos[chatKey].closed){
+    // Create new chat key with timestamp
+    visitorId='v_'+Math.random().toString(36).substr(2,9)+Date.now().toString(36);
+    localStorage.setItem('theclass_visitorid',visitorId);
+    chatKey=getChatKey(name);
+  }
+  
+  if(!convos[chatKey]){
+    convos[chatKey]={messages:[{from:'admin',text:greetings[name],time:getTime()}],admin:name,visitorId:visitorId,closed:false};
+    saveChats();
+  }
   renderUserChat();
   document.getElementById('chatOverlay').classList.add('active');
   document.getElementById('chatInput').focus();
-  // Start auto-refresh for user chat
   startUserRefresh();
 }
 function closeChat(){
@@ -349,20 +411,32 @@ function startUserRefresh(){
         }
       });
     }
-  },4000); // Refresh every 4 seconds
+  },4000);
 }
 function stopUserRefresh(){
-  if(userRefreshInterval){
-    clearInterval(userRefreshInterval);
-    userRefreshInterval=null;
-  }
+  if(userRefreshInterval){clearInterval(userRefreshInterval);userRefreshInterval=null;}
 }
 
 function renderUserChat(){
+  var chatKey=getChatKey(chatTarget);
+  var chat=convos[chatKey];
   var el=document.getElementById('chatMsgs');
+  var inputBar=document.getElementById('chatInputBar');
   var oldCount=el.children.length;
   el.innerHTML='';
-  var msgs=convos[chatTarget]||[];
+  
+  if(!chat){return;}
+  
+  // Check if closed
+  if(chat.closed){
+    el.innerHTML='<div class="chat-closed-msg">تم إغلاق هذه المحادثة من قبل الإدارة<br><button onclick="startNewChat()">بدء محادثة جديدة</button></div>';
+    inputBar.style.display='none';
+    return;
+  }else{
+    inputBar.style.display='flex';
+  }
+  
+  var msgs=chat.messages||[];
   for(var i=0;i<msgs.length;i++){
     var m=msgs[i];
     var div=document.createElement('div');
@@ -374,27 +448,34 @@ function renderUserChat(){
     div.innerHTML=h;
     el.appendChild(div);
   }
-  // Only scroll if new messages
-  if(msgs.length>oldCount||oldCount===0){
-    el.scrollTop=el.scrollHeight;
-  }
+  if(msgs.length>oldCount||oldCount===0){el.scrollTop=el.scrollHeight;}
+}
+
+function startNewChat(){
+  visitorId='v_'+Math.random().toString(36).substr(2,9)+Date.now().toString(36);
+  localStorage.setItem('theclass_visitorid',visitorId);
+  var chatKey=getChatKey(chatTarget);
+  convos[chatKey]={messages:[{from:'admin',text:greetings[chatTarget],time:getTime()}],admin:chatTarget,visitorId:visitorId,closed:false};
+  saveChats();
+  renderUserChat();
 }
 
 function sendUserMsg(){
   var inp=document.getElementById('chatInput');
   var t=inp.value.trim();
-  if(!t||!chatTarget)return;
-  convos[chatTarget].push({from:'user',text:t,time:getTime()});
+  var chatKey=getChatKey(chatTarget);
+  if(!t||!chatTarget||!convos[chatKey]||convos[chatKey].closed)return;
+  convos[chatKey].messages.push({from:'user',text:t,time:getTime()});
   inp.value='';
   renderUserChat();
-  updateInbox();
-  if(viewingChat===chatTarget)renderAdminChat();
   saveChats();
 }
 
 function attachPhoto(input){
   var file=input.files[0];
   if(!file)return;
+  var chatKey=getChatKey(chatTarget);
+  if(!convos[chatKey]||convos[chatKey].closed)return;
   var reader=new FileReader();
   reader.onload=function(e){
     var img=new Image();
@@ -407,10 +488,8 @@ function attachPhoto(input){
       canvas.width=w;canvas.height=h;
       canvas.getContext('2d').drawImage(img,0,0,w,h);
       var b64=canvas.toDataURL('image/jpeg',0.5);
-      convos[chatTarget].push({from:'user',img:b64,time:getTime()});
+      convos[chatKey].messages.push({from:'user',img:b64,time:getTime()});
       renderUserChat();
-      updateInbox();
-      if(viewingChat===chatTarget)renderAdminChat();
       saveChats();
     };
     img.src=e.target.result;
@@ -430,7 +509,7 @@ function attemptLogin(){
 }
 document.addEventListener('keydown',function(e){
   if(e.key==='Enter'&&document.getElementById('loginOverlay').classList.contains('active'))attemptLogin();
-  if(e.key==='Escape'){closeLogin();closeAdmin();closeChat();}
+  if(e.key==='Escape'){closeLogin();closeAdmin();closeChat();closeConfirm();}
 });
 
 // ===== ADMIN PANEL =====
@@ -439,12 +518,10 @@ function openAdmin(){
   document.getElementById('adminPanel').classList.add('active');
   document.body.style.overflow='hidden';
   switchTab('chats');
-  // Reload chats from server
   loadBin(CHATS_BIN,function(data){
     if(data&&data.chats){convos=data.chats;}
     updateInbox();
   });
-  // Start auto-refresh for admin
   startAdminRefresh();
 }
 function closeAdmin(){
@@ -461,18 +538,13 @@ function startAdminRefresh(){
       if(data&&data.chats){
         convos=data.chats;
         updateInbox();
-        if(viewingChat){
-          renderAdminChat();
-        }
+        if(viewingChat){renderAdminChat();}
       }
     });
-  },4000); // Refresh every 4 seconds
+  },4000);
 }
 function stopAdminRefresh(){
-  if(adminRefreshInterval){
-    clearInterval(adminRefreshInterval);
-    adminRefreshInterval=null;
-  }
+  if(adminRefreshInterval){clearInterval(adminRefreshInterval);adminRefreshInterval=null;}
 }
 
 function switchTab(tab){
@@ -483,50 +555,117 @@ function switchTab(tab){
   document.getElementById('tabRules').classList.toggle('active',tab==='rules');
   if(tab==='chats'){backToInbox();loadBin(CHATS_BIN,function(data){if(data&&data.chats){convos=data.chats;}updateInbox();});}
 }
+
 function updateInbox(){
   var list=document.getElementById('inboxList');
   var keys=Object.keys(convos);
   var badge=document.getElementById('chatBadge');
-  if(keys.length===0){list.innerHTML='<div class="inbox-empty">&#128237; لا توجد رسائل حالياً</div>';badge.style.display='none';return;}
-  var userChats=[];
-  for(var i=0;i<keys.length;i++){
-    var msgs=convos[keys[i]];
-    var hasUserMsg=false;
-    for(var j=0;j<msgs.length;j++){if(msgs[j].from==='user'){hasUserMsg=true;break;}}
-    if(hasUserMsg)userChats.push(keys[i]);
+  
+  if(keys.length===0){
+    list.innerHTML='<div class="inbox-empty">&#128237; لا توجد رسائل حالياً</div>';
+    badge.style.display='none';
+    return;
   }
-  if(userChats.length===0){list.innerHTML='<div class="inbox-empty">&#128237; لا توجد رسائل حالياً</div>';badge.style.display='none';return;}
-  badge.textContent=userChats.length;badge.style.display='inline';
+  
+  var validChats=[];
+  for(var i=0;i<keys.length;i++){
+    var chat=convos[keys[i]];
+    if(!chat||!chat.messages)continue;
+    
+    // Check if has user messages
+    var hasUserMsg=false;
+    for(var j=0;j<chat.messages.length;j++){
+      if(chat.messages[j].from==='user'){hasUserMsg=true;break;}
+    }
+    if(!hasUserMsg)continue;
+    
+    // If closed, only owners can see
+    if(chat.closed&&!isOwner())continue;
+    
+    validChats.push(keys[i]);
+  }
+  
+  if(validChats.length===0){
+    list.innerHTML='<div class="inbox-empty">&#128237; لا توجد رسائل حالياً</div>';
+    badge.style.display='none';
+    return;
+  }
+  
+  // Count open chats for badge
+  var openCount=0;
+  for(var i=0;i<validChats.length;i++){
+    if(!convos[validChats[i]].closed)openCount++;
+  }
+  badge.textContent=openCount;
+  badge.style.display=openCount>0?'inline':'none';
+  
   list.innerHTML='';
-  for(var i=0;i<userChats.length;i++){
-    var k=userChats[i];
-    var last=convos[k][convos[k].length-1];
+  for(var i=0;i<validChats.length;i++){
+    var k=validChats[i];
+    var chat=convos[k];
+    var last=chat.messages[chat.messages.length-1];
     var div=document.createElement('div');
-    div.className='inbox-item';
+    div.className='inbox-item'+(chat.closed?' closed':'');
     div.setAttribute('data-key',k);
+    
+    var actionsHtml='';
+    if(isOwner()){
+      actionsHtml='<div class="inbox-actions"><button class="inbox-action-btn delete" onclick="event.stopPropagation();confirmDelete(\''+k+'\')" title="حذف">&#128465;</button></div>';
+    }
+    
+    div.innerHTML=(chat.closed?'<span class="closed-badge">مغلق</span>':'')+
+      '<div class="inbox-av">'+k.charAt(0).toUpperCase()+'</div>'+
+      '<div class="inbox-info"><div class="inbox-name">محادثة - '+(chat.admin||'Admin')+'</div><div class="inbox-preview">'+(last.img?'📷 صورة':last.text)+'</div></div>'+
+      actionsHtml+
+      '<div style="text-align:left"><div class="inbox-time">'+last.time+'</div></div>';
+    
     div.onclick=function(){openAdminChat(this.getAttribute('data-key'));};
-    div.innerHTML='<div class="inbox-av">'+k.charAt(0)+'</div><div class="inbox-info"><div class="inbox-name">محادثة - '+k+'</div><div class="inbox-preview">'+(last.img?'📷 صورة':last.text)+'</div></div><div style="text-align:left"><div class="inbox-time">'+last.time+'</div></div>';
     list.appendChild(div);
   }
 }
-function openAdminChat(name){
-  viewingChat=name;
-  document.getElementById('acName').textContent='محادثة - '+name;
+
+function openAdminChat(key){
+  viewingChat=key;
+  var chat=convos[key];
+  document.getElementById('acName').textContent='محادثة - '+(chat?chat.admin:'Admin');
   document.getElementById('inboxList').style.display='none';
   document.getElementById('adminChatView').classList.add('active');
+  
+  // Update close button and input based on status
+  var closeBtn=document.getElementById('acCloseBtn');
+  var closedNotice=document.getElementById('acClosedNotice');
+  var acInput=document.getElementById('acInput');
+  var acSendBtn=document.getElementById('acSendBtn');
+  
+  if(chat&&chat.closed){
+    closeBtn.style.display='none';
+    closedNotice.style.display='block';
+    acInput.disabled=true;
+    acSendBtn.disabled=true;
+  }else{
+    closeBtn.style.display='inline-block';
+    closedNotice.style.display='none';
+    acInput.disabled=false;
+    acSendBtn.disabled=false;
+  }
+  
   renderAdminChat();
 }
+
 function backToInbox(){
   viewingChat=null;
   document.getElementById('inboxList').style.display='';
   document.getElementById('adminChatView').classList.remove('active');
   updateInbox();
 }
+
 function renderAdminChat(){
   var el=document.getElementById('acMsgs');
+  var chat=convos[viewingChat];
   var oldCount=el.children.length;
   el.innerHTML='';
-  var msgs=convos[viewingChat]||[];
+  if(!chat||!chat.messages)return;
+  var msgs=chat.messages;
   for(var i=0;i<msgs.length;i++){
     var m=msgs[i];
     var div=document.createElement('div');
@@ -538,20 +677,51 @@ function renderAdminChat(){
     div.innerHTML=h;
     el.appendChild(div);
   }
-  // Only scroll if new messages
-  if(msgs.length>oldCount||oldCount===0){
-    el.scrollTop=el.scrollHeight;
-  }
+  if(msgs.length>oldCount||oldCount===0){el.scrollTop=el.scrollHeight;}
 }
+
 function sendAdminReply(){
   var inp=document.getElementById('acInput');
   var t=inp.value.trim();
-  if(!t||!viewingChat)return;
-  convos[viewingChat].push({from:'admin',text:t,time:getTime()});
+  if(!t||!viewingChat||!convos[viewingChat]||convos[viewingChat].closed)return;
+  convos[viewingChat].messages.push({from:'admin',text:t,time:getTime()});
   inp.value='';
   renderAdminChat();
-  if(chatTarget===viewingChat)renderUserChat();
   saveChats();
+}
+
+function closeTicket(){
+  if(!viewingChat||!convos[viewingChat])return;
+  convos[viewingChat].closed=true;
+  convos[viewingChat].closedBy=currentAdmin;
+  convos[viewingChat].closedAt=getTime();
+  saveChats();
+  
+  // Update UI
+  document.getElementById('acCloseBtn').style.display='none';
+  document.getElementById('acClosedNotice').style.display='block';
+  document.getElementById('acInput').disabled=true;
+  document.getElementById('acSendBtn').disabled=true;
+}
+
+// ===== CONFIRM DELETE =====
+function confirmDelete(key){
+  pendingDeleteKey=key;
+  document.getElementById('confirmTitle').textContent='حذف المحادثة';
+  document.getElementById('confirmText').textContent='هل أنت متأكد من حذف هذه المحادثة نهائياً؟ لا يمكن التراجع.';
+  document.getElementById('confirmOverlay').classList.add('active');
+}
+function closeConfirm(){
+  document.getElementById('confirmOverlay').classList.remove('active');
+  pendingDeleteKey=null;
+}
+function confirmAction(){
+  if(pendingDeleteKey&&isOwner()){
+    delete convos[pendingDeleteKey];
+    saveChats();
+    updateInbox();
+  }
+  closeConfirm();
 }
 
 // ===== ADD RULE =====
