@@ -152,6 +152,10 @@ footer .f-logo span{color:var(--accent)}
 .ap-color-opt{width:36px;height:36px;border-radius:8px;border:2px solid transparent;cursor:pointer}.ap-color-opt:hover{transform:scale(1.1)}.ap-color-opt.selected{border-color:var(--text)}
 .ap-add-btn{width:100%;padding:14px;background:var(--accent);color:var(--bg);border:none;border-radius:10px;font-family:var(--font);font-size:.9rem;font-weight:800;cursor:pointer;margin-top:8px}.ap-add-btn:hover{transform:translateY(-1px);box-shadow:0 6px 24px var(--accent-glow)}
 .ap-success{color:var(--green);font-size:.82rem;text-align:center;margin-top:12px;display:none}.ap-success.show{display:block}
+.ac-btn.refresh-btn{background:var(--green);color:#000}
+.inbox-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.inbox-refresh{background:var(--accent);color:var(--bg);border:none;padding:8px 16px;border-radius:8px;font-family:var(--font);font-size:.8rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px}
+.inbox-refresh:hover{transform:translateY(-1px);box-shadow:0 4px 16px var(--accent-glow)}
 @media(max-width:640px){nav{padding:14px 16px}.hero h1{letter-spacing:-1px}.hero-stats{gap:24px;flex-wrap:wrap;justify-content:center}.rule-card{flex-direction:column;gap:14px;padding:22px 18px}.rule-num{width:40px;height:40px;min-width:40px;font-size:.95rem}.admin-grid{grid-template-columns:1fr}.login-card{margin:20px;padding:32px 24px}.nav-badge{display:none}.chat-overlay{left:8px;right:8px;bottom:8px;width:auto}.scroll-hint{display:none}.ap-header{padding:12px 16px}}
 </style>
 </head>
@@ -240,6 +244,10 @@ footer .f-logo span{color:var(--accent)}
   </div>
   <div class="ap-content">
     <div class="ap-section active" id="tabChats">
+      <div class="inbox-header">
+        <span style="font-weight:700;font-size:.9rem">📬 الرسائل الواردة</span>
+        <button class="inbox-refresh" onclick="refreshInbox()">🔄 تحديث</button>
+      </div>
       <div id="inboxList"><div class="inbox-empty">&#128237; لا توجد رسائل حالياً</div></div>
       <div class="admin-chat" id="adminChatView">
         <div class="ac-header">
@@ -505,21 +513,22 @@ function closeAdmin(){
 }
 
 function startAdminPolling(){
-  stopAdminPolling();
-  adminPollInterval=setInterval(function(){
-    loadBin(CHATS_BIN,function(data){
-      if(data&&data.chats){
-        convos=data.chats;
-        if(viewingChat){
-          renderAdminChat();
-        }else{
-          updateInbox();
-        }
-      }
-    });
-  },4000);
+  // Removed auto-polling - admin uses refresh button instead
 }
-function stopAdminPolling(){if(adminPollInterval){clearInterval(adminPollInterval);adminPollInterval=null;}}
+function stopAdminPolling(){}
+
+function refreshInbox(){
+  var btn=document.querySelector('.inbox-refresh');
+  if(btn){btn.textContent='⏳ جاري التحديث...';btn.disabled=true;}
+  loadBin(CHATS_BIN,function(data){
+    console.log('Refreshed data:',data);
+    if(data&&data.chats){
+      convos=data.chats;
+    }
+    updateInbox();
+    if(btn){btn.textContent='🔄 تحديث';btn.disabled=false;}
+  });
+}
 
 function switchTab(tab){
   var tabs=document.querySelectorAll('.ap-tab');
@@ -608,6 +617,13 @@ function renderAdminActions(){
   var isClosed=chat.closed;
   var amOwner=isOwner(currentAdmin);
   
+  // Refresh button always visible
+  var refreshBtn=document.createElement('button');
+  refreshBtn.className='ac-btn refresh-btn';
+  refreshBtn.textContent='🔄';
+  refreshBtn.onclick=refreshCurrentChat;
+  actionsEl.appendChild(refreshBtn);
+  
   if(isClosed){
     inputBar.style.display='none';
     // Owners can delete
@@ -644,6 +660,15 @@ function renderAdminActions(){
       actionsEl.appendChild(delBtn);
     }
   }
+}
+
+function refreshCurrentChat(){
+  loadBin(CHATS_BIN,function(data){
+    if(data&&data.chats){
+      convos=data.chats;
+      renderAdminChat();
+    }
+  });
 }
 
 function closeChatAdmin(){
