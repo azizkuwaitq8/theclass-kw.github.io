@@ -89,6 +89,7 @@ footer .f-logo span{color:var(--accent)}
 @keyframes mi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 .chat-msg.bot{background:var(--bg);border:1px solid var(--border);align-self:flex-start;border-bottom-right-radius:4px}
 .chat-msg.user{background:var(--accent);color:var(--bg);align-self:flex-end;border-bottom-left-radius:4px}
+.chat-msg.system{background:var(--blue-dim);border:1px solid var(--blue);color:var(--blue);align-self:center;text-align:center;font-size:.75rem;padding:6px 14px}
 .chat-msg img{max-width:100%;border-radius:8px;margin-top:6px;display:block}
 .chat-msg-time{font-size:.58rem;color:var(--text-dim);margin-top:4px;direction:ltr;font-family:var(--mono)}
 .chat-msg.user .chat-msg-time{color:#0a0a0f88}
@@ -125,6 +126,7 @@ footer .f-logo span{color:var(--accent)}
 .inbox-item:hover{border-color:var(--accent-glow);background:var(--bg-card-hover)}
 .inbox-item.closed{opacity:.6}
 .inbox-item .closed-badge{position:absolute;top:8px;left:8px;background:var(--red-dim);color:var(--red);font-size:.6rem;padding:2px 8px;border-radius:100px;font-weight:700}
+.inbox-item .transfer-badge{position:absolute;top:8px;left:60px;background:var(--blue-dim);color:var(--blue);font-size:.6rem;padding:2px 8px;border-radius:100px;font-weight:700}
 .inbox-av{width:40px;height:40px;min-width:40px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.9rem}
 .inbox-info{flex:1}.inbox-name{font-weight:700;font-size:.88rem;margin-bottom:2px}
 .inbox-preview{font-size:.75rem;color:var(--text-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:300px}
@@ -134,9 +136,12 @@ footer .f-logo span{color:var(--accent)}
 .inbox-action-btn:hover{border-color:var(--accent);color:var(--accent)}
 .inbox-action-btn.delete:hover{border-color:var(--red);color:var(--red)}
 .admin-chat{display:none}.admin-chat.active{display:flex;flex-direction:column;height:calc(100vh - 140px)}
-.ac-header{display:flex;align-items:center;gap:12px;padding:16px 0;border-bottom:1px solid var(--border);margin-bottom:12px}
+.ac-header{display:flex;align-items:center;gap:12px;padding:16px 0;border-bottom:1px solid var(--border);margin-bottom:12px;flex-wrap:wrap}
 .ac-back{background:none;border:none;color:var(--text-dim);font-size:.85rem;cursor:pointer;font-family:var(--font);font-weight:600}.ac-back:hover{color:var(--accent)}
 .ac-name{font-weight:800;font-size:1rem;flex:1}
+.ac-actions{display:flex;gap:8px;flex-wrap:wrap}
+.ac-transfer-btn{background:var(--blue-dim);border:1px solid var(--blue);color:var(--blue);padding:6px 14px;border-radius:8px;font-family:var(--font);font-size:.75rem;font-weight:700;cursor:pointer;transition:all .2s}
+.ac-transfer-btn:hover{background:var(--blue);color:#fff}
 .ac-close-btn{background:var(--red-dim);border:1px solid var(--red);color:var(--red);padding:6px 14px;border-radius:8px;font-family:var(--font);font-size:.75rem;font-weight:700;cursor:pointer;transition:all .2s}
 .ac-close-btn:hover{background:var(--red);color:#fff}
 .ac-closed-notice{background:var(--red-dim);border:1px solid var(--red);color:var(--red);padding:8px 14px;border-radius:8px;font-size:.8rem;text-align:center;margin-bottom:10px}
@@ -158,13 +163,19 @@ footer .f-logo span{color:var(--accent)}
 .confirm-box{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:28px;max-width:340px;text-align:center}
 .confirm-box h4{font-size:1.1rem;margin-bottom:8px}
 .confirm-box p{color:var(--text-dim);font-size:.85rem;margin-bottom:20px}
-.confirm-btns{display:flex;gap:10px;justify-content:center}
+.confirm-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
 .confirm-btns button{padding:10px 20px;border-radius:8px;font-family:var(--font);font-weight:700;cursor:pointer;font-size:.85rem}
 .confirm-cancel{background:var(--bg);border:1px solid var(--border);color:var(--text-dim)}
 .confirm-cancel:hover{border-color:var(--accent)}
 .confirm-delete{background:var(--red);border:none;color:#fff}
 .confirm-delete:hover{opacity:.9}
-@media(max-width:640px){nav{padding:14px 16px}.hero h1{letter-spacing:-1px}.hero-stats{gap:24px;flex-wrap:wrap;justify-content:center}.rule-card{flex-direction:column;gap:14px;padding:22px 18px}.rule-num{width:40px;height:40px;min-width:40px;font-size:.95rem}.admin-grid{grid-template-columns:1fr}.login-card{margin:20px;padding:32px 24px}.nav-badge{display:none}.chat-overlay{left:8px;right:8px;bottom:8px;width:auto}.scroll-hint{display:none}.ap-header{padding:12px 16px}}
+.confirm-transfer{background:var(--blue);border:none;color:#fff}
+.confirm-transfer:hover{opacity:.9}
+.transfer-select{display:flex;gap:8px;justify-content:center;margin-bottom:16px;flex-wrap:wrap}
+.transfer-opt{padding:10px 16px;background:var(--bg);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:.85rem;transition:all .2s}
+.transfer-opt:hover{border-color:var(--accent)}
+.transfer-opt.selected{border-color:var(--accent);background:var(--accent-dim);color:var(--accent)}
+@media(max-width:640px){nav{padding:14px 16px}.hero h1{letter-spacing:-1px}.hero-stats{gap:24px;flex-wrap:wrap;justify-content:center}.rule-card{flex-direction:column;gap:14px;padding:22px 18px}.rule-num{width:40px;height:40px;min-width:40px;font-size:.95rem}.admin-grid{grid-template-columns:1fr}.login-card{margin:20px;padding:32px 24px}.nav-badge{display:none}.chat-overlay{left:8px;right:8px;bottom:8px;width:auto}.scroll-hint{display:none}.ap-header{padding:12px 16px}.ac-actions{width:100%;justify-content:flex-end}}
 </style>
 </head>
 <body>
@@ -257,7 +268,10 @@ footer .f-logo span{color:var(--accent)}
         <div class="ac-header">
           <button class="ac-back" onclick="backToInbox()">&#8594; الرجوع</button>
           <div class="ac-name" id="acName">-</div>
-          <button class="ac-close-btn" id="acCloseBtn" onclick="closeTicket()">&#10006; إغلاق المحادثة</button>
+          <div class="ac-actions">
+            <button class="ac-transfer-btn" id="acTransferBtn" onclick="openTransfer()">&#8634; تحويل</button>
+            <button class="ac-close-btn" id="acCloseBtn" onclick="closeTicket()">&#10006; إغلاق</button>
+          </div>
         </div>
         <div class="ac-closed-notice" id="acClosedNotice" style="display:none">هذه المحادثة مغلقة</div>
         <div class="ac-msgs" id="acMsgs"></div>
@@ -285,12 +299,13 @@ footer .f-logo span{color:var(--accent)}
 </div>
 
 <div class="confirm-overlay" id="confirmOverlay">
-  <div class="confirm-box">
-    <h4 id="confirmTitle">تأكيد الحذف</h4>
+  <div class="confirm-box" id="confirmBox">
+    <h4 id="confirmTitle">تأكيد</h4>
     <p id="confirmText">هل أنت متأكد؟</p>
-    <div class="confirm-btns">
+    <div id="transferOptions" style="display:none"></div>
+    <div class="confirm-btns" id="confirmBtns">
       <button class="confirm-cancel" onclick="closeConfirm()">إلغاء</button>
-      <button class="confirm-delete" id="confirmBtn" onclick="confirmAction()">حذف</button>
+      <button class="confirm-delete" id="confirmBtn" onclick="confirmAction()">تأكيد</button>
     </div>
   </div>
 </div>
@@ -300,7 +315,8 @@ var JSONBIN_KEY='$2a$10$.fB0Huz/g0NiVanHR.F03.B.ZdHkJEiaVZsYdFRZwzJKuf4qwQaxq';
 var CHATS_BIN='69caf1e036566621a863145a';
 var RULES_BIN='69caf1d9aaba882197ab92e2';
 var ADMINS={'Aziz':'The_Class_admin@Aziz.TCA','Echo':'The_Class_admin@Echo.TCA','ReverseCard':'The_Class_admin@ReverseCard.TCA','Reverse Card':'The_Class_admin@ReverseCard.TCA'};
-var OWNERS=['Echo','Aziz']; // Echo is owner, Aziz is co-owner - both can see closed chats and delete
+var OWNERS=['Echo','Aziz'];
+var HIERARCHY={'Reverse Card':['Aziz','Echo'],'Aziz':['Echo'],'Echo':[]};
 var greetings={'Echo':'هلا والله! أنا Echo. شلون أقدر أساعدك؟','Aziz':'هلا! أنا Aziz. قول لي شنو تبي وأساعدك إن شاء الله.','Reverse Card':'أهلين! أنا Reverse Card. شنو عندك؟'};
 var adminNames=['Echo','Aziz','Reverse Card'];
 var currentAdmin=null;
@@ -314,15 +330,13 @@ var colorMap={red:{c:'r-red',n:'rn-red',b:'badge-ban'},orange:{c:'r-orange',n:'r
 var saving=false;
 var userRefreshInterval=null;
 var adminRefreshInterval=null;
-var pendingDeleteKey=null;
-var userId=localStorage.getItem('theclass_userid');
-if(!userId){userId='user_'+Math.random().toString(36).substr(2,9);localStorage.setItem('theclass_userid',userId);}
+var pendingAction=null;
+var pendingKey=null;
+var selectedTransferTo=null;
 
 function getTime(){var d=new Date();return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');}
-
 function isOwner(){return OWNERS.indexOf(currentAdmin)!==-1;}
 
-// ===== JSONBIN HELPERS =====
 function loadBin(binId,callback){
   fetch('https://api.jsonbin.io/v3/b/'+binId+'/latest',{headers:{'X-Master-Key':JSONBIN_KEY}})
   .then(function(r){return r.json();})
@@ -339,16 +353,8 @@ function saveBin(binId,data){
 function saveChats(){saveBin(CHATS_BIN,{chats:convos});}
 function saveRules(){saveBin(RULES_BIN,{rules:extraRulesData});}
 
-// ===== LOAD DATA ON START =====
-loadBin(CHATS_BIN,function(data){
-  if(data&&data.chats){convos=data.chats;}
-});
-loadBin(RULES_BIN,function(data){
-  if(data&&data.rules&&data.rules.length>0){
-    extraRulesData=data.rules;
-    renderExtraRules();
-  }
-});
+loadBin(CHATS_BIN,function(data){if(data&&data.chats){convos=data.chats;}});
+loadBin(RULES_BIN,function(data){if(data&&data.rules&&data.rules.length>0){extraRulesData=data.rules;renderExtraRules();}});
 
 function renderExtraRules(){
   var container=document.getElementById('extraRules');
@@ -366,35 +372,40 @@ function renderExtraRules(){
 }
 
 // ===== USER CHAT =====
-function getChatKey(adminName){return visitorId+'_'+adminName;}
-var visitorId=localStorage.getItem('theclass_visitorid');
-if(!visitorId){visitorId='v_'+Math.random().toString(36).substr(2,9)+Date.now().toString(36);localStorage.setItem('theclass_visitorid',visitorId);}
-
 function openRandomChat(){openChat(adminNames[Math.floor(Math.random()*adminNames.length)]);}
 
 function openChat(name){
   chatTarget=name;
-  var chatKey=getChatKey(name);
   document.getElementById('chatAv').textContent=name.charAt(0);
   document.getElementById('chatName').textContent=name;
   
-  // Check if chat exists and is closed - if so, create new chat
-  if(convos[chatKey]&&convos[chatKey].closed){
-    // Create new chat key with timestamp
-    visitorId='v_'+Math.random().toString(36).substr(2,9)+Date.now().toString(36);
-    localStorage.setItem('theclass_visitorid',visitorId);
-    chatKey=getChatKey(name);
-  }
-  
-  if(!convos[chatKey]){
-    convos[chatKey]={messages:[{from:'admin',text:greetings[name],time:getTime()}],admin:name,visitorId:visitorId,closed:false};
+  // Use simple key format for backward compatibility
+  if(!convos[name]){
+    convos[name]={messages:[{from:'admin',text:greetings[name],time:getTime()}],admin:name,closed:false};
     saveChats();
   }
+  
+  // Check if closed - need new chat
+  if(convos[name].closed){
+    var newKey=name+'_'+Date.now();
+    convos[newKey]={messages:[{from:'admin',text:greetings[name],time:getTime()}],admin:name,closed:false};
+    chatTarget=newKey;
+    localStorage.setItem('theclass_chatkey_'+name,newKey);
+    saveChats();
+  }else{
+    // Check if user has a specific chat key stored
+    var storedKey=localStorage.getItem('theclass_chatkey_'+name);
+    if(storedKey&&convos[storedKey]&&!convos[storedKey].closed){
+      chatTarget=storedKey;
+    }
+  }
+  
   renderUserChat();
   document.getElementById('chatOverlay').classList.add('active');
   document.getElementById('chatInput').focus();
   startUserRefresh();
 }
+
 function closeChat(){
   document.getElementById('chatOverlay').classList.remove('active');
   stopUserRefresh();
@@ -405,21 +416,15 @@ function startUserRefresh(){
   userRefreshInterval=setInterval(function(){
     if(chatTarget){
       loadBin(CHATS_BIN,function(data){
-        if(data&&data.chats){
-          convos=data.chats;
-          renderUserChat();
-        }
+        if(data&&data.chats){convos=data.chats;renderUserChat();}
       });
     }
   },4000);
 }
-function stopUserRefresh(){
-  if(userRefreshInterval){clearInterval(userRefreshInterval);userRefreshInterval=null;}
-}
+function stopUserRefresh(){if(userRefreshInterval){clearInterval(userRefreshInterval);userRefreshInterval=null;}}
 
 function renderUserChat(){
-  var chatKey=getChatKey(chatTarget);
-  var chat=convos[chatKey];
+  var chat=convos[chatTarget];
   var el=document.getElementById('chatMsgs');
   var inputBar=document.getElementById('chatInputBar');
   var oldCount=el.children.length;
@@ -427,7 +432,12 @@ function renderUserChat(){
   
   if(!chat){return;}
   
-  // Check if closed
+  // Update header if transferred
+  if(chat.admin){
+    document.getElementById('chatAv').textContent=chat.admin.charAt(0);
+    document.getElementById('chatName').textContent=chat.admin;
+  }
+  
   if(chat.closed){
     el.innerHTML='<div class="chat-closed-msg">تم إغلاق هذه المحادثة من قبل الإدارة<br><button onclick="startNewChat()">بدء محادثة جديدة</button></div>';
     inputBar.style.display='none';
@@ -440,11 +450,11 @@ function renderUserChat(){
   for(var i=0;i<msgs.length;i++){
     var m=msgs[i];
     var div=document.createElement('div');
-    div.className='chat-msg '+(m.from==='admin'?'bot':'user');
+    div.className='chat-msg '+(m.from==='system'?'system':(m.from==='admin'?'bot':'user'));
     var h='';
     if(m.img)h+='<img src="'+m.img+'">';
     if(m.text)h+=m.text;
-    h+='<div class="chat-msg-time">'+m.time+'</div>';
+    if(m.from!=='system')h+='<div class="chat-msg-time">'+m.time+'</div>';
     div.innerHTML=h;
     el.appendChild(div);
   }
@@ -452,10 +462,11 @@ function renderUserChat(){
 }
 
 function startNewChat(){
-  visitorId='v_'+Math.random().toString(36).substr(2,9)+Date.now().toString(36);
-  localStorage.setItem('theclass_visitorid',visitorId);
-  var chatKey=getChatKey(chatTarget);
-  convos[chatKey]={messages:[{from:'admin',text:greetings[chatTarget],time:getTime()}],admin:chatTarget,visitorId:visitorId,closed:false};
+  var adminName=convos[chatTarget]?convos[chatTarget].admin:chatTarget;
+  var newKey=adminName+'_'+Date.now();
+  convos[newKey]={messages:[{from:'admin',text:greetings[adminName],time:getTime()}],admin:adminName,closed:false};
+  chatTarget=newKey;
+  localStorage.setItem('theclass_chatkey_'+adminName,newKey);
   saveChats();
   renderUserChat();
 }
@@ -463,9 +474,8 @@ function startNewChat(){
 function sendUserMsg(){
   var inp=document.getElementById('chatInput');
   var t=inp.value.trim();
-  var chatKey=getChatKey(chatTarget);
-  if(!t||!chatTarget||!convos[chatKey]||convos[chatKey].closed)return;
-  convos[chatKey].messages.push({from:'user',text:t,time:getTime()});
+  if(!t||!chatTarget||!convos[chatTarget]||convos[chatTarget].closed)return;
+  convos[chatTarget].messages.push({from:'user',text:t,time:getTime()});
   inp.value='';
   renderUserChat();
   saveChats();
@@ -473,22 +483,19 @@ function sendUserMsg(){
 
 function attachPhoto(input){
   var file=input.files[0];
-  if(!file)return;
-  var chatKey=getChatKey(chatTarget);
-  if(!convos[chatKey]||convos[chatKey].closed)return;
+  if(!file||!chatTarget||!convos[chatTarget]||convos[chatTarget].closed)return;
   var reader=new FileReader();
   reader.onload=function(e){
     var img=new Image();
     img.onload=function(){
       var canvas=document.createElement('canvas');
-      var max=300;
-      var w=img.width,h=img.height;
+      var max=300,w=img.width,h=img.height;
       if(w>max){h=h*(max/w);w=max;}
       if(h>max){w=w*(max/h);h=max;}
       canvas.width=w;canvas.height=h;
       canvas.getContext('2d').drawImage(img,0,0,w,h);
       var b64=canvas.toDataURL('image/jpeg',0.5);
-      convos[chatKey].messages.push({from:'user',img:b64,time:getTime()});
+      convos[chatTarget].messages.push({from:'user',img:b64,time:getTime()});
       renderUserChat();
       saveChats();
     };
@@ -518,10 +525,7 @@ function openAdmin(){
   document.getElementById('adminPanel').classList.add('active');
   document.body.style.overflow='hidden';
   switchTab('chats');
-  loadBin(CHATS_BIN,function(data){
-    if(data&&data.chats){convos=data.chats;}
-    updateInbox();
-  });
+  loadBin(CHATS_BIN,function(data){if(data&&data.chats){convos=data.chats;}updateInbox();});
   startAdminRefresh();
 }
 function closeAdmin(){
@@ -535,17 +539,11 @@ function startAdminRefresh(){
   stopAdminRefresh();
   adminRefreshInterval=setInterval(function(){
     loadBin(CHATS_BIN,function(data){
-      if(data&&data.chats){
-        convos=data.chats;
-        updateInbox();
-        if(viewingChat){renderAdminChat();}
-      }
+      if(data&&data.chats){convos=data.chats;updateInbox();if(viewingChat){renderAdminChat();}}
     });
   },4000);
 }
-function stopAdminRefresh(){
-  if(adminRefreshInterval){clearInterval(adminRefreshInterval);adminRefreshInterval=null;}
-}
+function stopAdminRefresh(){if(adminRefreshInterval){clearInterval(adminRefreshInterval);adminRefreshInterval=null;}}
 
 function switchTab(tab){
   var tabs=document.querySelectorAll('.ap-tab');
@@ -561,41 +559,23 @@ function updateInbox(){
   var keys=Object.keys(convos);
   var badge=document.getElementById('chatBadge');
   
-  if(keys.length===0){
-    list.innerHTML='<div class="inbox-empty">&#128237; لا توجد رسائل حالياً</div>';
-    badge.style.display='none';
-    return;
-  }
+  if(keys.length===0){list.innerHTML='<div class="inbox-empty">&#128237; لا توجد رسائل حالياً</div>';badge.style.display='none';return;}
   
   var validChats=[];
   for(var i=0;i<keys.length;i++){
     var chat=convos[keys[i]];
     if(!chat||!chat.messages)continue;
-    
-    // Check if has user messages
     var hasUserMsg=false;
-    for(var j=0;j<chat.messages.length;j++){
-      if(chat.messages[j].from==='user'){hasUserMsg=true;break;}
-    }
+    for(var j=0;j<chat.messages.length;j++){if(chat.messages[j].from==='user'){hasUserMsg=true;break;}}
     if(!hasUserMsg)continue;
-    
-    // If closed, only owners can see
     if(chat.closed&&!isOwner())continue;
-    
     validChats.push(keys[i]);
   }
   
-  if(validChats.length===0){
-    list.innerHTML='<div class="inbox-empty">&#128237; لا توجد رسائل حالياً</div>';
-    badge.style.display='none';
-    return;
-  }
+  if(validChats.length===0){list.innerHTML='<div class="inbox-empty">&#128237; لا توجد رسائل حالياً</div>';badge.style.display='none';return;}
   
-  // Count open chats for badge
   var openCount=0;
-  for(var i=0;i<validChats.length;i++){
-    if(!convos[validChats[i]].closed)openCount++;
-  }
+  for(var i=0;i<validChats.length;i++){if(!convos[validChats[i]].closed)openCount++;}
   badge.textContent=openCount;
   badge.style.display=openCount>0?'inline':'none';
   
@@ -613,11 +593,13 @@ function updateInbox(){
       actionsHtml='<div class="inbox-actions"><button class="inbox-action-btn delete" onclick="event.stopPropagation();confirmDelete(\''+k+'\')" title="حذف">&#128465;</button></div>';
     }
     
-    div.innerHTML=(chat.closed?'<span class="closed-badge">مغلق</span>':'')+
-      '<div class="inbox-av">'+k.charAt(0).toUpperCase()+'</div>'+
-      '<div class="inbox-info"><div class="inbox-name">محادثة - '+(chat.admin||'Admin')+'</div><div class="inbox-preview">'+(last.img?'📷 صورة':last.text)+'</div></div>'+
+    var transferBadge=chat.transferredFrom?'<span class="transfer-badge">محول من '+chat.transferredFrom+'</span>':'';
+    
+    div.innerHTML=(chat.closed?'<span class="closed-badge">مغلق</span>':'')+transferBadge+
+      '<div class="inbox-av">'+(chat.admin?chat.admin.charAt(0):'?')+'</div>'+
+      '<div class="inbox-info"><div class="inbox-name">محادثة - '+(chat.admin||'Admin')+'</div><div class="inbox-preview">'+(last.img?'📷 صورة':last.text||'')+'</div></div>'+
       actionsHtml+
-      '<div style="text-align:left"><div class="inbox-time">'+last.time+'</div></div>';
+      '<div style="text-align:left"><div class="inbox-time">'+(last.time||'')+'</div></div>';
     
     div.onclick=function(){openAdminChat(this.getAttribute('data-key'));};
     list.appendChild(div);
@@ -631,19 +613,21 @@ function openAdminChat(key){
   document.getElementById('inboxList').style.display='none';
   document.getElementById('adminChatView').classList.add('active');
   
-  // Update close button and input based on status
   var closeBtn=document.getElementById('acCloseBtn');
+  var transferBtn=document.getElementById('acTransferBtn');
   var closedNotice=document.getElementById('acClosedNotice');
   var acInput=document.getElementById('acInput');
   var acSendBtn=document.getElementById('acSendBtn');
   
   if(chat&&chat.closed){
     closeBtn.style.display='none';
+    transferBtn.style.display='none';
     closedNotice.style.display='block';
     acInput.disabled=true;
     acSendBtn.disabled=true;
   }else{
     closeBtn.style.display='inline-block';
+    transferBtn.style.display='inline-block';
     closedNotice.style.display='none';
     acInput.disabled=false;
     acSendBtn.disabled=false;
@@ -669,11 +653,11 @@ function renderAdminChat(){
   for(var i=0;i<msgs.length;i++){
     var m=msgs[i];
     var div=document.createElement('div');
-    div.className='chat-msg '+(m.from==='user'?'bot':'user');
+    div.className='chat-msg '+(m.from==='system'?'system':(m.from==='user'?'bot':'user'));
     var h='';
     if(m.img)h+='<img src="'+m.img+'" style="max-width:200px;border-radius:8px;margin-bottom:4px">';
     if(m.text)h+=m.text;
-    h+='<div class="chat-msg-time">'+m.time+'</div>';
+    if(m.from!=='system')h+='<div class="chat-msg-time">'+m.time+'</div>';
     div.innerHTML=h;
     el.appendChild(div);
   }
@@ -695,31 +679,86 @@ function closeTicket(){
   convos[viewingChat].closed=true;
   convos[viewingChat].closedBy=currentAdmin;
   convos[viewingChat].closedAt=getTime();
+  convos[viewingChat].messages.push({from:'system',text:'تم إغلاق المحادثة بواسطة '+currentAdmin,time:getTime()});
   saveChats();
-  
-  // Update UI
   document.getElementById('acCloseBtn').style.display='none';
+  document.getElementById('acTransferBtn').style.display='none';
   document.getElementById('acClosedNotice').style.display='block';
   document.getElementById('acInput').disabled=true;
   document.getElementById('acSendBtn').disabled=true;
+  renderAdminChat();
 }
 
-// ===== CONFIRM DELETE =====
-function confirmDelete(key){
-  pendingDeleteKey=key;
-  document.getElementById('confirmTitle').textContent='حذف المحادثة';
-  document.getElementById('confirmText').textContent='هل أنت متأكد من حذف هذه المحادثة نهائياً؟ لا يمكن التراجع.';
+// ===== TRANSFER =====
+function openTransfer(){
+  if(!viewingChat||!convos[viewingChat]||convos[viewingChat].closed)return;
+  
+  var supervisors=HIERARCHY[currentAdmin]||[];
+  if(supervisors.length===0){
+    alert('لا يوجد مشرف أعلى لتحويل المحادثة إليه');
+    return;
+  }
+  
+  pendingAction='transfer';
+  pendingKey=viewingChat;
+  selectedTransferTo=null;
+  
+  document.getElementById('confirmTitle').textContent='تحويل المحادثة';
+  document.getElementById('confirmText').textContent='اختر المشرف:';
+  
+  var optionsHtml='<div class="transfer-select">';
+  for(var i=0;i<supervisors.length;i++){
+    optionsHtml+='<div class="transfer-opt" onclick="selectTransfer(this,\''+supervisors[i]+'\')">'+supervisors[i]+'</div>';
+  }
+  optionsHtml+='</div>';
+  document.getElementById('transferOptions').innerHTML=optionsHtml;
+  document.getElementById('transferOptions').style.display='block';
+  
+  document.getElementById('confirmBtn').textContent='تحويل';
+  document.getElementById('confirmBtn').className='confirm-delete confirm-transfer';
   document.getElementById('confirmOverlay').classList.add('active');
 }
+
+function selectTransfer(el,name){
+  var opts=document.querySelectorAll('.transfer-opt');
+  for(var i=0;i<opts.length;i++){opts[i].classList.remove('selected');}
+  el.classList.add('selected');
+  selectedTransferTo=name;
+}
+
+function confirmDelete(key){
+  pendingAction='delete';
+  pendingKey=key;
+  document.getElementById('confirmTitle').textContent='حذف المحادثة';
+  document.getElementById('confirmText').textContent='هل أنت متأكد من حذف هذه المحادثة نهائياً؟ لا يمكن التراجع.';
+  document.getElementById('transferOptions').style.display='none';
+  document.getElementById('confirmBtn').textContent='حذف';
+  document.getElementById('confirmBtn').className='confirm-delete';
+  document.getElementById('confirmOverlay').classList.add('active');
+}
+
 function closeConfirm(){
   document.getElementById('confirmOverlay').classList.remove('active');
-  pendingDeleteKey=null;
+  pendingAction=null;
+  pendingKey=null;
+  selectedTransferTo=null;
 }
+
 function confirmAction(){
-  if(pendingDeleteKey&&isOwner()){
-    delete convos[pendingDeleteKey];
+  if(pendingAction==='delete'&&pendingKey&&isOwner()){
+    delete convos[pendingKey];
     saveChats();
     updateInbox();
+  }else if(pendingAction==='transfer'&&pendingKey&&selectedTransferTo){
+    var chat=convos[pendingKey];
+    if(chat){
+      chat.transferredFrom=chat.admin;
+      chat.admin=selectedTransferTo;
+      chat.messages.push({from:'system',text:'تم تحويل المحادثة من '+chat.transferredFrom+' إلى '+selectedTransferTo,time:getTime()});
+      saveChats();
+      renderAdminChat();
+      document.getElementById('acName').textContent='محادثة - '+selectedTransferTo;
+    }
   }
   closeConfirm();
 }
