@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Class — قوانين السيرفر</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0a0f;--bg-card:#111118;--bg-card-hover:#16161f;--text:#e8e6e3;--text-dim:#8a8a9a;--accent:#c8ff00;--accent-dim:#c8ff0022;--accent-glow:#c8ff0044;--border:#1e1e2a;--border-hover:#2e2e3f;--red:#ff3b3b;--red-dim:#ff3b3b15;--orange:#ff9f1c;--orange-dim:#ff9f1c15;--yellow:#fee75c;--blue:#5865f2;--blue-dim:#5865f215;--green:#00e87b;--green-dim:#00e87b15;--fuchsia:#eb459e;--fuchsia-dim:#eb459e15;--radius:16px;--font:'Noto Kufi Arabic',sans-serif;--mono:'Space Mono',monospace}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);overflow-x:hidden;line-height:1.8}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:9999}
+.grid-bg{position:fixed;inset:0;background-image:linear-gradient(90deg,#ffffff03 1px,transparent 1px),linear-gradient(0deg,#ffffff03 1px,transparent 1px);background-size:80px 80px;pointer-events:none}
+.cursor-blob{position:fixed;width:350px;height:350px;background:radial-gradient(circle,var(--accent-glow) 0%,transparent 70%);border-radius:50%;pointer-events:none;z-index:0;transform:translate(-50%,-50%);transition:left .5s ease-out,top .5s ease-out;opacity:.35}
+nav{position:fixed;top:0;width:100%;z-index:1000;padding:18px 32px;display:flex;justify-content:space-between;align-items:center;backdrop-filter:blur(20px);background:#0a0a0fcc;border-bottom:1px solid var(--border)}
+.logo{font-weight:900;font-size:1.4rem;color:var(--text);direction:ltr;unicode-bidi:bidi-override}.logo span{color:var(--accent)}
+.nav-right{display:flex;align-items:center;gap:12px}
+.nav-badge{background:var(--accent-dim);border:1px solid var(--accent-glow);color:var(--accent);padding:6px 16px;border-radius:100px;font-size:.7rem;font-weight:700}
+.admin-btn{background:var(--bg-card);border:1px solid var(--border);color:var(--text-dim);padding:7px 16px;border-radius:100px;font-size:.72rem;font-weight:600;font-family:var(--font);cursor:pointer;transition:border-color .3s,color .3s;display:flex;align-items:center;gap:6px;direction:ltr}
+.admin-btn:hover{border-color:var(--accent-glow);color:var(--accent)}
+.admin-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:120px 24px 80px;position:relative;z-index:1}
+.hero-glow{position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,var(--accent-glow) 0%,transparent 65%);top:50%;left:50%;transform:translate(-50%,-55%);pointer-events:none;opacity:.3;animation:gp 5s ease-in-out infinite}
+@keyframes gp{0%,100%{opacity:.25;transform:translate(-50%,-55%) scale(1)}50%{opacity:.4;transform:translate(-50%,-55%) scale(1.08)}}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:var(--accent-dim);border:1px solid var(--accent-glow);border-radius:100px;padding:8px 20px;font-size:.78rem;font-weight:700;color:var(--accent);margin-bottom:40px;animation:fsu .8s ease both}
+.hero-badge::before{content:'';width:8px;height:8px;background:var(--accent);border-radius:50%;animation:pl 2s ease-in-out infinite}
+@keyframes pl{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+.hero h1{font-size:clamp(3rem,8vw,6.5rem);font-weight:900;line-height:1.1;letter-spacing:-2px;max-width:800px;position:relative;animation:fsu .8s ease both .1s}
+.hero h1 .en{font-style:normal;color:var(--accent);position:relative;direction:ltr;unicode-bidi:bidi-override;display:inline-block}
+.hero h1 .en::after{content:'';position:absolute;bottom:12px;right:0;width:100%;height:6px;background:var(--accent);opacity:.25;border-radius:3px}
+.hero-sub{font-size:1.1rem;color:var(--text-dim);max-width:520px;margin-top:28px;line-height:1.9;animation:fsu .8s ease both .25s}
+.hero-stats{display:flex;gap:48px;margin-top:56px;animation:fsu .8s ease both .4s}
+.stat{text-align:center}.stat-num{font-size:2.2rem;font-weight:900;color:var(--accent)}.stat-label{font-size:.75rem;color:var(--text-dim);margin-top:4px}
+.scroll-hint{position:absolute;bottom:36px;font-size:.72rem;color:var(--text-dim);animation:bn 2s infinite}
+@keyframes bn{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
+@keyframes fsu{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+.rules-section{max-width:820px;margin:0 auto;padding:40px 24px 80px;position:relative;z-index:1}
+.rules-header{text-align:center;margin-bottom:56px}
+.section-tag{font-size:.72rem;letter-spacing:3px;color:var(--accent);font-weight:700;margin-bottom:14px}
+.section-title{font-size:clamp(1.8rem,4vw,2.8rem);font-weight:900;letter-spacing:-1px;line-height:1.2;margin-bottom:14px}
+.section-desc{color:var(--text-dim);font-size:.95rem;max-width:480px;margin:0 auto;line-height:1.8}
+.rule-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:28px 26px;margin-bottom:14px;display:flex;gap:18px;align-items:flex-start;position:relative;overflow:hidden;opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease,border-color .3s,background .3s}
+.rule-card.visible{opacity:1;transform:translateY(0)}.rule-card:hover{border-color:var(--border-hover);background:var(--bg-card-hover)}
+.rule-card::before{content:'';position:absolute;top:0;right:0;left:0;height:2px;opacity:0;transition:opacity .3s}.rule-card:hover::before{opacity:1}
+.rule-card.r-red::before{background:linear-gradient(90deg,transparent,var(--red),transparent)}
+.rule-card.r-orange::before{background:linear-gradient(90deg,transparent,var(--orange),transparent)}
+.rule-card.r-blue::before{background:linear-gradient(90deg,transparent,var(--blue),transparent)}
+.rule-num{width:48px;height:48px;min-width:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.1rem;color:#fff}
+.rn-red{background:var(--red)}.rn-orange{background:var(--orange);color:#000}.rn-blue{background:var(--blue)}.rn-green{background:var(--green);color:#000}.rn-yellow{background:var(--yellow);color:#000}.rn-fuchsia{background:var(--fuchsia)}
+.rule-content{flex:1}.rule-title{font-size:1.05rem;font-weight:800;margin-bottom:6px;line-height:1.5}.rule-desc{color:var(--text-dim);font-size:.88rem;line-height:1.8}
+.rule-badge{display:inline-block;font-size:.62rem;font-weight:700;padding:3px 10px;border-radius:100px;margin-top:10px}
+.badge-ban{background:var(--red-dim);color:var(--red)}.badge-warn{background:var(--orange-dim);color:var(--orange)}.badge-info{background:var(--blue-dim);color:var(--blue)}.badge-strict{background:var(--fuchsia-dim);color:var(--fuchsia)}
+.mention{background:var(--accent-dim);color:var(--accent);padding:1px 6px;border-radius:5px;font-weight:700;font-size:.82rem}
+.note-box{background:var(--bg-card);border:1px solid var(--accent-glow);border-radius:var(--radius);padding:28px 26px;margin-top:40px;position:relative;overflow:hidden;opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
+.note-box.visible{opacity:1;transform:translateY(0)}
+.note-box::before{content:'';position:absolute;top:0;right:0;left:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent)}
+.note-box .note-title{font-size:.95rem;font-weight:800;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.note-box .note-text{color:var(--text-dim);font-size:.88rem;line-height:1.8}
+.contact-section{max-width:820px;margin:0 auto;padding:40px 24px 100px;position:relative;z-index:1}
+.contact-header{text-align:center;margin-bottom:40px}
+.admin-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.admin-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:28px 24px;text-align:center;transition:border-color .3s,transform .3s,background .3s;position:relative;overflow:hidden}
+.admin-card:hover{border-color:var(--border-hover);transform:translateY(-3px);background:var(--bg-card-hover)}
+.admin-card::before{content:'';position:absolute;top:0;right:0;left:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:0;transition:opacity .3s}.admin-card:hover::before{opacity:1}
+.admin-avatar{width:56px;height:56px;border-radius:50%;background:var(--accent);color:var(--bg);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.2rem;margin:0 auto 14px;direction:ltr}
+.admin-name{font-weight:800;font-size:1rem;margin-bottom:2px;direction:ltr;unicode-bidi:bidi-override}
+.admin-realname{font-size:.78rem;color:var(--text-dim);margin-bottom:6px}
+.admin-role{font-size:.75rem;color:var(--accent);font-weight:700;margin-bottom:4px}
+.admin-disc{font-family:var(--mono);font-size:.72rem;color:var(--text-dim);direction:ltr;margin-bottom:14px}
+.chat-btn{width:100%;padding:10px;background:var(--accent);color:var(--bg);border:none;border-radius:10px;font-family:var(--font);font-size:.82rem;font-weight:700;cursor:pointer;transition:transform .2s,box-shadow .3s}
+.chat-btn:hover{transform:translateY(-1px);box-shadow:0 4px 20px var(--accent-glow)}
+.any-admin-btn{display:block;width:100%;margin-top:20px;padding:16px;background:transparent;border:1px solid var(--accent);color:var(--accent);border-radius:12px;font-family:var(--font);font-size:.92rem;font-weight:700;cursor:pointer;transition:background .3s,transform .2s,box-shadow .3s}
+.any-admin-btn:hover{background:var(--accent);color:var(--bg);transform:translateY(-2px);box-shadow:0 6px 24px var(--accent-glow)}
+footer{padding:36px 24px;text-align:center;border-top:1px solid var(--border);position:relative;z-index:1}
+footer p{color:var(--text-dim);font-size:.75rem}
+footer .f-logo{font-weight:900;font-size:1.05rem;color:var(--text);margin-bottom:6px;direction:ltr;unicode-bidi:bidi-override}
+footer .f-logo span{color:var(--accent)}
+.chat-overlay{position:fixed;bottom:24px;left:24px;width:400px;height:500px;z-index:4000;background:var(--bg-card);border:1px solid var(--border);border-radius:20px;display:flex;flex-direction:column;overflow:hidden;opacity:0;visibility:hidden;transform:translateY(20px) scale(.95);transition:all .35s ease;box-shadow:0 12px 48px #00000060}
+.chat-overlay.active{opacity:1;visibility:visible;transform:translateY(0) scale(1)}
+.chat-hdr{padding:14px 18px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);background:var(--bg)}
+.chat-hdr-av{width:36px;height:36px;border-radius:50%;background:var(--accent);color:var(--bg);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.9rem;direction:ltr}
+.chat-hdr-info{flex:1}.chat-hdr-name{font-size:.88rem;font-weight:800;direction:ltr;unicode-bidi:bidi-override}
+.chat-hdr-status{font-size:.65rem;color:var(--green);display:flex;align-items:center;gap:4px;direction:ltr}
+.chat-hdr-status::before{content:'';width:6px;height:6px;background:var(--green);border-radius:50%}
+.chat-x{background:none;border:none;color:var(--text-dim);font-size:1.2rem;cursor:pointer;padding:4px}.chat-x:hover{color:var(--text)}
+.chat-msgs{flex:1;padding:14px;overflow-y:auto;display:flex;flex-direction:column;gap:8px}
+.chat-msg{max-width:82%;padding:10px 14px;border-radius:14px;font-size:.84rem;line-height:1.6;animation:mi .3s ease both}
+@keyframes mi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.chat-msg.bot{background:var(--bg);border:1px solid var(--border);align-self:flex-start;border-bottom-right-radius:4px}
+.chat-msg.user{background:var(--accent);color:var(--bg);align-self:flex-end;border-bottom-left-radius:4px}
+.chat-msg img{max-width:100%;border-radius:8px;margin-top:6px;display:block}
+.chat-msg-time{font-size:.58rem;color:var(--text-dim);margin-top:4px;direction:ltr;font-family:var(--mono)}
+.chat-msg.user .chat-msg-time{color:#0a0a0f88}
+.chat-input-bar{padding:10px 14px;border-top:1px solid var(--border);display:flex;gap:8px;background:var(--bg);align-items:center}
+.chat-input{flex:1;background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:10px 14px;color:var(--text);font-family:var(--font);font-size:.84rem;outline:none}.chat-input:focus{border-color:var(--accent)}.chat-input::placeholder{color:var(--text-dim)}
+.chat-attach{background:none;border:none;color:var(--text-dim);font-size:1.1rem;cursor:pointer;padding:6px}.chat-attach:hover{color:var(--accent)}
+.chat-send{background:var(--accent);color:var(--bg);border:none;width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.95rem}.chat-send:hover{transform:scale(1.05)}
+.login-overlay{position:fixed;inset:0;z-index:5000;background:#0a0a0fdd;backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:opacity .35s,visibility .35s}
+.login-overlay.active{opacity:1;visibility:visible}
+.login-card{background:var(--bg-card);border:1px solid var(--border);border-radius:20px;padding:40px 36px;width:100%;max-width:400px;position:relative;animation:fsu .4s ease both}
+.login-close{position:absolute;top:16px;left:16px;background:var(--bg);border:1px solid var(--border);color:var(--text-dim);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;cursor:pointer}.login-close:hover{border-color:var(--accent);color:var(--accent)}
+.login-card h3{font-size:1.3rem;font-weight:900;margin-bottom:6px;text-align:center}
+.login-card .login-sub{color:var(--text-dim);font-size:.82rem;text-align:center;margin-bottom:28px}
+.login-field{margin-bottom:14px}.login-field label{display:block;font-size:.75rem;font-weight:700;color:var(--text-dim);margin-bottom:6px}
+.login-field input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px 16px;color:var(--text);font-family:var(--mono);font-size:.88rem;outline:none;direction:ltr}.login-field input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim)}
+.login-btn{width:100%;padding:14px;background:var(--accent);color:var(--bg);border:none;border-radius:10px;font-family:var(--font);font-size:.9rem;font-weight:800;cursor:pointer;margin-top:8px}.login-btn:hover{transform:translateY(-1px);box-shadow:0 6px 24px var(--accent-glow)}
+.login-error{color:var(--red);font-size:.78rem;text-align:center;margin-top:12px;display:none}.login-error.show{display:block}
+.admin-panel{position:fixed;inset:0;z-index:5000;background:var(--bg);opacity:0;visibility:hidden;transition:opacity .35s,visibility .35s;overflow-y:auto}
+.admin-panel.active{opacity:1;visibility:visible}
+.ap-header{padding:16px 28px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);background:var(--bg-card);position:sticky;top:0;z-index:10;flex-wrap:wrap;gap:10px}
+.ap-title{font-size:1rem;font-weight:800}.ap-title span{color:var(--accent)}
+.ap-user{display:flex;align-items:center;gap:8px;font-size:.8rem;color:var(--text-dim);direction:ltr}
+.ap-user-dot{width:8px;height:8px;border-radius:50%;background:var(--green)}
+.ap-close{background:var(--bg);border:1px solid var(--border);color:var(--text-dim);padding:6px 16px;border-radius:8px;font-family:var(--font);font-size:.78rem;font-weight:600;cursor:pointer}.ap-close:hover{border-color:var(--accent)}
+.ap-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);background:var(--bg-card)}
+.ap-tab{flex:1;padding:14px;text-align:center;font-size:.82rem;font-weight:700;color:var(--text-dim);cursor:pointer;border-bottom:2px solid transparent}.ap-tab.active{color:var(--accent);border-bottom-color:var(--accent)}.ap-tab:hover{color:var(--text)}
+.ap-tab-badge{background:var(--red);color:#fff;font-size:.6rem;padding:2px 6px;border-radius:100px;margin-right:4px;font-weight:700}
+.ap-content{max-width:700px;margin:32px auto;padding:0 24px}
+.ap-section{display:none}.ap-section.active{display:block}
+.inbox-empty{text-align:center;color:var(--text-dim);padding:60px 20px;font-size:.9rem}
+.inbox-item{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;margin-bottom:10px;cursor:pointer;transition:border-color .3s,background .3s;display:flex;align-items:center;gap:14px}
+.inbox-item:hover{border-color:var(--accent-glow);background:var(--bg-card-hover)}
+.inbox-av{width:40px;height:40px;min-width:40px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.9rem}
+.inbox-info{flex:1}.inbox-name{font-weight:700;font-size:.88rem;margin-bottom:2px}
+.inbox-preview{font-size:.75rem;color:var(--text-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:300px}
+.inbox-time{font-family:var(--mono);font-size:.65rem;color:var(--text-dim);direction:ltr}
+.admin-chat{display:none}.admin-chat.active{display:flex;flex-direction:column;height:calc(100vh - 140px)}
+.ac-header{display:flex;align-items:center;gap:12px;padding:16px 0;border-bottom:1px solid var(--border);margin-bottom:12px}
+.ac-back{background:none;border:none;color:var(--text-dim);font-size:.85rem;cursor:pointer;font-family:var(--font);font-weight:600}.ac-back:hover{color:var(--accent)}
+.ac-name{font-weight:800;font-size:1rem}
+.ac-msgs{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:8px 0}
+.ac-input-bar{display:flex;gap:8px;padding:12px 0;border-top:1px solid var(--border);margin-top:8px;align-items:center}
+.ac-input{flex:1;background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-family:var(--font);font-size:.86rem;outline:none}.ac-input:focus{border-color:var(--accent)}
+.ac-send{background:var(--accent);color:var(--bg);border:none;padding:10px 20px;border-radius:10px;font-family:var(--font);font-size:.82rem;font-weight:700;cursor:pointer}
+.ap-field{margin-bottom:16px}.ap-field label{display:block;font-size:.78rem;font-weight:700;color:var(--text-dim);margin-bottom:6px}
+.ap-field input,.ap-field textarea{width:100%;background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:14px 16px;color:var(--text);font-family:var(--font);font-size:.88rem;outline:none;resize:vertical}.ap-field input:focus,.ap-field textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim)}
+.ap-field textarea{min-height:90px;line-height:1.7}
+.ap-color-row{display:flex;gap:8px;flex-wrap:wrap}
+.ap-color-opt{width:36px;height:36px;border-radius:8px;border:2px solid transparent;cursor:pointer}.ap-color-opt:hover{transform:scale(1.1)}.ap-color-opt.selected{border-color:var(--text)}
+.ap-add-btn{width:100%;padding:14px;background:var(--accent);color:var(--bg);border:none;border-radius:10px;font-family:var(--font);font-size:.9rem;font-weight:800;cursor:pointer;margin-top:8px}.ap-add-btn:hover{transform:translateY(-1px);box-shadow:0 6px 24px var(--accent-glow)}
+.ap-success{color:var(--green);font-size:.82rem;text-align:center;margin-top:12px;display:none}.ap-success.show{display:block}
+@media(max-width:640px){nav{padding:14px 16px}.hero h1{letter-spacing:-1px}.hero-stats{gap:24px;flex-wrap:wrap;justify-content:center}.rule-card{flex-direction:column;gap:14px;padding:22px 18px}.rule-num{width:40px;height:40px;min-width:40px;font-size:.95rem}.admin-grid{grid-template-columns:1fr}.login-card{margin:20px;padding:32px 24px}.nav-badge{display:none}.chat-overlay{left:8px;right:8px;bottom:8px;width:auto}.scroll-hint{display:none}.ap-header{padding:12px 16px}}
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+<div class="cursor-blob" id="blob"></div>
+<nav>
+  <div class="logo">The Class<span>.</span></div>
+  <div class="nav-right">
+    <div class="nav-badge">Discord Server</div>
+    <button class="admin-btn" onclick="openLogin()"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>Admin</button>
+  </div>
+</nav>
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-badge">قوانين السيرفر — 2026</div>
+  <h1>قوانين<br><span class="en">The Class.</span></h1>
+  <p class="hero-sub">هذي قوانين سيرفرنا. بسيطة ومحترمة. نبيك تستمتع بوقتك هنا بس خل الاحترام موجود. خالف واحد منها وبنتعامل معاها بكل حب &#128514;</p>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-num">5</div><div class="stat-label">قوانين</div></div>
+    <div class="stat"><div class="stat-num">&#10084;&#65039;</div><div class="stat-label">تسامح</div></div>
+    <div class="stat"><div class="stat-num">&#9889;</div><div class="stat-label">بس لا تزود</div></div>
+  </div>
+  <div class="scroll-hint">&darr; اقرأ القوانين &darr;</div>
+</section>
+<section class="rules-section">
+  <div class="rules-header">
+    <div class="section-tag">&#128220; القوانين</div>
+    <div class="section-title">احترمها وبنحترمك</div>
+    <p class="section-desc">ما نبي نعقد الأمور. قوانين بسيطة تخلي السيرفر مكان حلو للكل.</p>
+  </div>
+  <div class="rule-card r-red"><div class="rule-num rn-red">1</div><div class="rule-content"><div class="rule-title">بدون قذف ومس الديانات بأي شكل</div><div class="rule-desc">ممنوع الإساءة لأي دين أو معتقد. هذا الشي مو قابل للنقاش ولا حتى كمزحة. خط أحمر.</div><div class="rule-badge badge-ban">بان مباشر</div></div></div>
+  <div class="rule-card r-red"><div class="rule-num rn-red">2</div><div class="rule-content"><div class="rule-title">عدم إرسال صور إباحية</div><div class="rule-desc">أي محتوى إباحي بأي شكل = بان فوري. لا صور، لا فيديوهات، لا روابط. حتى "كمزحة" لا.</div><div class="rule-badge badge-ban">بان مباشر</div></div></div>
+  <div class="rule-card r-orange"><div class="rule-num rn-orange">3</div><div class="rule-content"><div class="rule-title">بدون سبام</div><div class="rule-desc">لا تمنشن أحد عشر مرات ورا بعض. <span class="mention">@شخص</span> مرة وحدة تكفي وتوفي. إذا ما رد يعني مشغول.</div><div class="rule-badge badge-warn">تنبيه</div></div></div>
+  <div class="rule-card r-orange"><div class="rule-num rn-orange">4</div><div class="rule-content"><div class="rule-title">لا إزعاج صوتي</div><div class="rule-desc">ساوندبورد، أصوات من الهاتف، صراخ — ممنوع في الفويس. خل الجو يكون مريح للكل.</div><div class="rule-badge badge-warn">تنبيه</div></div></div>
+  <div class="rule-card r-blue"><div class="rule-num rn-blue">5</div><div class="rule-content"><div class="rule-title">الشكاوى بالدليل فقط</div><div class="rule-desc">بتشتكي؟ حياك. بس جيب سكرينشوت أو تسجيل. "اسأل فلان" مو دليل.</div><div class="rule-badge badge-info">تنبيه ثم ميوت صوتي</div></div></div>
+  <div id="extraRules"></div>
+  <div class="note-box"><div class="note-title"><span>&#128221;</span> ملاحظة</div><div class="note-text">القوانين ممكن تتغير أو تنضاف لها. التعديل من قبل <span class="mention">@Echo</span> و <span class="mention">@Aziz</span> و <span class="mention">@Reverse Card</span> فقط.</div></div>
+</section>
+<section class="contact-section">
+  <div class="contact-header">
+    <div class="section-tag">&#128231; تواصل مع الإدارة</div>
+    <div class="section-title">عندك مشكلة؟ كلمنا</div>
+    <p class="section-desc" style="margin:0 auto">إذا عندك شكوى، اقتراح، أو أي شي — تواصل مع أحد الإدارة:</p>
+  </div>
+  <div class="admin-grid">
+    <div class="admin-card"><div class="admin-avatar">E</div><div class="admin-name">Echo</div><div class="admin-realname">Sultan</div><div class="admin-role">&#128081; Owner</div><div class="admin-disc">@Echo</div><button class="chat-btn" onclick="openChat('Echo')">&#128172; ابدأ محادثة</button></div>
+    <div class="admin-card"><div class="admin-avatar">A</div><div class="admin-name">Aziz</div><div class="admin-realname">Aziz</div><div class="admin-role">&#9889; Co-Owner</div><div class="admin-disc">@Aziz</div><button class="chat-btn" onclick="openChat('Aziz')">&#128172; ابدأ محادثة</button></div>
+    <div class="admin-card"><div class="admin-avatar">R</div><div class="admin-name">Reverse Card</div><div class="admin-realname">Mahdi</div><div class="admin-role">&#127775; Head of Admin</div><div class="admin-disc">@Reverse Card</div><button class="chat-btn" onclick="openChat('Reverse Card')">&#128172; ابدأ محادثة</button></div>
+  </div>
+  <button class="any-admin-btn" onclick="openRandomChat()">&#128172; ابدأ محادثة مع أي أدمن متاح</button>
+</section>
+<footer><div class="f-logo">The Class<span>.</span></div><p>&copy; 2026 The Class Discord Server</p></footer>
+
+<div class="chat-overlay" id="chatOverlay">
+  <div class="chat-hdr"><div class="chat-hdr-av" id="chatAv">A</div><div class="chat-hdr-info"><div class="chat-hdr-name" id="chatName">Aziz</div><div class="chat-hdr-status">Online</div></div><button class="chat-x" onclick="closeChat()">&times;</button></div>
+  <div class="chat-msgs" id="chatMsgs"></div>
+  <div class="chat-input-bar">
+    <button class="chat-attach" onclick="document.getElementById('chatFile').click()">&#128206;</button>
+    <input type="file" id="chatFile" accept="image/*" style="display:none" onchange="attachPhoto(this)">
+    <input class="chat-input" id="chatInput" placeholder="اكتب رسالتك..." onkeydown="if(event.key==='Enter')sendUserMsg()">
+    <button class="chat-send" onclick="sendUserMsg()">&#10148;</button>
+  </div>
+</div>
+
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-card">
+    <button class="login-close" onclick="closeLogin()">&times;</button>
+    <h3>&#128274; تسجيل دخول</h3><p class="login-sub">للإدارة فقط</p>
+    <div class="login-field"><label>اسم المستخدم</label><input type="text" id="loginUser" placeholder="Discord username"></div>
+    <div class="login-field"><label>كلمة المرور</label><input type="password" id="loginPass" placeholder="Password"></div>
+    <button class="login-btn" onclick="attemptLogin()">دخول</button>
+    <div class="login-error" id="loginError">&#10060; بيانات غلط</div>
+  </div>
+</div>
+
+<div class="admin-panel" id="adminPanel">
+  <div class="ap-header">
+    <div class="ap-title">&#9881;&#65039; لوحة التحكم <span>Admin</span></div>
+    <div class="ap-user"><span class="ap-user-dot"></span><span id="apUser">-</span></div>
+    <button class="ap-close" onclick="closeAdmin()">تسجيل خروج</button>
+  </div>
+  <div class="ap-tabs">
+    <div class="ap-tab active" onclick="switchTab('chats')"><span class="ap-tab-badge" id="chatBadge" style="display:none">0</span>الرسائل</div>
+    <div class="ap-tab" onclick="switchTab('rules')">إضافة قانون</div>
+  </div>
+  <div class="ap-content">
+    <div class="ap-section active" id="tabChats">
+      <div id="inboxList"><div class="inbox-empty">&#128237; لا توجد رسائل حالياً</div></div>
+      <div class="admin-chat" id="adminChatView">
+        <div class="ac-header"><button class="ac-back" onclick="backToInbox()">&#8594; الرجوع</button><div class="ac-name" id="acName">-</div></div>
+        <div class="ac-msgs" id="acMsgs"></div>
+        <div class="ac-input-bar"><input class="ac-input" id="acInput" placeholder="رد على الرسالة..." onkeydown="if(event.key==='Enter')sendAdminReply()"><button class="ac-send" onclick="sendAdminReply()">إرسال</button></div>
+      </div>
+    </div>
+    <div class="ap-section" id="tabRules">
+      <h2 style="font-size:1.3rem;font-weight:900;margin-bottom:8px">إضافة قانون جديد</h2>
+      <p style="color:var(--text-dim);font-size:.85rem;margin-bottom:28px">اكتب القانون وبينضاف للصفحة.</p>
+      <div class="ap-field"><label>عنوان القانون</label><input type="text" id="newRuleTitle" placeholder="مثال: بدون روابط مشبوهة"></div>
+      <div class="ap-field"><label>وصف القانون</label><textarea id="newRuleDesc" placeholder="اشرح القانون..."></textarea></div>
+      <div class="ap-field"><label>اللون</label><div class="ap-color-row">
+        <div class="ap-color-opt selected" style="background:var(--red)" data-color="red" onclick="selectColor(this)"></div>
+        <div class="ap-color-opt" style="background:var(--orange)" data-color="orange" onclick="selectColor(this)"></div>
+        <div class="ap-color-opt" style="background:var(--yellow)" data-color="yellow" onclick="selectColor(this)"></div>
+        <div class="ap-color-opt" style="background:var(--fuchsia)" data-color="fuchsia" onclick="selectColor(this)"></div>
+        <div class="ap-color-opt" style="background:var(--blue)" data-color="blue" onclick="selectColor(this)"></div>
+        <div class="ap-color-opt" style="background:var(--green)" data-color="green" onclick="selectColor(this)"></div>
+      </div></div>
+      <div class="ap-field"><label>العقوبة</label><input type="text" id="newRulePunish" placeholder="مثال: تنبيه أول مرة"></div>
+      <button class="ap-add-btn" onclick="addRule()">&#10133; إضافة القانون</button>
+      <div class="ap-success" id="apSuccess">&#9989; تم إضافة القانون!</div>
+    </div>
+  </div>
+</div>
+
+<script>
+var JSONBIN_KEY='$2a$10$.fB0Huz/g0NiVanHR.F03.B.ZdHkJEiaVZsYdFRZwzJKuf4qwQaxq';
+var CHATS_BIN='69caf1e036566621a863145a';
+var RULES_BIN='69caf1d9aaba882197ab92e2';
+var ADMINS={'Aziz':'The_Class_admin@Aziz.TCA','Echo':'The_Class_admin@Echo.TCA','ReverseCard':'The_Class_admin@ReverseCard.TCA','Reverse Card':'The_Class_admin@ReverseCard.TCA'};
+var greetings={'Echo':'هلا والله! أنا Echo. شلون أقدر أساعدك؟','Aziz':'هلا! أنا Aziz. قول لي شنو تبي وأساعدك إن شاء الله.','Reverse Card':'أهلين! أنا Reverse Card. شنو عندك؟'};
+var adminNames=['Echo','Aziz','Reverse Card'];
+var currentAdmin=null;
+var selectedColor='red';
+var chatTarget=null;
+var viewingChat=null;
+var convos={};
+var extraRulesData=[];
+var ruleCount=5;
+var colorMap={red:{c:'r-red',n:'rn-red',b:'badge-ban'},orange:{c:'r-orange',n:'rn-orange',b:'badge-warn'},yellow:{c:'r-yellow',n:'rn-yellow',b:'badge-warn'},fuchsia:{c:'r-fuchsia',n:'rn-fuchsia',b:'badge-strict'},blue:{c:'r-blue',n:'rn-blue',b:'badge-info'},green:{c:'r-green',n:'rn-green',b:'badge-info'}};
+var saving=false;
+
+function getTime(){var d=new Date();return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');}
+
+// ===== JSONBIN HELPERS =====
+function loadBin(binId,callback){
+  fetch('https://api.jsonbin.io/v3/b/'+binId+'/latest',{headers:{'X-Master-Key':JSONBIN_KEY}})
+  .then(function(r){return r.json();})
+  .then(function(data){callback(data.record||{});})
+  .catch(function(){callback(null);});
+}
+function saveBin(binId,data){
+  if(saving)return;
+  saving=true;
+  fetch('https://api.jsonbin.io/v3/b/'+binId,{method:'PUT',headers:{'Content-Type':'application/json','X-Master-Key':JSONBIN_KEY},body:JSON.stringify(data)})
+  .then(function(){saving=false;})
+  .catch(function(){saving=false;});
+}
+function saveChats(){saveBin(CHATS_BIN,{chats:convos});}
+function saveRules(){saveBin(RULES_BIN,{rules:extraRulesData});}
+
+// ===== LOAD DATA ON START =====
+loadBin(CHATS_BIN,function(data){
+  if(data&&data.chats){convos=data.chats;}
+});
+loadBin(RULES_BIN,function(data){
+  if(data&&data.rules&&data.rules.length>0){
+    extraRulesData=data.rules;
+    renderExtraRules();
+  }
+});
+
+function renderExtraRules(){
+  var container=document.getElementById('extraRules');
+  container.innerHTML='';
+  ruleCount=5;
+  for(var i=0;i<extraRulesData.length;i++){
+    ruleCount++;
+    var d=extraRulesData[i];
+    var cl=colorMap[d.color]||colorMap.red;
+    var card=document.createElement('div');
+    card.className='rule-card '+cl.c+' visible';
+    card.innerHTML='<div class="rule-num '+cl.n+'">'+ruleCount+'</div><div class="rule-content"><div class="rule-title">'+d.title+'</div><div class="rule-desc">'+d.desc+'</div>'+(d.punish?'<div class="rule-badge '+cl.b+'">'+d.punish+'</div>':'')+'</div>';
+    container.appendChild(card);
+  }
+}
+
+// ===== USER CHAT =====
+function openRandomChat(){openChat(adminNames[Math.floor(Math.random()*adminNames.length)]);}
+
+function openChat(name){
+  chatTarget=name;
+  document.getElementById('chatAv').textContent=name.charAt(0);
+  document.getElementById('chatName').textContent=name;
+  if(!convos[name]){convos[name]=[{from:'admin',text:greetings[name],time:getTime()}];saveChats();}
+  renderUserChat();
+  document.getElementById('chatOverlay').classList.add('active');
+  document.getElementById('chatInput').focus();
+}
+function closeChat(){document.getElementById('chatOverlay').classList.remove('active');}
+
+function renderUserChat(){
+  var el=document.getElementById('chatMsgs');
+  el.innerHTML='';
+  var msgs=convos[chatTarget]||[];
+  for(var i=0;i<msgs.length;i++){
+    var m=msgs[i];
+    var div=document.createElement('div');
+    div.className='chat-msg '+(m.from==='admin'?'bot':'user');
+    var h='';
+    if(m.img)h+='<img src="'+m.img+'">';
+    if(m.text)h+=m.text;
+    h+='<div class="chat-msg-time">'+m.time+'</div>';
+    div.innerHTML=h;
+    el.appendChild(div);
+  }
+  el.scrollTop=el.scrollHeight;
+}
+
+function sendUserMsg(){
+  var inp=document.getElementById('chatInput');
+  var t=inp.value.trim();
+  if(!t||!chatTarget)return;
+  convos[chatTarget].push({from:'user',text:t,time:getTime()});
+  inp.value='';
+  renderUserChat();
+  updateInbox();
+  if(viewingChat===chatTarget)renderAdminChat();
+  saveChats();
+}
+
+function attachPhoto(input){
+  var file=input.files[0];
+  if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var img=new Image();
+    img.onload=function(){
+      var canvas=document.createElement('canvas');
+      var max=300;
+      var w=img.width,h=img.height;
+      if(w>max){h=h*(max/w);w=max;}
+      if(h>max){w=w*(max/h);h=max;}
+      canvas.width=w;canvas.height=h;
+      canvas.getContext('2d').drawImage(img,0,0,w,h);
+      var b64=canvas.toDataURL('image/jpeg',0.5);
+      convos[chatTarget].push({from:'user',img:b64,time:getTime()});
+      renderUserChat();
+      updateInbox();
+      if(viewingChat===chatTarget)renderAdminChat();
+      saveChats();
+    };
+    img.src=e.target.result;
+  };
+  reader.readAsDataURL(file);
+  input.value='';
+}
+
+// ===== LOGIN =====
+function openLogin(){document.getElementById('loginOverlay').classList.add('active');document.getElementById('loginError').classList.remove('show');document.getElementById('loginUser').value='';document.getElementById('loginPass').value='';}
+function closeLogin(){document.getElementById('loginOverlay').classList.remove('active');}
+function attemptLogin(){
+  var u=document.getElementById('loginUser').value.trim();
+  var p=document.getElementById('loginPass').value;
+  if(ADMINS[u]&&ADMINS[u]===p){currentAdmin=u;closeLogin();openAdmin();}
+  else{document.getElementById('loginError').classList.add('show');}
+}
+document.addEventListener('keydown',function(e){
+  if(e.key==='Enter'&&document.getElementById('loginOverlay').classList.contains('active'))attemptLogin();
+  if(e.key==='Escape'){closeLogin();closeAdmin();closeChat();}
+});
+
+// ===== ADMIN PANEL =====
+function openAdmin(){
+  document.getElementById('apUser').textContent=currentAdmin;
+  document.getElementById('adminPanel').classList.add('active');
+  document.body.style.overflow='hidden';
+  switchTab('chats');
+  // Reload chats from server
+  loadBin(CHATS_BIN,function(data){
+    if(data&&data.chats){convos=data.chats;}
+    updateInbox();
+  });
+}
+function closeAdmin(){
+  document.getElementById('adminPanel').classList.remove('active');
+  document.body.style.overflow='';
+  currentAdmin=null;viewingChat=null;
+}
+function switchTab(tab){
+  var tabs=document.querySelectorAll('.ap-tab');
+  tabs[0].classList.toggle('active',tab==='chats');
+  tabs[1].classList.toggle('active',tab==='rules');
+  document.getElementById('tabChats').classList.toggle('active',tab==='chats');
+  document.getElementById('tabRules').classList.toggle('active',tab==='rules');
+  if(tab==='chats'){backToInbox();loadBin(CHATS_BIN,function(data){if(data&&data.chats){convos=data.chats;}updateInbox();});}
+}
+function updateInbox(){
+  var list=document.getElementById('inboxList');
+  var keys=Object.keys(convos);
+  var badge=document.getElementById('chatBadge');
+  if(keys.length===0){list.innerHTML='<div class="inbox-empty">&#128237; لا توجد رسائل حالياً</div>';badge.style.display='none';return;}
+  var userChats=[];
+  for(var i=0;i<keys.length;i++){
+    var msgs=convos[keys[i]];
+    var hasUserMsg=false;
+    for(var j=0;j<msgs.length;j++){if(msgs[j].from==='user'){hasUserMsg=true;break;}}
+    if(hasUserMsg)userChats.push(keys[i]);
+  }
+  if(userChats.length===0){list.innerHTML='<div class="inbox-empty">&#128237; لا توجد رسائل حالياً</div>';badge.style.display='none';return;}
+  badge.textContent=userChats.length;badge.style.display='inline';
+  list.innerHTML='';
+  for(var i=0;i<userChats.length;i++){
+    var k=userChats[i];
+    var last=convos[k][convos[k].length-1];
+    var div=document.createElement('div');
+    div.className='inbox-item';
+    div.setAttribute('data-key',k);
+    div.onclick=function(){openAdminChat(this.getAttribute('data-key'));};
+    div.innerHTML='<div class="inbox-av">'+k.charAt(0)+'</div><div class="inbox-info"><div class="inbox-name">محادثة - '+k+'</div><div class="inbox-preview">'+(last.img?'📷 صورة':last.text)+'</div></div><div style="text-align:left"><div class="inbox-time">'+last.time+'</div></div>';
+    list.appendChild(div);
+  }
+}
+function openAdminChat(name){
+  viewingChat=name;
+  document.getElementById('acName').textContent='محادثة - '+name;
+  document.getElementById('inboxList').style.display='none';
+  document.getElementById('adminChatView').classList.add('active');
+  renderAdminChat();
+}
+function backToInbox(){
+  viewingChat=null;
+  document.getElementById('inboxList').style.display='';
+  document.getElementById('adminChatView').classList.remove('active');
+  updateInbox();
+}
+function renderAdminChat(){
+  var el=document.getElementById('acMsgs');
+  el.innerHTML='';
+  var msgs=convos[viewingChat]||[];
+  for(var i=0;i<msgs.length;i++){
+    var m=msgs[i];
+    var div=document.createElement('div');
+    div.className='chat-msg '+(m.from==='user'?'bot':'user');
+    var h='';
+    if(m.img)h+='<img src="'+m.img+'" style="max-width:200px;border-radius:8px;margin-bottom:4px">';
+    if(m.text)h+=m.text;
+    h+='<div class="chat-msg-time">'+m.time+'</div>';
+    div.innerHTML=h;
+    el.appendChild(div);
+  }
+  el.scrollTop=el.scrollHeight;
+}
+function sendAdminReply(){
+  var inp=document.getElementById('acInput');
+  var t=inp.value.trim();
+  if(!t||!viewingChat)return;
+  convos[viewingChat].push({from:'admin',text:t,time:getTime()});
+  inp.value='';
+  renderAdminChat();
+  if(chatTarget===viewingChat)renderUserChat();
+  saveChats();
+}
+
+// ===== ADD RULE =====
+function selectColor(el){
+  var opts=document.querySelectorAll('.ap-color-opt');
+  for(var i=0;i<opts.length;i++){opts[i].classList.remove('selected');}
+  el.classList.add('selected');
+  selectedColor=el.dataset.color;
+}
+function addRule(){
+  var title=document.getElementById('newRuleTitle').value.trim();
+  var desc=document.getElementById('newRuleDesc').value.trim();
+  var punish=document.getElementById('newRulePunish').value.trim();
+  if(!title||!desc)return;
+  extraRulesData.push({title:title,desc:desc,punish:punish,color:selectedColor,addedBy:currentAdmin});
+  renderExtraRules();
+  saveRules();
+  document.getElementById('newRuleTitle').value='';
+  document.getElementById('newRuleDesc').value='';
+  document.getElementById('newRulePunish').value='';
+  var s=document.getElementById('apSuccess');s.classList.add('show');setTimeout(function(){s.classList.remove('show');},2500);
+}
+
+// ===== CURSOR =====
+var blob=document.getElementById('blob');
+if(window.innerWidth>768){document.addEventListener('mousemove',function(e){blob.style.left=e.clientX+'px';blob.style.top=e.clientY+'px';});}else{blob.style.display='none';}
+
+// ===== SCROLL REVEAL =====
+var obs=new IntersectionObserver(function(entries){for(var i=0;i<entries.length;i++){if(entries[i].isIntersecting)entries[i].target.classList.add('visible');}},{threshold:.1,rootMargin:'0px 0px -40px 0px'});
+var revEls=document.querySelectorAll('.rule-card,.note-box');
+for(var i=0;i<revEls.length;i++){obs.observe(revEls[i]);}
+</script>
+</body>
+</html>
