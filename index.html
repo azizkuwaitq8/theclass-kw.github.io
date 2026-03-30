@@ -487,7 +487,12 @@ function openAdmin(){
   document.body.style.overflow='hidden';
   switchTab('chats');
   loadBin(CHATS_BIN,function(data){
-    if(data&&data.chats){convos=data.chats;}
+    console.log('Raw data from JSONBin:',data);
+    if(data&&data.chats){
+      convos=data.chats;
+      console.log('Convos loaded:',convos);
+      console.log('Keys:',Object.keys(convos));
+    }
     updateInbox();
   });
   startAdminPolling();
@@ -537,16 +542,22 @@ function updateInbox(){
   for(var i=0;i<keys.length;i++){
     var k=keys[i];
     var chat=convos[k];
-    // Migrate old format
+    // Migrate old format (array of messages)
     if(Array.isArray(chat)){
       convos[k]={messages:chat,closed:false};
       chat=convos[k];
     }
+    // Handle if chat is null/undefined
+    if(!chat)continue;
     var msgs=chat.messages||[];
-    var isClosed=chat.closed;
+    // If msgs is empty, skip
+    if(msgs.length===0)continue;
+    var isClosed=chat.closed||false;
     // Check if has user messages
     var hasUserMsg=false;
-    for(var j=0;j<msgs.length;j++){if(msgs[j].from==='user'){hasUserMsg=true;break;}}
+    for(var j=0;j<msgs.length;j++){
+      if(msgs[j]&&msgs[j].from==='user'){hasUserMsg=true;break;}
+    }
     if(!hasUserMsg)continue;
     // Owners see all, others don't see closed
     if(isClosed&&!amOwner)continue;
@@ -560,16 +571,20 @@ function updateInbox(){
   for(var i=0;i<validChats.length;i++){
     var k=validChats[i];
     var chat=convos[k];
+    if(!chat)continue;
     var msgs=chat.messages||[];
+    if(msgs.length===0)continue;
     var last=msgs[msgs.length-1];
-    var isClosed=chat.closed;
+    var isClosed=chat.closed||false;
     var div=document.createElement('div');
     div.className='inbox-item'+(isClosed?' closed':'');
     div.setAttribute('data-key',k);
     div.onclick=function(){openAdminChat(this.getAttribute('data-key'));};
     var badges='';
     if(isClosed)badges+='<span class="inbox-badge closed-badge">مغلق</span>';
-    div.innerHTML='<div class="inbox-av">'+k.charAt(0).toUpperCase()+'</div><div class="inbox-info"><div class="inbox-name">'+badges+'محادثة - '+k+'</div><div class="inbox-preview">'+(last.img?'📷 صورة':(last.text||''))+'</div></div><div style="text-align:left"><div class="inbox-time">'+(last.time||'')+'</div></div>';
+    var previewText=last?(last.img?'📷 صورة':(last.text||'')):'';
+    var timeText=last?(last.time||''):'';
+    div.innerHTML='<div class="inbox-av">'+k.charAt(0).toUpperCase()+'</div><div class="inbox-info"><div class="inbox-name">'+badges+'محادثة - '+k+'</div><div class="inbox-preview">'+previewText+'</div></div><div style="text-align:left"><div class="inbox-time">'+timeText+'</div></div>';
     list.appendChild(div);
   }
 }
