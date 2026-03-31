@@ -348,16 +348,29 @@ function renderExtraRules(){
 }
 
 // ===== USER CHAT =====
+// Generate unique visitor ID - persists in localStorage
+function getVisitorId(){
+  var id=localStorage.getItem('theclass_visitor_id');
+  if(!id){
+    id='user_'+Date.now()+'_'+Math.random().toString(36).substr(2,9);
+    localStorage.setItem('theclass_visitor_id',id);
+  }
+  return id;
+}
+var visitorId=getVisitorId();
+
 function openRandomChat(){openChat(adminNames[Math.floor(Math.random()*adminNames.length)]);}
 
 function openChat(name){
-  chatTarget=name;
+  // Chat key is unique per visitor + admin
+  var chatKey=visitorId+'_'+name;
+  chatTarget=chatKey;
   document.getElementById('chatAv').textContent=name.charAt(0);
   document.getElementById('chatName').textContent=name;
-  if(!convos[name]){convos[name]={messages:[{from:'admin',text:greetings[name],time:getTime()}],closed:false};saveChats();}
+  if(!convos[chatKey]){convos[chatKey]={messages:[{from:'admin',text:greetings[name],time:getTime()}],closed:false,admin:name};saveChats();}
   // Migrate old format
-  if(Array.isArray(convos[name])){
-    convos[name]={messages:convos[name],closed:false};
+  if(Array.isArray(convos[chatKey])){
+    convos[chatKey]={messages:convos[chatKey],closed:false,admin:name};
     saveChats();
   }
   renderUserChat();
@@ -427,9 +440,12 @@ function renderUserChat(){
 }
 
 function startNewChat(){
-  // Create new chat key with timestamp
-  var newKey=chatTarget+'_'+Date.now();
-  convos[newKey]={messages:[{from:'admin',text:greetings[chatTarget],time:getTime()}],closed:false,admin:chatTarget};
+  // Get admin name from current chat
+  var chat=convos[chatTarget];
+  var adminName=chat?chat.admin:'Echo';
+  // Create new chat key with visitor ID + admin + timestamp
+  var newKey=visitorId+'_'+adminName+'_'+Date.now();
+  convos[newKey]={messages:[{from:'admin',text:greetings[adminName],time:getTime()}],closed:false,admin:adminName};
   chatTarget=newKey;
   saveChats();
   renderUserChat();
