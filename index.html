@@ -504,6 +504,7 @@ var viewingChat=null;
 var currentFilter='all';
 var selectedRuleColor='red';
 var userPollInterval=null;
+var saving=false;
 
 // ===== HELPERS =====
 function getTime(){var d=new Date();return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');}
@@ -530,7 +531,10 @@ function saveBin(binId,data,callback){
   .then(function(){if(callback)callback();})
   .catch(function(){});
 }
-function saveChats(cb){saveBin(CHATS_BIN,{chats:convos,logs:activityLog},cb);}
+function saveChats(cb){
+  saving=true;
+  saveBin(CHATS_BIN,{chats:convos,logs:activityLog},function(){saving=false;if(cb)cb();});
+}
 function saveRules(cb){saveBin(RULES_BIN,{rules:extraRulesData,quickReplies:quickReplies},cb);}
 
 function addLog(action,detail){
@@ -570,7 +574,7 @@ function openChat(name){
   startUserPolling();
 }
 function closeChat(){document.getElementById('chatOverlay').classList.remove('active');stopUserPolling();}
-function startUserPolling(){stopUserPolling();userPollInterval=setInterval(function(){loadBin(CHATS_BIN,function(data){if(data&&data.chats){var oldLen=convos[chatTarget]?convos[chatTarget].messages.length:0;convos=data.chats;if(convos[chatTarget]&&Array.isArray(convos[chatTarget])){convos[chatTarget]={messages:convos[chatTarget],closed:false};}var newLen=convos[chatTarget]?convos[chatTarget].messages.length:0;if(newLen!==oldLen)renderUserChat();}});},4000);}
+function startUserPolling(){stopUserPolling();userPollInterval=setInterval(function(){if(saving)return;loadBin(CHATS_BIN,function(data){if(saving)return;if(data&&data.chats){var oldLen=convos[chatTarget]?convos[chatTarget].messages.length:0;convos=data.chats;if(convos[chatTarget]&&Array.isArray(convos[chatTarget])){convos[chatTarget]={messages:convos[chatTarget],closed:false};}var newLen=convos[chatTarget]?convos[chatTarget].messages.length:0;if(newLen!==oldLen)renderUserChat();}});},4000);}
 function stopUserPolling(){if(userPollInterval){clearInterval(userPollInterval);userPollInterval=null;}}
 function renderUserChat(){
   var el=document.getElementById('chatMsgs');
