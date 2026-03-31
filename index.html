@@ -549,8 +549,13 @@ loadBin(RULES_BIN,function(data){if(data){extraRulesData=data.rules||[];quickRep
 function renderExtraRules(){
   var container=document.getElementById('extraRules');
   container.innerHTML='';
-  for(var i=0;i<extraRulesData.length;i++){
-    var d=extraRulesData[i];
+  // Sort by color: red, orange, yellow, fuchsia, blue, green
+  var colorOrder={red:0,orange:1,yellow:2,fuchsia:3,blue:4,green:5};
+  var sorted=extraRulesData.slice().sort(function(a,b){
+    return (colorOrder[a.color]||99)-(colorOrder[b.color]||99);
+  });
+  for(var i=0;i<sorted.length;i++){
+    var d=sorted[i];
     var cl=colorMap[d.color]||colorMap.red;
     var card=document.createElement('div');
     card.className='rule-card '+cl.c+' visible';
