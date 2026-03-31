@@ -752,6 +752,7 @@ function renderExtraRules(){
 
 // ===== USER CHAT =====
 var userName=localStorage.getItem('theclass_user_name')||'';
+var userReason='';
 function openRandomChat(){openChat(adminNames[Math.floor(Math.random()*adminNames.length)]);}
 function openChat(name){
   // Check if user has provided name
@@ -768,7 +769,8 @@ function openChat(name){
     if(data){
       convos[chatKey]=data;
     }else{
-      convos[chatKey]={messages:[{from:'admin',text:greetings[name]+'\n\nأهلاً '+userName+'! كيف أقدر أساعدك؟',time:getTime()}],closed:false,admin:name,userName:userName};
+      var reasonText=userReason?'\n📋 السبب: '+userReason:'';
+      convos[chatKey]={messages:[{from:'admin',text:greetings[name]+'\n\n👤 المستخدم: @'+userName+reasonText+'\n\nكيف أقدر أساعدك؟',time:getTime()}],closed:false,admin:name,userName:userName,reason:userReason};
       saveChat(chatKey,convos[chatKey]);
     }
     renderUserChat();
@@ -780,19 +782,51 @@ function openChat(name){
 function showNamePrompt(adminName){
   var overlay=document.createElement('div');
   overlay.id='namePromptOverlay';
-  overlay.style.cssText='position:fixed;inset:0;z-index:6000;background:rgba(0,0,0,0.95);display:flex;align-items:center;justify-content:center;padding:20px;';
-  overlay.innerHTML='<div style="background:#111118;border:1px solid #2a2a35;border-radius:20px;padding:32px;width:100%;max-width:400px;text-align:center;animation:fsu .4s ease"><div style="font-size:2.5rem;margin-bottom:12px">👋</div><div style="font-size:1.2rem;font-weight:800;margin-bottom:8px;color:#fff">قبل ما نبدأ...</div><div style="color:#8a8a9a;margin-bottom:20px;font-size:.85rem;line-height:1.6">أدخل يوزرنيم الديسكورد حقك<br>عشان نعرف مين أنت</div><input type="text" id="userNameInput" placeholder="@username" style="width:100%;padding:14px 18px;background:#0a0a0f;border:1px solid #2a2a35;border-radius:12px;color:#fff;font-family:inherit;font-size:1rem;text-align:center;outline:none;margin-bottom:12px;direction:ltr"><div style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:10px;padding:12px;margin-bottom:20px"><div style="color:#ef4444;font-size:.75rem;line-height:1.7">⚠️ محاولة انتحال شخصية = بان دائم<br>كل المحادثات محفوظة ومراقبة</div></div><div style="display:flex;gap:10px"><button onclick="closeNamePrompt()" style="flex:1;padding:14px;background:transparent;border:1px solid #2a2a35;color:#8a8a9a;border-radius:12px;font-family:inherit;font-weight:700;cursor:pointer">إلغاء</button><button onclick="submitName(\''+adminName+'\')" style="flex:1;padding:14px;background:#c8ff00;border:none;color:#0a0a0f;border-radius:12px;font-family:inherit;font-weight:800;cursor:pointer">متابعة</button></div></div>';
+  overlay.style.cssText='position:fixed;inset:0;z-index:6000;background:rgba(0,0,0,0.95);display:flex;align-items:center;justify-content:center;padding:20px;overflow-y:auto;';
+  overlay.innerHTML='<div style="background:#111118;border:1px solid #2a2a35;border-radius:20px;padding:28px;width:100%;max-width:420px;text-align:center;animation:fsu .4s ease;margin:auto;"><div style="font-size:2.5rem;margin-bottom:10px">🔐</div><div style="font-size:1.2rem;font-weight:800;margin-bottom:6px;color:#fff">التحقق من الهوية</div><div style="color:#8a8a9a;margin-bottom:20px;font-size:.82rem;line-height:1.6">لفتح تذكرة، لازم نتأكد من هويتك</div><div style="text-align:right;margin-bottom:16px;"><label style="display:block;font-size:.75rem;font-weight:700;color:#8a8a9a;margin-bottom:6px;">يوزرنيم الديسكورد *</label><input type="text" id="userNameInput" placeholder="مثال: aziz_q8" style="width:100%;padding:14px 18px;background:#0a0a0f;border:1px solid #2a2a35;border-radius:12px;color:#fff;font-family:inherit;font-size:.95rem;outline:none;direction:ltr;text-align:left;"><div id="usernameError" style="color:#ef4444;font-size:.72rem;margin-top:6px;display:none;text-align:right;">أدخل يوزرنيم صحيح (بدون @)</div></div><div style="text-align:right;margin-bottom:16px;"><label style="display:block;font-size:.75rem;font-weight:700;color:#8a8a9a;margin-bottom:6px;">سبب التذكرة *</label><select id="ticketReason" style="width:100%;padding:14px 18px;background:#0a0a0f;border:1px solid #2a2a35;border-radius:12px;color:#fff;font-family:inherit;font-size:.9rem;outline:none;cursor:pointer;"><option value="">اختر السبب...</option><option value="شكوى">📢 شكوى على شخص</option><option value="استفسار">❓ استفسار</option><option value="اقتراح">💡 اقتراح</option><option value="مشكلة تقنية">🔧 مشكلة تقنية</option><option value="طلب رتبة">👑 طلب رتبة</option><option value="استئناف بان">🔓 استئناف بان/ميوت</option><option value="أخرى">📝 أخرى</option></select><div id="reasonError" style="color:#ef4444;font-size:.72rem;margin-top:6px;display:none;text-align:right;">اختر سبب التذكرة</div></div><div style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:10px;padding:12px;margin-bottom:16px;text-align:right;"><div style="color:#ef4444;font-size:.72rem;line-height:1.8;font-weight:600">⚠️ تحذير مهم:<br>• انتحال شخصية = بان دائم<br>• كل المحادثات محفوظة ومراقبة<br>• الكذب = عقوبة مضاعفة<br>• IP الخاص بك مسجل</div></div><div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:20px;text-align:right;background:#0a0a0f;padding:12px;border-radius:10px;border:1px solid #2a2a35;"><input type="checkbox" id="agreeTerms" style="width:20px;height:20px;margin-top:2px;cursor:pointer;accent-color:#c8ff00;flex-shrink:0;"><label for="agreeTerms" style="color:#8a8a9a;font-size:.75rem;line-height:1.6;cursor:pointer;">أقر وأتعهد بأن المعلومات المدخلة صحيحة وأنني الشخص المذكور. أفهم أن الكذب أو انتحال الشخصية سيؤدي لعقوبة دائمة.</label></div><div id="agreeError" style="color:#ef4444;font-size:.72rem;margin-bottom:12px;display:none;text-align:right;">يجب الموافقة على الشروط</div><div style="display:flex;gap:10px"><button onclick="closeNamePrompt()" style="flex:1;padding:14px;background:transparent;border:1px solid #2a2a35;color:#8a8a9a;border-radius:12px;font-family:inherit;font-weight:700;cursor:pointer">إلغاء</button><button onclick="submitVerification(\''+adminName+'\')" style="flex:1;padding:14px;background:#c8ff00;border:none;color:#0a0a0f;border-radius:12px;font-family:inherit;font-weight:800;cursor:pointer">تأكيد وفتح التذكرة</button></div></div>';
   document.body.appendChild(overlay);
   document.getElementById('userNameInput').focus();
-  document.getElementById('userNameInput').addEventListener('keydown',function(e){if(e.key==='Enter')submitName(adminName);});
+  document.getElementById('userNameInput').addEventListener('keydown',function(e){if(e.key==='Enter')submitVerification(adminName);});
 }
 function closeNamePrompt(){var el=document.getElementById('namePromptOverlay');if(el)el.remove();}
-function submitName(adminName){
+function submitVerification(adminName){
   var inp=document.getElementById('userNameInput');
-  var name=inp.value.trim();
-  // Must be at least 2 chars
-  if(!name||name.length<2){inp.style.borderColor='#ef4444';inp.placeholder='أدخل يوزرنيم صحيح!';return;}
+  var reason=document.getElementById('ticketReason');
+  var agree=document.getElementById('agreeTerms');
+  var name=inp.value.trim().replace('@','');
+  var valid=true;
+  
+  // Reset errors
+  document.getElementById('usernameError').style.display='none';
+  document.getElementById('reasonError').style.display='none';
+  document.getElementById('agreeError').style.display='none';
+  inp.style.borderColor='#2a2a35';
+  reason.style.borderColor='#2a2a35';
+  
+  // Validate username (2-32 chars, no spaces, alphanumeric + underscore + dot)
+  if(!name||name.length<2||name.length>32||/\s/.test(name)||!/^[a-zA-Z0-9_.]+$/.test(name)){
+    document.getElementById('usernameError').style.display='block';
+    inp.style.borderColor='#ef4444';
+    valid=false;
+  }
+  
+  // Validate reason
+  if(!reason.value){
+    document.getElementById('reasonError').style.display='block';
+    reason.style.borderColor='#ef4444';
+    valid=false;
+  }
+  
+  // Validate agreement
+  if(!agree.checked){
+    document.getElementById('agreeError').style.display='block';
+    valid=false;
+  }
+  
+  if(!valid)return;
+  
   userName=name;
+  userReason=reason.value;
   localStorage.setItem('theclass_user_name',name);
   closeNamePrompt();
   openChat(adminName);
@@ -1332,7 +1366,7 @@ var obs=new IntersectionObserver(function(entries){for(var i=0;i<entries.length;
 document.querySelectorAll('.rule-card,.note-box').forEach(function(el){obs.observe(el);});
 
 // ===== VERSION CHECK =====
-var SITE_BUILD='20260331_006';
+var SITE_BUILD='20260331_007';
 var versionCheckInterval=null;
 function checkVersion(){
   fetch('https://azizkuwaitq8.github.io/theclass-kw.github.io/index.html?t='+Date.now(),{cache:'no-store'})
