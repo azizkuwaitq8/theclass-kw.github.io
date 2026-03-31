@@ -605,11 +605,16 @@ function showToast(msg,type){
 }
 
 // ===== SUPABASE =====
-function supaFetch(table,method,body,query){
+function supaFetch(table,method,body,query,upsert){
   var url=SUPABASE_URL+'/rest/v1/'+table+(query||'');
-  var opts={method:method||'GET',headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=representation'}};
+  var headers={'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=representation'};
+  if(upsert)headers['Prefer']='resolution=merge-duplicates,return=representation';
+  var opts={method:method||'GET',headers:headers};
   if(body)opts.body=JSON.stringify(body);
-  return fetch(url,opts).then(function(r){return r.json();}).catch(function(){return null;});
+  return fetch(url,opts).then(function(r){
+    if(!r.ok){console.log('Supabase error:',r.status);return null;}
+    return r.json();
+  }).catch(function(e){console.log('Fetch error:',e);return null;});
 }
 
 // Load chat by ID
@@ -620,18 +625,33 @@ function loadChat(chatId,cb){
   });
 }
 
-// Save chat
+// Save chat (upsert)
 function saveChat(chatId,chatData,cb){
   saving=true;
-  supaFetch('chats','POST',{id:chatId,data:chatData,updated_at:new Date().toISOString()},'?on_conflict=id').then(function(){
-    saving=false;if(cb)cb();
-  });
+  // First try to update, if fails then insert
+  var url=SUPABASE_URL+'/rest/v1/chats?id=eq.'+encodeURIComponent(chatId);
+  fetch(url,{
+    method:'PATCH',
+    headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=representation'},
+    body:JSON.stringify({data:chatData,updated_at:new Date().toISOString()})
+  }).then(function(r){return r.json();}).then(function(data){
+    if(!data||data.length===0){
+      // No row updated, insert new
+      fetch(SUPABASE_URL+'/rest/v1/chats',{
+        method:'POST',
+        headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=representation'},
+        body:JSON.stringify({id:chatId,data:chatData,updated_at:new Date().toISOString()})
+      }).then(function(){saving=false;if(cb)cb();});
+    }else{
+      saving=false;if(cb)cb();
+    }
+  }).catch(function(){saving=false;});
 }
 
 // Load all chats (for admin)
 function loadAllChats(cb){
   supaFetch('chats','GET').then(function(data){
-    if(data){
+    if(data&&Array.isArray(data)){
       convos={};
       for(var i=0;i<data.length;i++){
         convos[data[i].id]=data[i].data;
@@ -653,15 +673,31 @@ function loadRules(cb){
   });
 }
 
-// Save rules
+// Save rules (upsert)
 function saveRules(cb){
-  supaFetch('rules','POST',{id:'main',rules:extraRulesData,events:eventsData,quick_replies:quickReplies},'?on_conflict=id').then(function(){if(cb)cb();});
+  var url=SUPABASE_URL+'/rest/v1/rules?id=eq.main';
+  fetch(url,{
+    method:'PATCH',
+    headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=representation'},
+    body:JSON.stringify({rules:extraRulesData,events:eventsData,quick_replies:quickReplies})
+  }).then(function(r){return r.json();}).then(function(data){
+    if(!data||data.length===0){
+      // No row, insert
+      fetch(SUPABASE_URL+'/rest/v1/rules',{
+        method:'POST',
+        headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=representation'},
+        body:JSON.stringify({id:'main',rules:extraRulesData,events:eventsData,quick_replies:quickReplies})
+      }).then(function(){if(cb)cb();});
+    }else{
+      if(cb)cb();
+    }
+  }).catch(function(){});
 }
 
 // Load logs
 function loadLogs(cb){
   supaFetch('logs','GET',null,'?order=created_at.desc&limit=50').then(function(data){
-    if(data)activityLog=data;
+    if(data&&Array.isArray(data))activityLog=data;
     if(cb)cb();
   });
 }
