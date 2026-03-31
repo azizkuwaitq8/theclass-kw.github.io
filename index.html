@@ -471,7 +471,6 @@ footer .f-logo span{color:var(--accent)}
         <div class="ap-chat-list" id="chatList"></div>
         <div id="ownerActions" style="margin-top:20px;display:none">
           <button class="ap-topbar-btn" style="background:var(--red);border-color:var(--red);color:#fff" onclick="closeAllChats()">🔒 إغلاق جميع المحادثات</button>
-          <button class="ap-topbar-btn" style="background:var(--accent);border-color:var(--accent);color:var(--bg);margin-right:10px" onclick="pushUpdate()">🚀 إرسال تحديث للجميع</button>
         </div>
       </div>
       
@@ -1298,23 +1297,30 @@ var obs=new IntersectionObserver(function(entries){for(var i=0;i<entries.length;
 document.querySelectorAll('.rule-card,.note-box').forEach(function(el){obs.observe(el);});
 
 // ===== VERSION CHECK =====
-var SITE_VERSION='1.0';
+var SITE_BUILD='20260331_001';
+var versionCheckInterval=null;
 function checkVersion(){
-  supaFetch('rules','GET',null,'?id=eq.main').then(function(data){
-    if(data&&data[0]&&data[0].site_version&&data[0].site_version!==SITE_VERSION){
+  fetch('https://azizkuwaitq8.github.io/theclass-kw.github.io/index.html?t='+Date.now(),{cache:'no-store'})
+  .then(function(r){return r.text();})
+  .then(function(html){
+    var match=html.match(/SITE_BUILD='([^']+)'/);
+    if(match&&match[1]&&match[1]!==SITE_BUILD){
       showUpdatePopup();
+      if(versionCheckInterval){clearInterval(versionCheckInterval);versionCheckInterval=null;}
     }
-  });
+  }).catch(function(){});
 }
 function showUpdatePopup(){
+  if(document.getElementById('updatePopup'))return;
   var popup=document.createElement('div');
+  popup.id='updatePopup';
   popup.style.cssText='position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.9);display:flex;align-items:center;justify-content:center;';
-  popup.innerHTML='<div style="background:#111118;border:1px solid #c8ff00;border-radius:20px;padding:40px;text-align:center;max-width:400px;"><div style="font-size:2rem;margin-bottom:16px;">🔄</div><div style="font-size:1.2rem;font-weight:800;margin-bottom:12px;">تحديث جديد متوفر!</div><div style="color:#8a8a9a;margin-bottom:24px;">يوجد تحديث جديد للموقع. اضغط الزر للتحديث.</div><button onclick="location.reload(true)" style="background:#c8ff00;color:#0a0a0f;border:none;padding:14px 32px;border-radius:12px;font-weight:800;font-size:1rem;cursor:pointer;">تحديث الآن</button></div>';
+  popup.innerHTML='<div style="background:#111118;border:2px solid #c8ff00;border-radius:20px;padding:40px;text-align:center;max-width:400px;animation:fsu .4s ease"><div style="font-size:3rem;margin-bottom:16px;">🔄</div><div style="font-size:1.3rem;font-weight:800;margin-bottom:12px;color:#fff;">تحديث جديد متوفر!</div><div style="color:#8a8a9a;margin-bottom:24px;line-height:1.7;">يوجد إصدار جديد من الموقع.<br>اضغط الزر للتحديث الآن.</div><button onclick="location.reload(true)" style="background:#c8ff00;color:#0a0a0f;border:none;padding:14px 40px;border-radius:12px;font-weight:800;font-size:1rem;cursor:pointer;font-family:inherit;">🔄 تحديث الآن</button></div>';
   document.body.appendChild(popup);
 }
-// Check version every 30 seconds
-setInterval(checkVersion,30000);
-checkVersion();
+// Check version every 15 seconds
+versionCheckInterval=setInterval(checkVersion,15000);
+setTimeout(checkVersion,5000);
 </script>
 </body>
 </html>
