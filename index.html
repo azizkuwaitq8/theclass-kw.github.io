@@ -734,8 +734,12 @@ function renderExtraRules(){
   container.innerHTML='';
   // Sort by color: red, orange, yellow, fuchsia, blue, green
   var colorOrder={red:0,orange:1,yellow:2,fuchsia:3,blue:4,green:5};
+  // Make sure each rule has a color, default to 'red'
+  for(var j=0;j<extraRulesData.length;j++){
+    if(!extraRulesData[j].color)extraRulesData[j].color='red';
+  }
   var sorted=extraRulesData.slice().sort(function(a,b){
-    return (colorOrder[a.color]||99)-(colorOrder[b.color]||99);
+    return (colorOrder[a.color]||0)-(colorOrder[b.color]||0);
   });
   for(var i=0;i<sorted.length;i++){
     var d=sorted[i];
@@ -1187,8 +1191,12 @@ function renderRulesAdmin(){
   grid.innerHTML='';
   // Sort by color for admin view too
   var colorOrder={red:0,orange:1,yellow:2,fuchsia:3,blue:4,green:5};
+  // Make sure each rule has a color
+  for(var j=0;j<extraRulesData.length;j++){
+    if(!extraRulesData[j].color)extraRulesData[j].color='red';
+  }
   var sorted=extraRulesData.map(function(r,i){return {rule:r,origIdx:i};}).sort(function(a,b){
-    return (colorOrder[a.rule.color]||99)-(colorOrder[b.rule.color]||99);
+    return (colorOrder[a.rule.color]||0)-(colorOrder[b.rule.color]||0);
   });
   for(var i=0;i<sorted.length;i++){
     var r=sorted[i].rule;
@@ -1366,7 +1374,7 @@ var obs=new IntersectionObserver(function(entries){for(var i=0;i<entries.length;
 document.querySelectorAll('.rule-card,.note-box').forEach(function(el){obs.observe(el);});
 
 // ===== VERSION CHECK =====
-var SITE_BUILD='20260331_011';
+var SITE_BUILD='20260331_012';
 var versionCheckInterval=null;
 function checkVersion(){
   fetch('https://azizkuwaitq8.github.io/theclass-kw.github.io/index.html?t='+Date.now(),{cache:'no-store'})
