@@ -1366,7 +1366,7 @@ var obs=new IntersectionObserver(function(entries){for(var i=0;i<entries.length;
 document.querySelectorAll('.rule-card,.note-box').forEach(function(el){obs.observe(el);});
 
 // ===== VERSION CHECK =====
-var SITE_BUILD='20260331_010';
+var SITE_BUILD='20260331_011';
 var versionCheckInterval=null;
 function checkVersion(){
   fetch('https://azizkuwaitq8.github.io/theclass-kw.github.io/index.html?t='+Date.now(),{cache:'no-store'})
@@ -1390,6 +1390,31 @@ function showUpdatePopup(){
 // Check version every 15 seconds
 versionCheckInterval=setInterval(checkVersion,15000);
 setTimeout(checkVersion,5000);
+
+// ===== ANTI-DEVTOOLS =====
+// Block right click
+document.addEventListener('contextmenu',function(e){e.preventDefault();});
+
+// Block F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+document.addEventListener('keydown',function(e){
+  if(e.key==='F12'||(e.ctrlKey&&e.shiftKey&&(e.key==='I'||e.key==='i'||e.key==='J'||e.key==='j'||e.key==='C'||e.key==='c'))||(e.ctrlKey&&(e.key==='U'||e.key==='u'))){
+    e.preventDefault();
+    showLockdown();
+  }
+});
+
+// Detect DevTools open (size trick)
+var devtoolsOpen=false;
+setInterval(function(){
+  var threshold=160;
+  if(window.outerWidth-window.innerWidth>threshold||window.outerHeight-window.innerHeight>threshold){
+    if(!devtoolsOpen){devtoolsOpen=true;showLockdown();}
+  }
+},1000);
+
+function showLockdown(){
+  document.body.innerHTML='<div style="position:fixed;inset:0;background:#0a0a0f;display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:999999;"><div style="font-size:4rem;margin-bottom:20px;">🔒</div><div style="color:#ef4444;font-size:1.5rem;font-weight:800;margin-bottom:10px;">تم قفل الصفحة</div><div style="color:#8a8a9a;font-size:1rem;">محاولة غير مصرح بها</div><button onclick="location.reload()" style="margin-top:30px;padding:14px 32px;background:#c8ff00;color:#0a0a0f;border:none;border-radius:12px;font-weight:800;font-size:1rem;cursor:pointer;">إعادة تحميل</button></div>';
+}
 </script>
 </body>
 </html>
