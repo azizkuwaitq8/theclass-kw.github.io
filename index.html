@@ -471,6 +471,7 @@ footer .f-logo span{color:var(--accent)}
         <div class="ap-chat-list" id="chatList"></div>
         <div id="ownerActions" style="margin-top:20px;display:none">
           <button class="ap-topbar-btn" style="background:var(--red);border-color:var(--red);color:#fff" onclick="closeAllChats()">🔒 إغلاق جميع المحادثات</button>
+          <button class="ap-topbar-btn" style="background:var(--accent);border-color:var(--accent);color:var(--bg);margin-right:10px" onclick="pushUpdate()">🚀 إرسال تحديث للجميع</button>
         </div>
       </div>
       
@@ -781,7 +782,7 @@ function startUserPolling(){
         if(newLen!==oldLen)renderUserChat();
       }
     });
-  },3000);
+  },1500);
 }
 function stopUserPolling(){if(userPollInterval){clearInterval(userPollInterval);userPollInterval=null;}}
 function renderUserChat(){
@@ -813,6 +814,7 @@ function attemptLogin(){var u=document.getElementById('loginUser').value.trim();
 document.addEventListener('keydown',function(e){if(e.key==='Enter'&&document.getElementById('loginOverlay').classList.contains('active'))attemptLogin();if(e.key==='Escape'){closeLogin();closeAdmin();closeChat();}});
 
 // ===== ADMIN PANEL =====
+var adminPollInterval=null;
 function openAdmin(){
   document.getElementById('apUserAvatar').textContent=currentAdmin.charAt(0);
   document.getElementById('apUserName').textContent=currentAdmin;
@@ -823,8 +825,31 @@ function openAdmin(){
   else{document.getElementById('navLogs').style.display='none';document.getElementById('ownerActions').style.display='none';}
   refreshData();
   switchSection('dashboard');
+  startAdminPolling();
 }
-function closeAdmin(){document.getElementById('adminPanel').classList.remove('active');document.body.style.overflow='';currentAdmin=null;viewingChat=null;}
+function closeAdmin(){
+  document.getElementById('adminPanel').classList.remove('active');
+  document.body.style.overflow='';
+  currentAdmin=null;
+  viewingChat=null;
+  stopAdminPolling();
+}
+function startAdminPolling(){
+  stopAdminPolling();
+  adminPollInterval=setInterval(function(){
+    // Refresh chats list
+    loadAllChats(function(){
+      updateStats();
+      renderChatList();
+      renderRecentChats();
+      // If viewing a chat, refresh it too
+      if(viewingChat&&convos[viewingChat]){
+        renderChatMessages();
+      }
+    });
+  },2000);
+}
+function stopAdminPolling(){if(adminPollInterval){clearInterval(adminPollInterval);adminPollInterval=null;}}
 function toggleSidebar(){document.getElementById('apSidebar').classList.toggle('open');}
 
 function refreshData(){
@@ -1063,6 +1088,19 @@ function closeAllChats(){
   addLog('close','إغلاق جميع المحادثات');
   Promise.all(promises).then(function(){renderChatList();updateStats();showToast('تم إغلاق الكل','success');});
 }
+function pushUpdate(){
+  if(!confirm('إرسال تحديث للجميع؟ سيظهر لهم popup للتحديث'))return;
+  var newVersion=Date.now().toString();
+  var url=SUPABASE_URL+'/rest/v1/rules?id=eq.main';
+  fetch(url,{
+    method:'PATCH',
+    headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json'},
+    body:JSON.stringify({site_version:newVersion})
+  }).then(function(){
+    showToast('تم إرسال التحديث','success');
+    addLog('update','إرسال تحديث للموقع');
+  });
+}
 function sendAdminReply(){
   var inp=document.getElementById('cvInput');
   var t=inp.value.trim();
@@ -1258,6 +1296,25 @@ if(window.innerWidth>768){document.addEventListener('mousemove',function(e){blob
 // ===== SCROLL REVEAL =====
 var obs=new IntersectionObserver(function(entries){for(var i=0;i<entries.length;i++){if(entries[i].isIntersecting)entries[i].target.classList.add('visible');}},{threshold:.1,rootMargin:'0px 0px -40px 0px'});
 document.querySelectorAll('.rule-card,.note-box').forEach(function(el){obs.observe(el);});
+
+// ===== VERSION CHECK =====
+var SITE_VERSION='1.0';
+function checkVersion(){
+  supaFetch('rules','GET',null,'?id=eq.main').then(function(data){
+    if(data&&data[0]&&data[0].site_version&&data[0].site_version!==SITE_VERSION){
+      showUpdatePopup();
+    }
+  });
+}
+function showUpdatePopup(){
+  var popup=document.createElement('div');
+  popup.style.cssText='position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.9);display:flex;align-items:center;justify-content:center;';
+  popup.innerHTML='<div style="background:#111118;border:1px solid #c8ff00;border-radius:20px;padding:40px;text-align:center;max-width:400px;"><div style="font-size:2rem;margin-bottom:16px;">🔄</div><div style="font-size:1.2rem;font-weight:800;margin-bottom:12px;">تحديث جديد متوفر!</div><div style="color:#8a8a9a;margin-bottom:24px;">يوجد تحديث جديد للموقع. اضغط الزر للتحديث.</div><button onclick="location.reload(true)" style="background:#c8ff00;color:#0a0a0f;border:none;padding:14px 32px;border-radius:12px;font-weight:800;font-size:1rem;cursor:pointer;">تحديث الآن</button></div>';
+  document.body.appendChild(popup);
+}
+// Check version every 30 seconds
+setInterval(checkVersion,30000);
+checkVersion();
 </script>
 </body>
 </html>
