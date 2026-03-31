@@ -144,31 +144,31 @@ footer .f-logo span{color:var(--accent)}
 .login-error{color:var(--red);font-size:.78rem;text-align:center;margin-top:12px;display:none}.login-error.show{display:block}
 
 /* ====== PREMIUM ADMIN PANEL ====== */
-.admin-panel{position:fixed;inset:0;z-index:5000;background:linear-gradient(135deg,#0a0a0f 0%,#12121a 50%,#0a0a0f 100%);opacity:0;visibility:hidden;transition:opacity .35s,visibility .35s;overflow:hidden;display:flex;flex-direction:row-reverse}
+.admin-panel{position:fixed;inset:0;z-index:5000;background:linear-gradient(135deg,#0a0a0f 0%,#12121a 50%,#0a0a0f 100%);opacity:0;visibility:hidden;transition:opacity .35s,visibility .35s;overflow:hidden;display:flex;flex-direction:column}
 .admin-panel.active{opacity:1;visibility:visible}
 
-/* Sidebar */
-.ap-sidebar{width:260px;min-width:260px;background:linear-gradient(180deg,#111118 0%,#0d0d12 100%);border-left:1px solid var(--border);display:flex;flex-direction:column;height:100%;position:relative;flex-shrink:0}
-.ap-sidebar::before{content:'';position:absolute;top:0;left:0;right:0;height:150px;background:linear-gradient(180deg,var(--accent-dim) 0%,transparent 100%);opacity:0.3;pointer-events:none}
-.ap-sidebar-header{padding:24px 20px;border-bottom:1px solid var(--border);position:relative;z-index:1}
-.ap-sidebar-logo{font-size:1.3rem;font-weight:900;margin-bottom:4px;background:linear-gradient(90deg,var(--accent),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}.ap-sidebar-logo span{color:var(--accent)}
-.ap-sidebar-sub{font-size:.7rem;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase}
-.ap-user-card{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;background:linear-gradient(90deg,var(--accent-dim),transparent);position:relative;z-index:1}
-.ap-user-avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--cyan));display:flex;align-items:center;justify-content:center;font-weight:900;color:var(--bg);font-size:1.1rem;box-shadow:0 4px 20px var(--accent-glow)}
-.ap-user-info{flex:1}
-.ap-user-name{font-weight:800;font-size:.95rem}
-.ap-user-role{font-size:.72rem;color:var(--accent);font-weight:600}
-.ap-nav{flex:1;padding:16px 12px;overflow-y:auto;position:relative;z-index:1}
-.ap-nav-item{display:flex;align-items:center;gap:12px;padding:14px 18px;border-radius:14px;cursor:pointer;transition:all .25s;color:var(--text-dim);font-size:.88rem;font-weight:600;margin-bottom:6px;position:relative;border:1px solid transparent}
-.ap-nav-item:hover{background:var(--bg-elevated);color:var(--text);border-color:var(--border);transform:translateX(-4px)}
-.ap-nav-item.active{background:linear-gradient(90deg,var(--accent-dim),transparent);color:var(--accent);border-color:var(--accent-glow);box-shadow:0 0 20px var(--accent-dim)}
-.ap-nav-item.active::before{content:'';position:absolute;right:0;top:50%;transform:translateY(-50%);width:4px;height:24px;background:var(--accent);border-radius:4px;box-shadow:0 0 10px var(--accent)}
-.ap-nav-icon{font-size:1.2rem}
-.ap-nav-badge{margin-right:auto;background:linear-gradient(135deg,var(--red),#ff6b6b);color:#fff;font-size:.65rem;padding:3px 10px;border-radius:100px;font-weight:700;box-shadow:0 2px 10px rgba(239,68,68,0.4)}
-.ap-nav-divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:16px 0}
-.ap-sidebar-footer{padding:16px 20px;border-top:1px solid var(--border);position:relative;z-index:1}
-.ap-logout-btn{width:100%;padding:14px;background:transparent;border:1px solid var(--border);color:var(--text-dim);border-radius:12px;font-family:var(--font);font-size:.85rem;font-weight:700;cursor:pointer;transition:all .25s}
-.ap-logout-btn:hover{border-color:var(--red);color:var(--red);background:rgba(239,68,68,0.1);box-shadow:0 0 20px rgba(239,68,68,0.2)}
+/* Top Nav Bar */
+.ap-sidebar{width:100%;background:linear-gradient(180deg,#111118 0%,#0d0d12 100%);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:12px 24px;gap:16px;position:relative;flex-shrink:0}
+.ap-sidebar::before{display:none}
+.ap-sidebar-header{display:flex;align-items:center;gap:8px}
+.ap-sidebar-logo{font-size:1.2rem;font-weight:900;background:linear-gradient(90deg,var(--accent),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}.ap-sidebar-logo span{color:var(--accent)}
+.ap-sidebar-sub{display:none}
+.ap-user-card{display:flex;align-items:center;gap:10px;background:linear-gradient(90deg,var(--accent-dim),transparent);padding:8px 14px;border-radius:12px;margin-right:auto}
+.ap-user-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--cyan));display:flex;align-items:center;justify-content:center;font-weight:900;color:var(--bg);font-size:.9rem;box-shadow:0 4px 20px var(--accent-glow)}
+.ap-user-info{display:flex;flex-direction:column}
+.ap-user-name{font-weight:800;font-size:.85rem}
+.ap-user-role{font-size:.65rem;color:var(--accent);font-weight:600}
+.ap-nav{display:flex;gap:6px;align-items:center;flex:1}
+.ap-nav-item{display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:10px;cursor:pointer;transition:all .25s;color:var(--text-dim);font-size:.82rem;font-weight:600;position:relative;border:1px solid transparent;white-space:nowrap}
+.ap-nav-item:hover{background:var(--bg-elevated);color:var(--text);border-color:var(--border)}
+.ap-nav-item.active{background:linear-gradient(90deg,var(--accent-dim),transparent);color:var(--accent);border-color:var(--accent-glow)}
+.ap-nav-item.active::before{display:none}
+.ap-nav-icon{font-size:1rem}
+.ap-nav-badge{background:linear-gradient(135deg,var(--red),#ff6b6b);color:#fff;font-size:.6rem;padding:2px 8px;border-radius:100px;font-weight:700}
+.ap-nav-divider{width:1px;height:24px;background:var(--border);margin:0 8px}
+.ap-sidebar-footer{display:flex;align-items:center}
+.ap-logout-btn{padding:10px 16px;background:transparent;border:1px solid var(--border);color:var(--text-dim);border-radius:10px;font-family:var(--font);font-size:.8rem;font-weight:700;cursor:pointer;transition:all .25s}
+.ap-logout-btn:hover{border-color:var(--red);color:var(--red);background:rgba(239,68,68,0.1)}
 
 /* Main Content */
 .ap-main{flex:1;display:flex;flex-direction:column;overflow:hidden}
@@ -299,14 +299,15 @@ footer .f-logo span{color:var(--accent)}
 .ap-toast.success{border-color:var(--green)}.ap-toast.success::before{content:'✅'}
 .ap-toast.error{border-color:var(--red)}.ap-toast.error::before{content:'❌'}
 
-@media(max-width:900px){.ap-sidebar{width:220px}}
+@media(max-width:900px){.ap-nav-item span:not(.ap-nav-icon):not(.ap-nav-badge){display:none}.ap-nav-item{padding:10px 12px}}
 @media(max-width:768px){
-  .ap-sidebar{position:fixed;right:-280px;width:280px;z-index:10;transition:right .3s}
-  .ap-sidebar.open{right:0}
-  .ap-mobile-toggle{display:flex!important}
+  .ap-sidebar{flex-wrap:wrap;padding:10px 16px;gap:10px}
+  .ap-nav{order:3;width:100%;overflow-x:auto;padding-top:10px;border-top:1px solid var(--border);margin-top:4px}
+  .ap-user-card{margin-right:0}
+  .ap-mobile-toggle{display:none!important}
   nav{padding:14px 16px}.hero h1{letter-spacing:-1px}.hero-stats{gap:24px;flex-wrap:wrap;justify-content:center}.rule-card{flex-direction:column;gap:14px;padding:22px 18px}.rule-num{width:40px;height:40px;min-width:40px;font-size:.95rem}.admin-grid{grid-template-columns:1fr}.login-card{margin:20px;padding:32px 24px}.nav-badge{display:none}.chat-overlay{left:8px;right:8px;bottom:8px;width:auto}.scroll-hint{display:none}
 }
-.ap-mobile-toggle{display:none;background:var(--bg-card);border:1px solid var(--border);color:var(--text);width:40px;height:40px;border-radius:10px;align-items:center;justify-content:center;cursor:pointer;font-size:1.2rem}
+.ap-mobile-toggle{display:none}
 </style>
 </head>
 <body>
@@ -1331,7 +1332,7 @@ var obs=new IntersectionObserver(function(entries){for(var i=0;i<entries.length;
 document.querySelectorAll('.rule-card,.note-box').forEach(function(el){obs.observe(el);});
 
 // ===== VERSION CHECK =====
-var SITE_BUILD='20260331_004';
+var SITE_BUILD='20260331_006';
 var versionCheckInterval=null;
 function checkVersion(){
   fetch('https://azizkuwaitq8.github.io/theclass-kw.github.io/index.html?t='+Date.now(),{cache:'no-store'})
