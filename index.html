@@ -544,7 +544,19 @@ function addLog(action,detail){
 
 // ===== LOAD DATA =====
 loadBin(CHATS_BIN,function(data){if(data){convos=data.chats||{};activityLog=data.logs||[];}});
-loadBin(RULES_BIN,function(data){if(data){extraRulesData=data.rules||[];quickReplies=data.quickReplies||[];renderExtraRules();}});
+function loadRulesFromDB(){
+  loadBin(RULES_BIN,function(data){
+    if(data){
+      extraRulesData=data.rules||[];
+      quickReplies=data.quickReplies||[];
+      renderExtraRules();
+    }else{
+      // Retry after 2 seconds if failed
+      setTimeout(loadRulesFromDB,2000);
+    }
+  });
+}
+loadRulesFromDB();
 
 function renderExtraRules(){
   var container=document.getElementById('extraRules');
@@ -859,24 +871,51 @@ function sendAdminReply(){
 function renderRulesAdmin(){
   var grid=document.getElementById('rulesGrid');
   grid.innerHTML='';
-  for(var i=0;i<extraRulesData.length;i++){
-    var r=extraRulesData[i];
-    var cl=colorMap[r.color]||colorMap.red;
+  // Sort by color for admin view too
+  var colorOrder={red:0,orange:1,yellow:2,fuchsia:3,blue:4,green:5};
+  var sorted=extraRulesData.map(function(r,i){return {rule:r,origIdx:i};}).sort(function(a,b){
+    return (colorOrder[a.rule.color]||99)-(colorOrder[b.rule.color]||99);
+  });
+  for(var i=0;i<sorted.length;i++){
+    var r=sorted[i].rule;
+    var origIdx=sorted[i].origIdx;
     var div=document.createElement('div');
     div.className='ap-rule-item';
-    div.innerHTML='<div class="ap-rule-num" style="background:var(--'+r.color+')">'+(6+i)+'</div><div class="ap-rule-content"><div class="ap-rule-title">'+r.title+'</div><div class="ap-rule-desc">'+r.desc+'</div></div><div class="ap-rule-actions"><button class="ap-rule-btn delete" data-idx="'+i+'" onclick="deleteRule('+i+')">🗑️</button></div>';
+    div.innerHTML='<div class="ap-rule-num" style="background:var(--'+r.color+')">'+(6+i)+'</div><div class="ap-rule-content"><div class="ap-rule-title">'+r.title+'</div><div class="ap-rule-desc">'+r.desc+(r.punish?' <span style="color:var(--accent)">['+r.punish+']</span>':'')+'</div></div><div class="ap-rule-actions"><button class="ap-rule-btn" onclick="editRule('+origIdx+')">✏️</button><button class="ap-rule-btn delete" onclick="deleteRule('+origIdx+')">🗑️</button></div>';
     grid.appendChild(div);
   }
 }
 function selectRuleColor(el){document.querySelectorAll('.ap-color-opt').forEach(function(o){o.classList.remove('selected');});el.classList.add('selected');selectedRuleColor=el.dataset.color;}
+var editingRuleIdx=-1;
+function editRule(idx){
+  var r=extraRulesData[idx];
+  document.getElementById('ruleTitle').value=r.title;
+  document.getElementById('ruleDesc').value=r.desc;
+  document.getElementById('rulePunish').value=r.punish||'';
+  // Select color
+  document.querySelectorAll('.ap-color-opt').forEach(function(o){o.classList.remove('selected');if(o.dataset.color===r.color)o.classList.add('selected');});
+  selectedRuleColor=r.color;
+  editingRuleIdx=idx;
+  document.querySelector('.ap-submit-btn[onclick="addRule()"]').textContent='💾 حفظ التعديل';
+  showToast('عدّل القانون ثم اضغط حفظ','success');
+}
 function addRule(){
   var title=document.getElementById('ruleTitle').value.trim();
   var desc=document.getElementById('ruleDesc').value.trim();
   var punish=document.getElementById('rulePunish').value.trim();
   if(!title||!desc){showToast('أدخل العنوان والوصف','error');return;}
-  extraRulesData.push({title:title,desc:desc,punish:punish,color:selectedRuleColor,addedBy:currentAdmin});
-  addLog('add','إضافة قانون: '+title);
-  saveRules(function(){renderRulesAdmin();renderExtraRules();document.getElementById('ruleTitle').value='';document.getElementById('ruleDesc').value='';document.getElementById('rulePunish').value='';showToast('تم إضافة القانون','success');});
+  if(editingRuleIdx>=0){
+    // Editing existing
+    extraRulesData[editingRuleIdx]={title:title,desc:desc,punish:punish,color:selectedRuleColor,addedBy:currentAdmin};
+    addLog('edit','تعديل قانون: '+title);
+    editingRuleIdx=-1;
+    document.querySelector('.ap-submit-btn[onclick="addRule()"]').textContent='➕ إضافة القانون';
+  }else{
+    // Adding new
+    extraRulesData.push({title:title,desc:desc,punish:punish,color:selectedRuleColor,addedBy:currentAdmin});
+    addLog('add','إضافة قانون: '+title);
+  }
+  saveRules(function(){renderRulesAdmin();renderExtraRules();document.getElementById('ruleTitle').value='';document.getElementById('ruleDesc').value='';document.getElementById('rulePunish').value='';showToast('تم الحفظ','success');});
   saveChats();
 }
 function deleteRule(idx){
