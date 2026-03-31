@@ -293,7 +293,7 @@ footer .f-logo span{color:var(--accent)}
   <h1>قوانين<br><span class="en">The Class.</span></h1>
   <p class="hero-sub">هذي قوانين سيرفرنا. بسيطة ومحترمة. نبيك تستمتع بوقتك هنا بس خل الاحترام موجود. خالف واحد منها وبنتعامل معاك بكل حب</p>
   <div class="hero-stats">
-    <div class="stat"><div class="stat-num">5</div><div class="stat-label">قوانين</div></div>
+    <div class="stat"><div class="stat-num" id="heroRuleCount">5</div><div class="stat-label">قوانين</div></div>
     <div class="stat"><div class="stat-num">❤️</div><div class="stat-label">تسامح</div></div>
     <div class="stat"><div class="stat-num">⚡</div><div class="stat-label">بس لا تزود</div></div>
   </div>
@@ -305,7 +305,7 @@ footer .f-logo span{color:var(--accent)}
     <div class="section-title">احترمها وبنحترمك</div>
     <p class="section-desc">ما نبي نعقد الأمور. قوانين بسيطة تخلي السيرفر مكان حلو للكل.</p>
   </div>
-  <div class="rule-card r-red"><div class="rule-num rn-red">1</div><div class="rule-content"><div class="rule-title">بدون قذف ومس الديانات بأي شكل</div><div class="rule-desc">ممنوع الإساءة لأي دين أو معتقد. هذا الشي مو قابل للنقاش ولا حتى كمزحة. خط أحمر.</div><div class="rule-badge badge-ban">بان مباشر</div></div></div>
+  <div class="rule-card r-red"><div class="rule-num rn-red">1</div><div class="rule-content"><div class="rule-title">بدون قذف ومس الديانات بأي شكل</div><div class="rule-desc">ممنوع الإساءة لأي دين أو معتقد. هذا الشي مو قابل للنقاش ولا حتى كمزحة. خط أحمر. القذف يشمل: سب الذات الإلهية، الأنبياء، الكتب السماوية، أو أي رمز ديني. وكذلك قذف الناس واتهامهم بالزنا أو أي اتهام باطل. حتى لو "مزح" أو "ترول" — بان مباشر بدون إنذار.</div><div class="rule-badge badge-ban">بان مباشر</div></div></div>
   <div class="rule-card r-red"><div class="rule-num rn-red">2</div><div class="rule-content"><div class="rule-title">عدم إرسال صور إباحية</div><div class="rule-desc">أي محتوى إباحي بأي شكل = بان فوري. لا صور، لا فيديوهات، لا روابط. حتى "كمزحة" لا.</div><div class="rule-badge badge-ban">بان مباشر</div></div></div>
   <div class="rule-card r-orange"><div class="rule-num rn-orange">3</div><div class="rule-content"><div class="rule-title">بدون سبام</div><div class="rule-desc">لا تمنشن أحد عشر مرات ورا بعض. <span class="mention">@شخص</span> مرة وحدة تكفي وتوفي. إذا ما رد يعني مشغول.</div><div class="rule-badge badge-warn">تنبيه</div></div></div>
   <div class="rule-card r-orange"><div class="rule-num rn-orange">4</div><div class="rule-content"><div class="rule-title">لا إزعاج صوتي</div><div class="rule-desc">ساوندبورد، أصوات من الهاتف، صراخ — ممنوع في الفويس. خل الجو يكون مريح للكل.</div><div class="rule-badge badge-warn">تنبيه</div></div></div>
@@ -574,6 +574,9 @@ function renderExtraRules(){
     card.innerHTML='<div class="rule-num '+cl.n+'">'+(6+i)+'</div><div class="rule-content"><div class="rule-title">'+d.title+'</div><div class="rule-desc">'+d.desc+'</div>'+(d.punish?'<div class="rule-badge '+cl.b+'">'+d.punish+'</div>':'')+'</div>';
     container.appendChild(card);
   }
+  // Update hero rule count
+  var heroCount=document.getElementById('heroRuleCount');
+  if(heroCount)heroCount.textContent=5+extraRulesData.length;
 }
 
 // ===== USER CHAT =====
