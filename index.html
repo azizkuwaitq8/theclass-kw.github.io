@@ -712,27 +712,30 @@ function showTransferOptions(){
 function transferChatTo(newAdmin){
   var chat=convos[viewingChat];
   if(!chat)return;
-  var oldAdmin=currentAdmin;
+  var oldAdmin=chat.admin||currentAdmin;
   // Add system message
   chat.messages.push({system:true,text:'تم تحويل المحادثة من '+oldAdmin+' إلى '+newAdmin,time:getTime()});
-  // Create new key for new admin
-  var newKey=newAdmin+'_'+Date.now();
-  convos[newKey]=chat;
-  delete convos[viewingChat];
-  viewingChat=newKey;
+  // Update admin field - keep same key so user can still access
+  chat.admin=newAdmin;
   saveChats(function(){
     renderAdminChat();
     renderAdminActions();
-    document.getElementById('acName').textContent='محادثة - '+newKey;
   });
 }
 
 function deleteChat(){
   if(!confirm('هل أنت متأكد؟ سيتم حذف المحادثة نهائياً ولا يمكن استرجاعها.'))return;
-  delete convos[viewingChat];
+  var keyToDelete=viewingChat;
+  delete convos[keyToDelete];
   viewingChat=null;
-  saveChats(function(){
+  // Force save by bypassing the saving flag
+  saving=false;
+  fetch('https://api.jsonbin.io/v3/b/'+CHATS_BIN,{method:'PUT',headers:{'Content-Type':'application/json','X-Master-Key':JSONBIN_KEY},body:JSON.stringify({chats:convos})})
+  .then(function(){
     backToInbox();
+  })
+  .catch(function(){
+    alert('حدث خطأ في الحذف');
   });
 }
 
