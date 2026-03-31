@@ -567,9 +567,8 @@ footer .f-logo span{color:var(--accent)}
 
 <script>
 // ===== CONFIG =====
-var JSONBIN_KEY='$2a$10$.fB0Huz/g0NiVanHR.F03.B.ZdHkJEiaVZsYdFRZwzJKuf4qwQaxq';
-var CHATS_BIN='69caf1e036566621a863145a';
-var RULES_BIN='69caf1d9aaba882197ab92e2';
+var SUPABASE_URL='https://gxzbpsgyhlaoxokiumro.supabase.co';
+var SUPABASE_KEY='sb_publishable_S7zOy1lzcWUeYYCdX-ySDw_NDj6Ybss';
 var ADMINS={'Aziz':'The_Class_admin@Aziz.TCA','Echo':'The_Class_admin@Echo.TCA','ReverseCard':'The_Class_admin@ReverseCard.TCA','Reverse Card':'The_Class_admin@ReverseCard.TCA'};
 var OWNERS=['Echo','Aziz'];
 var ADMIN_ROLES={'Echo':'Owner','Aziz':'Co-Owner','Reverse Card':'Head of Admin'};
@@ -605,43 +604,87 @@ function showToast(msg,type){
   setTimeout(function(){t.classList.remove('show');},3000);
 }
 
-// ===== JSONBIN =====
-function loadBin(binId,callback){
-  fetch('https://api.jsonbin.io/v3/b/'+binId+'/latest',{headers:{'X-Master-Key':JSONBIN_KEY}})
-  .then(function(r){return r.json();})
-  .then(function(data){callback(data.record||{});})
-  .catch(function(){callback(null);});
+// ===== SUPABASE =====
+function supaFetch(table,method,body,query){
+  var url=SUPABASE_URL+'/rest/v1/'+table+(query||'');
+  var opts={method:method||'GET',headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=representation'}};
+  if(body)opts.body=JSON.stringify(body);
+  return fetch(url,opts).then(function(r){return r.json();}).catch(function(){return null;});
 }
-function saveBin(binId,data,callback){
-  fetch('https://api.jsonbin.io/v3/b/'+binId,{method:'PUT',headers:{'Content-Type':'application/json','X-Master-Key':JSONBIN_KEY},body:JSON.stringify(data)})
-  .then(function(){if(callback)callback();})
-  .catch(function(){});
-}
-function saveChats(cb){
-  saving=true;
-  saveBin(CHATS_BIN,{chats:convos,logs:activityLog},function(){saving=false;if(cb)cb();});
-}
-function saveRules(cb){saveBin(RULES_BIN,{rules:extraRulesData,quickReplies:quickReplies,events:eventsData},cb);}
 
+// Load chat by ID
+function loadChat(chatId,cb){
+  supaFetch('chats','GET',null,'?id=eq.'+encodeURIComponent(chatId)).then(function(data){
+    if(data&&data[0])cb(data[0].data);
+    else cb(null);
+  });
+}
+
+// Save chat
+function saveChat(chatId,chatData,cb){
+  saving=true;
+  supaFetch('chats','POST',{id:chatId,data:chatData,updated_at:new Date().toISOString()},'?on_conflict=id').then(function(){
+    saving=false;if(cb)cb();
+  });
+}
+
+// Load all chats (for admin)
+function loadAllChats(cb){
+  supaFetch('chats','GET').then(function(data){
+    if(data){
+      convos={};
+      for(var i=0;i<data.length;i++){
+        convos[data[i].id]=data[i].data;
+      }
+    }
+    if(cb)cb();
+  });
+}
+
+// Load rules/events/quickreplies
+function loadRules(cb){
+  supaFetch('rules','GET',null,'?id=eq.main').then(function(data){
+    if(data&&data[0]){
+      extraRulesData=data[0].rules||[];
+      eventsData=data[0].events||[];
+      quickReplies=data[0].quick_replies||[];
+    }
+    if(cb)cb();
+  });
+}
+
+// Save rules
+function saveRules(cb){
+  supaFetch('rules','POST',{id:'main',rules:extraRulesData,events:eventsData,quick_replies:quickReplies},'?on_conflict=id').then(function(){if(cb)cb();});
+}
+
+// Load logs
+function loadLogs(cb){
+  supaFetch('logs','GET',null,'?order=created_at.desc&limit=50').then(function(data){
+    if(data)activityLog=data;
+    if(cb)cb();
+  });
+}
+
+// Add log
 function addLog(action,detail){
-  activityLog.unshift({action:action,detail:detail,admin:currentAdmin,time:getDate()});
-  if(activityLog.length>50)activityLog.pop();
+  var log={action:action,detail:detail,admin:currentAdmin,created_at:new Date().toISOString()};
+  activityLog.unshift(log);
+  supaFetch('logs','POST',log);
+}
+
+// Save current chat (helper)
+function saveChats(cb){
+  if(!chatTarget)return;
+  var chat=convos[chatTarget];
+  if(chat)saveChat(chatTarget,chat,cb);
 }
 
 // ===== LOAD DATA =====
-loadBin(CHATS_BIN,function(data){if(data){convos=data.chats||{};activityLog=data.logs||[];}});
 function loadRulesFromDB(){
-  loadBin(RULES_BIN,function(data){
-    if(data){
-      extraRulesData=data.rules||[];
-      quickReplies=data.quickReplies||[];
-      eventsData=data.events||[];
-      renderExtraRules();
-      renderPublicEvents();
-    }else{
-      // Retry after 2 seconds if failed
-      setTimeout(loadRulesFromDB,2000);
-    }
+  loadRules(function(){
+    renderExtraRules();
+    renderPublicEvents();
   });
 }
 loadRulesFromDB();
@@ -674,15 +717,36 @@ function openChat(name){
   chatTarget=chatKey;
   document.getElementById('chatAv').textContent=name.charAt(0);
   document.getElementById('chatName').textContent=name;
-  if(!convos[chatKey]){convos[chatKey]={messages:[{from:'admin',text:greetings[name],time:getTime()}],closed:false,admin:name};saveChats();}
-  if(Array.isArray(convos[chatKey])){convos[chatKey]={messages:convos[chatKey],closed:false,admin:name};saveChats();}
-  renderUserChat();
+  // Load chat from Supabase
+  loadChat(chatKey,function(data){
+    if(data){
+      convos[chatKey]=data;
+    }else{
+      convos[chatKey]={messages:[{from:'admin',text:greetings[name],time:getTime()}],closed:false,admin:name};
+      saveChat(chatKey,convos[chatKey]);
+    }
+    renderUserChat();
+  });
   document.getElementById('chatOverlay').classList.add('active');
   document.getElementById('chatInput').focus();
   startUserPolling();
 }
 function closeChat(){document.getElementById('chatOverlay').classList.remove('active');stopUserPolling();}
-function startUserPolling(){stopUserPolling();userPollInterval=setInterval(function(){if(saving)return;loadBin(CHATS_BIN,function(data){if(saving)return;if(data&&data.chats){var oldLen=convos[chatTarget]?convos[chatTarget].messages.length:0;convos=data.chats;if(convos[chatTarget]&&Array.isArray(convos[chatTarget])){convos[chatTarget]={messages:convos[chatTarget],closed:false};}var newLen=convos[chatTarget]?convos[chatTarget].messages.length:0;if(newLen!==oldLen)renderUserChat();}});},4000);}
+function startUserPolling(){
+  stopUserPolling();
+  userPollInterval=setInterval(function(){
+    if(saving||!chatTarget)return;
+    loadChat(chatTarget,function(data){
+      if(saving)return;
+      if(data){
+        var oldLen=convos[chatTarget]?convos[chatTarget].messages.length:0;
+        convos[chatTarget]=data;
+        var newLen=data.messages?data.messages.length:0;
+        if(newLen!==oldLen)renderUserChat();
+      }
+    });
+  },3000);
+}
 function stopUserPolling(){if(userPollInterval){clearInterval(userPollInterval);userPollInterval=null;}}
 function renderUserChat(){
   var el=document.getElementById('chatMsgs');
@@ -728,15 +792,20 @@ function closeAdmin(){document.getElementById('adminPanel').classList.remove('ac
 function toggleSidebar(){document.getElementById('apSidebar').classList.toggle('open');}
 
 function refreshData(){
-  loadBin(CHATS_BIN,function(data){
-    if(data){convos=data.chats||{};activityLog=data.logs||[];}
+  loadAllChats(function(){
     updateStats();
     renderChatList();
     renderRecentChats();
-    renderLogs();
   });
-  loadBin(RULES_BIN,function(data){
-    if(data){extraRulesData=data.rules||[];quickReplies=data.quickReplies||[];eventsData=data.events||[];renderExtraRules();renderRulesAdmin();renderQuickReplies();renderEventsAdmin();renderPublicEvents();}
+  loadRules(function(){
+    renderExtraRules();
+    renderRulesAdmin();
+    renderQuickReplies();
+    renderEventsAdmin();
+    renderPublicEvents();
+  });
+  loadLogs(function(){
+    renderLogs();
   });
   showToast('تم التحديث','success');
 }
@@ -883,7 +952,7 @@ function renderChatActions(){
   if(!chat)return;
   var amOwner=isOwner(currentAdmin);
   // Refresh
-  var ref=document.createElement('button');ref.className='ap-action-btn refresh';ref.innerHTML='🔄';ref.onclick=function(){loadBin(CHATS_BIN,function(data){if(data&&data.chats){convos=data.chats;renderChatMessages();}});};el.appendChild(ref);
+  var ref=document.createElement('button');ref.className='ap-action-btn refresh';ref.innerHTML='🔄';ref.onclick=function(){loadChat(viewingChat,function(data){if(data){convos[viewingChat]=data;renderChatMessages();}});};el.appendChild(ref);
   if(!chat.closed){
     // Transfer
     var targets=transferTargets[currentAdmin]||[];
@@ -921,7 +990,7 @@ function transferChat(newAdmin){
   chat.messages.push({system:true,text:'تم تحويل المحادثة من '+oldAdmin+' إلى '+newAdmin,time:getTime()});
   chat.admin=newAdmin;
   addLog('transfer','تحويل محادثة من '+oldAdmin+' إلى '+newAdmin);
-  saveChats(function(){renderChatMessages();renderChatActions();showToast('تم التحويل','success');});
+  saveChat(viewingChat,chat,function(){renderChatMessages();renderChatActions();showToast('تم التحويل','success');});
 }
 function closeChatAdmin(){
   var chat=convos[viewingChat];
@@ -929,22 +998,34 @@ function closeChatAdmin(){
   chat.closed=true;
   chat.messages.push({system:true,text:'تم إغلاق المحادثة بواسطة '+currentAdmin,time:getTime()});
   addLog('close','إغلاق محادثة');
-  saveChats(function(){renderChatMessages();renderChatActions();showToast('تم الإغلاق','success');});
+  saveChat(viewingChat,chat,function(){renderChatMessages();renderChatActions();showToast('تم الإغلاق','success');});
 }
 function deleteChat(){
   if(!confirm('هل أنت متأكد؟ سيتم الحذف نهائياً'))return;
   var key=viewingChat;
-  delete convos[key];
   addLog('delete','حذف محادثة');
-  fetch('https://api.jsonbin.io/v3/b/'+CHATS_BIN,{method:'PUT',headers:{'Content-Type':'application/json','X-Master-Key':JSONBIN_KEY},body:JSON.stringify({chats:convos,logs:activityLog})})
-  .then(function(){viewingChat=null;backToList();updateStats();showToast('تم الحذف','success');});
+  supaFetch('chats','DELETE',null,'?id=eq.'+encodeURIComponent(key)).then(function(){
+    delete convos[key];
+    viewingChat=null;
+    backToList();
+    updateStats();
+    showToast('تم الحذف','success');
+  });
 }
 function closeAllChats(){
   if(!confirm('إغلاق جميع المحادثات؟'))return;
   var keys=Object.keys(convos);
-  for(var i=0;i<keys.length;i++){var chat=convos[keys[i]];if(chat&&!chat.closed){chat.closed=true;chat.messages.push({system:true,text:'تم إغلاق المحادثة بواسطة '+currentAdmin,time:getTime()});}}
+  var promises=[];
+  for(var i=0;i<keys.length;i++){
+    var chat=convos[keys[i]];
+    if(chat&&!chat.closed){
+      chat.closed=true;
+      chat.messages.push({system:true,text:'تم إغلاق المحادثة بواسطة '+currentAdmin,time:getTime()});
+      promises.push(saveChat(keys[i],chat));
+    }
+  }
   addLog('close','إغلاق جميع المحادثات');
-  saveChats(function(){renderChatList();updateStats();showToast('تم إغلاق الكل','success');});
+  Promise.all(promises).then(function(){renderChatList();updateStats();showToast('تم إغلاق الكل','success');});
 }
 function sendAdminReply(){
   var inp=document.getElementById('cvInput');
@@ -955,7 +1036,7 @@ function sendAdminReply(){
   chat.messages.push({from:'admin',text:t,time:getTime()});
   inp.value='';
   renderChatMessages();
-  saveChats();
+  saveChat(viewingChat,chat);
 }
 
 // ===== RULES =====
