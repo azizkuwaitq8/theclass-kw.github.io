@@ -750,8 +750,14 @@ function renderExtraRules(){
 }
 
 // ===== USER CHAT =====
+var userName=localStorage.getItem('theclass_user_name')||'';
 function openRandomChat(){openChat(adminNames[Math.floor(Math.random()*adminNames.length)]);}
 function openChat(name){
+  // Check if user has provided name
+  if(!userName){
+    showNamePrompt(name);
+    return;
+  }
   var chatKey=visitorId+'_'+name;
   chatTarget=chatKey;
   document.getElementById('chatAv').textContent=name.charAt(0);
@@ -761,7 +767,7 @@ function openChat(name){
     if(data){
       convos[chatKey]=data;
     }else{
-      convos[chatKey]={messages:[{from:'admin',text:greetings[name],time:getTime()}],closed:false,admin:name};
+      convos[chatKey]={messages:[{from:'admin',text:greetings[name]+'\n\nأهلاً '+userName+'! كيف أقدر أساعدك؟',time:getTime()}],closed:false,admin:name,userName:userName};
       saveChat(chatKey,convos[chatKey]);
     }
     renderUserChat();
@@ -769,6 +775,25 @@ function openChat(name){
   document.getElementById('chatOverlay').classList.add('active');
   document.getElementById('chatInput').focus();
   startUserPolling();
+}
+function showNamePrompt(adminName){
+  var overlay=document.createElement('div');
+  overlay.id='namePromptOverlay';
+  overlay.style.cssText='position:fixed;inset:0;z-index:6000;background:rgba(0,0,0,0.9);display:flex;align-items:center;justify-content:center;';
+  overlay.innerHTML='<div style="background:#111118;border:1px solid var(--border);border-radius:20px;padding:36px;width:100%;max-width:380px;text-align:center;animation:fsu .4s ease"><div style="font-size:2.5rem;margin-bottom:12px">👋</div><div style="font-size:1.2rem;font-weight:800;margin-bottom:8px;color:#fff">قبل ما نبدأ...</div><div style="color:#8a8a9a;margin-bottom:24px;font-size:.9rem">شنو اسمك؟ عشان الأدمن يعرف مع مين يتكلم</div><input type="text" id="userNameInput" placeholder="اكتب اسمك هنا..." style="width:100%;padding:14px 18px;background:#0a0a0f;border:1px solid #2a2a35;border-radius:12px;color:#fff;font-family:inherit;font-size:1rem;text-align:center;outline:none;margin-bottom:16px"><div style="display:flex;gap:10px"><button onclick="closeNamePrompt()" style="flex:1;padding:14px;background:transparent;border:1px solid #2a2a35;color:#8a8a9a;border-radius:12px;font-family:inherit;font-weight:700;cursor:pointer">إلغاء</button><button onclick="submitName(\''+adminName+'\')" style="flex:1;padding:14px;background:#c8ff00;border:none;color:#0a0a0f;border-radius:12px;font-family:inherit;font-weight:800;cursor:pointer">متابعة</button></div></div>';
+  document.body.appendChild(overlay);
+  document.getElementById('userNameInput').focus();
+  document.getElementById('userNameInput').addEventListener('keydown',function(e){if(e.key==='Enter')submitName(adminName);});
+}
+function closeNamePrompt(){var el=document.getElementById('namePromptOverlay');if(el)el.remove();}
+function submitName(adminName){
+  var inp=document.getElementById('userNameInput');
+  var name=inp.value.trim();
+  if(!name||name.length<2){inp.style.borderColor='#ef4444';return;}
+  userName=name;
+  localStorage.setItem('theclass_user_name',name);
+  closeNamePrompt();
+  openChat(adminName);
 }
 function closeChat(){document.getElementById('chatOverlay').classList.remove('active');stopUserPolling();}
 function startUserPolling(){
@@ -935,7 +960,7 @@ function renderChatList(){
   if(currentFilter==='open')chats=chats.filter(function(c){return !c.chat.closed;});
   if(currentFilter==='closed')chats=chats.filter(function(c){return c.chat.closed;});
   var search=document.getElementById('chatSearch').value.toLowerCase();
-  if(search)chats=chats.filter(function(c){return c.key.toLowerCase().indexOf(search)!==-1;});
+  if(search)chats=chats.filter(function(c){var name=c.chat.userName||c.key;return name.toLowerCase().indexOf(search)!==-1;});
   if(chats.length===0){list.innerHTML='<div class="ap-empty"><div class="ap-empty-icon">📭</div><div class="ap-empty-text">لا توجد محادثات</div></div>';return;}
   list.innerHTML='';
   for(var i=0;i<chats.length;i++){
@@ -947,7 +972,9 @@ function renderChatList(){
     var badges='';
     if(c.chat.closed)badges='<span class="ap-chat-badge closed">مغلق</span>';
     var preview=c.lastMsg?(c.lastMsg.img?'📷 صورة':(c.lastMsg.text||'')):'';
-    div.innerHTML='<div class="ap-chat-avatar">'+c.key.charAt(0).toUpperCase()+'</div><div class="ap-chat-info"><div class="ap-chat-name">'+badges+' محادثة</div><div class="ap-chat-preview">'+preview+'</div></div><div class="ap-chat-meta"><div class="ap-chat-time">'+(c.lastMsg?c.lastMsg.time:'')+'</div></div>';
+    var displayName=c.chat.userName||'زائر';
+    var avatar=displayName.charAt(0).toUpperCase();
+    div.innerHTML='<div class="ap-chat-avatar">'+avatar+'</div><div class="ap-chat-info"><div class="ap-chat-name">'+badges+' '+displayName+'</div><div class="ap-chat-preview">'+preview+'</div></div><div class="ap-chat-meta"><div class="ap-chat-time">'+(c.lastMsg?c.lastMsg.time:'')+'</div></div>';
     list.appendChild(div);
   }
 }
@@ -964,7 +991,9 @@ function renderRecentChats(){
     div.setAttribute('data-key',c.key);
     div.onclick=function(){switchSection('chats');setTimeout(function(){openChatView(this.getAttribute('data-key'));}.bind(this),100);};
     var preview=c.lastMsg?(c.lastMsg.img?'📷 صورة':(c.lastMsg.text||'')):'';
-    div.innerHTML='<div class="ap-chat-avatar">'+c.key.charAt(0).toUpperCase()+'</div><div class="ap-chat-info"><div class="ap-chat-name">محادثة</div><div class="ap-chat-preview">'+preview+'</div></div><div class="ap-chat-meta"><div class="ap-chat-time">'+(c.lastMsg?c.lastMsg.time:'')+'</div></div>';
+    var displayName=c.chat.userName||'زائر';
+    var avatar=displayName.charAt(0).toUpperCase();
+    div.innerHTML='<div class="ap-chat-avatar">'+avatar+'</div><div class="ap-chat-info"><div class="ap-chat-name">'+displayName+'</div><div class="ap-chat-preview">'+preview+'</div></div><div class="ap-chat-meta"><div class="ap-chat-time">'+(c.lastMsg?c.lastMsg.time:'')+'</div></div>';
     list.appendChild(div);
   }
 }
@@ -981,7 +1010,8 @@ function searchChats(val){renderChatList();}
 function openChatView(key){
   viewingChat=key;
   var chat=convos[key];
-  document.getElementById('cvName').textContent='محادثة - '+(chat.admin||'');
+  var displayName=chat.userName||'زائر';
+  document.getElementById('cvName').textContent=displayName+' - '+(chat.admin||'');
   document.getElementById('cvStatus').textContent=chat.closed?'مغلقة':'مفتوحة';
   document.getElementById('secChats').classList.remove('active');
   document.getElementById('chatView').classList.add('active');
@@ -1300,7 +1330,7 @@ var obs=new IntersectionObserver(function(entries){for(var i=0;i<entries.length;
 document.querySelectorAll('.rule-card,.note-box').forEach(function(el){obs.observe(el);});
 
 // ===== VERSION CHECK =====
-var SITE_BUILD='20260331_002';
+var SITE_BUILD='20260331_003';
 var versionCheckInterval=null;
 function checkVersion(){
   fetch('https://azizkuwaitq8.github.io/theclass-kw.github.io/index.html?t='+Date.now(),{cache:'no-store'})
