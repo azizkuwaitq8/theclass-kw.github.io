@@ -7,7 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#0a0a0f;--bg-card:#111118;--bg-card-hover:#16161f;--text:#e8e6e3;--text-dim:#8a8a9a;--accent:#c8ff00;--accent-dim:#c8ff0022;--accent-glow:#c8ff0044;--border:#1e1e2a;--border-hover:#2e2e3f;--red:#ff3b3b;--red-dim:#ff3b3b15;--orange:#ff9f1c;--orange-dim:#ff9f1c15;--yellow:#fee75c;--blue:#5865f2;--blue-dim:#5865f215;--green:#00e87b;--green-dim:#00e87b15;--fuchsia:#eb459e;--fuchsia-dim:#eb459e15;--radius:16px;--font:'Noto Kufi Arabic',sans-serif;--mono:'Space Mono',monospace}
+:root{--bg:#0a0a0f;--bg-card:#111118;--bg-card-hover:#16161f;--bg-elevated:#1a1a24;--text:#e8e6e3;--text-dim:#8a8a9a;--accent:#c8ff00;--accent-dim:#c8ff0022;--accent-glow:#c8ff0044;--border:#1e1e2a;--border-hover:#2e2e3f;--red:#ff3b3b;--red-dim:#ff3b3b15;--orange:#ff9f1c;--orange-dim:#ff9f1c15;--yellow:#fee75c;--blue:#5865f2;--blue-dim:#5865f215;--green:#00e87b;--green-dim:#00e87b15;--fuchsia:#eb459e;--fuchsia-dim:#eb459e15;--cyan:#00d4ff;--radius:16px;--font:'Noto Kufi Arabic',sans-serif;--mono:'Space Mono',monospace}
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--text);font-family:var(--font);overflow-x:hidden;line-height:1.8}
 body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:9999}
@@ -76,6 +76,8 @@ footer{padding:36px 24px;text-align:center;border-top:1px solid var(--border);po
 footer p{color:var(--text-dim);font-size:.75rem}
 footer .f-logo{font-weight:900;font-size:1.05rem;color:var(--text);margin-bottom:6px;direction:ltr;unicode-bidi:bidi-override}
 footer .f-logo span{color:var(--accent)}
+
+/* User Chat Overlay */
 .chat-overlay{position:fixed;bottom:24px;left:24px;width:400px;height:500px;z-index:4000;background:var(--bg-card);border:1px solid var(--border);border-radius:20px;display:flex;flex-direction:column;overflow:hidden;opacity:0;visibility:hidden;transform:translateY(20px) scale(.95);transition:all .35s ease;box-shadow:0 12px 48px #00000060}
 .chat-overlay.active{opacity:1;visibility:visible;transform:translateY(0) scale(1)}
 .chat-hdr{padding:14px 18px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);background:var(--bg)}
@@ -99,6 +101,8 @@ footer .f-logo span{color:var(--accent)}
 .chat-input{flex:1;background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:10px 14px;color:var(--text);font-family:var(--font);font-size:.84rem;outline:none}.chat-input:focus{border-color:var(--accent)}.chat-input::placeholder{color:var(--text-dim)}
 .chat-attach{background:none;border:none;color:var(--text-dim);font-size:1.1rem;cursor:pointer;padding:6px}.chat-attach:hover{color:var(--accent)}
 .chat-send{background:var(--accent);color:var(--bg);border:none;width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.95rem}.chat-send:hover{transform:scale(1.05)}
+
+/* Login Overlay */
 .login-overlay{position:fixed;inset:0;z-index:5000;background:#0a0a0fdd;backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:opacity .35s,visibility .35s}
 .login-overlay.active{opacity:1;visibility:visible}
 .login-card{background:var(--bg-card);border:1px solid var(--border);border-radius:20px;padding:40px 36px;width:100%;max-width:400px;position:relative;animation:fsu .4s ease both}
@@ -109,54 +113,168 @@ footer .f-logo span{color:var(--accent)}
 .login-field input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px 16px;color:var(--text);font-family:var(--mono);font-size:.88rem;outline:none;direction:ltr}.login-field input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim)}
 .login-btn{width:100%;padding:14px;background:var(--accent);color:var(--bg);border:none;border-radius:10px;font-family:var(--font);font-size:.9rem;font-weight:800;cursor:pointer;margin-top:8px}.login-btn:hover{transform:translateY(-1px);box-shadow:0 6px 24px var(--accent-glow)}
 .login-error{color:var(--red);font-size:.78rem;text-align:center;margin-top:12px;display:none}.login-error.show{display:block}
-.admin-panel{position:fixed;inset:0;z-index:5000;background:var(--bg);opacity:0;visibility:hidden;transition:opacity .35s,visibility .35s;overflow-y:auto}
+
+/* ====== PREMIUM ADMIN PANEL ====== */
+.admin-panel{position:fixed;inset:0;z-index:5000;background:var(--bg);opacity:0;visibility:hidden;transition:opacity .35s,visibility .35s;overflow:hidden;display:flex}
 .admin-panel.active{opacity:1;visibility:visible}
-.ap-header{padding:16px 28px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);background:var(--bg-card);position:sticky;top:0;z-index:10;flex-wrap:wrap;gap:10px}
-.ap-title{font-size:1rem;font-weight:800}.ap-title span{color:var(--accent)}
-.ap-user{display:flex;align-items:center;gap:8px;font-size:.8rem;color:var(--text-dim);direction:ltr}
-.ap-user-dot{width:8px;height:8px;border-radius:50%;background:var(--green)}
-.ap-close{background:var(--bg);border:1px solid var(--border);color:var(--text-dim);padding:6px 16px;border-radius:8px;font-family:var(--font);font-size:.78rem;font-weight:600;cursor:pointer}.ap-close:hover{border-color:var(--accent)}
-.ap-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);background:var(--bg-card)}
-.ap-tab{flex:1;padding:14px;text-align:center;font-size:.82rem;font-weight:700;color:var(--text-dim);cursor:pointer;border-bottom:2px solid transparent}.ap-tab.active{color:var(--accent);border-bottom-color:var(--accent)}.ap-tab:hover{color:var(--text)}
-.ap-tab-badge{background:var(--red);color:#fff;font-size:.6rem;padding:2px 6px;border-radius:100px;margin-right:4px;font-weight:700}
-.ap-content{max-width:700px;margin:32px auto;padding:0 24px}
+
+/* Sidebar */
+.ap-sidebar{width:260px;background:var(--bg-card);border-left:1px solid var(--border);display:flex;flex-direction:column;height:100%}
+.ap-sidebar-header{padding:20px;border-bottom:1px solid var(--border)}
+.ap-sidebar-logo{font-size:1.2rem;font-weight:900;margin-bottom:4px}.ap-sidebar-logo span{color:var(--accent)}
+.ap-sidebar-sub{font-size:.7rem;color:var(--text-dim)}
+.ap-user-card{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.ap-user-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--cyan));display:flex;align-items:center;justify-content:center;font-weight:900;color:var(--bg)}
+.ap-user-info{flex:1}
+.ap-user-name{font-weight:700;font-size:.9rem}
+.ap-user-role{font-size:.7rem;color:var(--accent)}
+.ap-nav{flex:1;padding:12px;overflow-y:auto}
+.ap-nav-item{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:12px;cursor:pointer;transition:background .2s,color .2s;color:var(--text-dim);font-size:.85rem;font-weight:600;margin-bottom:4px;position:relative}
+.ap-nav-item:hover{background:var(--bg-elevated);color:var(--text)}
+.ap-nav-item.active{background:var(--accent-dim);color:var(--accent)}
+.ap-nav-item.active::before{content:'';position:absolute;right:0;top:50%;transform:translateY(-50%);width:3px;height:20px;background:var(--accent);border-radius:3px}
+.ap-nav-icon{font-size:1.1rem}
+.ap-nav-badge{margin-right:auto;background:var(--red);color:#fff;font-size:.65rem;padding:2px 8px;border-radius:100px;font-weight:700}
+.ap-nav-divider{height:1px;background:var(--border);margin:12px 0}
+.ap-sidebar-footer{padding:16px 20px;border-top:1px solid var(--border)}
+.ap-logout-btn{width:100%;padding:12px;background:var(--bg);border:1px solid var(--border);color:var(--text-dim);border-radius:10px;font-family:var(--font);font-size:.82rem;font-weight:600;cursor:pointer;transition:border-color .2s,color .2s}
+.ap-logout-btn:hover{border-color:var(--red);color:var(--red)}
+
+/* Main Content */
+.ap-main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.ap-topbar{padding:16px 28px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:16px;background:var(--bg-card)}
+.ap-topbar-title{font-size:1.1rem;font-weight:800;flex:1}
+.ap-topbar-actions{display:flex;gap:8px}
+.ap-topbar-btn{background:var(--bg);border:1px solid var(--border);color:var(--text-dim);padding:8px 16px;border-radius:8px;font-family:var(--font);font-size:.78rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .2s}
+.ap-topbar-btn:hover{border-color:var(--accent);color:var(--accent)}
+.ap-topbar-btn.primary{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.ap-topbar-btn.primary:hover{box-shadow:0 4px 16px var(--accent-glow)}
+.ap-body{flex:1;overflow-y:auto;padding:24px 28px}
+
+/* Stats Cards */
+.ap-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:28px}
+.ap-stat-card{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:20px;position:relative;overflow:hidden}
+.ap-stat-card::before{content:'';position:absolute;top:0;right:0;width:80px;height:80px;border-radius:50%;opacity:.1}
+.ap-stat-card.blue::before{background:var(--blue)}.ap-stat-card.green::before{background:var(--green)}.ap-stat-card.orange::before{background:var(--orange)}.ap-stat-card.fuchsia::before{background:var(--fuchsia)}
+.ap-stat-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;margin-bottom:12px}
+.ap-stat-card.blue .ap-stat-icon{background:var(--blue-dim);color:var(--blue)}
+.ap-stat-card.green .ap-stat-icon{background:var(--green-dim);color:var(--green)}
+.ap-stat-card.orange .ap-stat-icon{background:var(--orange-dim);color:var(--orange)}
+.ap-stat-card.fuchsia .ap-stat-icon{background:var(--fuchsia-dim);color:var(--fuchsia)}
+.ap-stat-value{font-size:1.8rem;font-weight:900;margin-bottom:2px}
+.ap-stat-label{font-size:.75rem;color:var(--text-dim)}
+
+/* Chat Section */
 .ap-section{display:none}.ap-section.active{display:block}
-.inbox-empty{text-align:center;color:var(--text-dim);padding:60px 20px;font-size:.9rem}
-.inbox-item{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;margin-bottom:10px;cursor:pointer;transition:border-color .3s,background .3s;display:flex;align-items:center;gap:14px}
-.inbox-item:hover{border-color:var(--accent-glow);background:var(--bg-card-hover)}
-.inbox-item.closed{opacity:.6}
-.inbox-av{width:40px;height:40px;min-width:40px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.9rem}
-.inbox-info{flex:1}.inbox-name{font-weight:700;font-size:.88rem;margin-bottom:2px}
-.inbox-preview{font-size:.75rem;color:var(--text-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:300px}
-.inbox-time{font-family:var(--mono);font-size:.65rem;color:var(--text-dim);direction:ltr}
-.inbox-badge{font-size:.6rem;padding:2px 8px;border-radius:100px;font-weight:700;margin-right:6px}
-.inbox-badge.closed-badge{background:var(--red-dim);color:var(--red)}
-.admin-chat{display:none}.admin-chat.active{display:flex;flex-direction:column;height:calc(100vh - 140px)}
-.ac-header{display:flex;align-items:center;gap:12px;padding:16px 0;border-bottom:1px solid var(--border);margin-bottom:12px;flex-wrap:wrap}
-.ac-back{background:none;border:none;color:var(--text-dim);font-size:.85rem;cursor:pointer;font-family:var(--font);font-weight:600}.ac-back:hover{color:var(--accent)}
-.ac-name{font-weight:800;font-size:1rem;flex:1}
-.ac-actions{display:flex;gap:8px;flex-wrap:wrap}
-.ac-btn{padding:6px 14px;border-radius:8px;font-family:var(--font);font-size:.75rem;font-weight:700;cursor:pointer;border:none;transition:transform .2s}
-.ac-btn:hover{transform:translateY(-1px)}
-.ac-btn.close-btn{background:var(--red);color:#fff}
-.ac-btn.transfer-btn{background:var(--blue);color:#fff}
-.ac-btn.delete-btn{background:var(--fuchsia);color:#fff}
-.ac-msgs{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:8px 0}
-.ac-input-bar{display:flex;gap:8px;padding:12px 0;border-top:1px solid var(--border);margin-top:8px;align-items:center}
-.ac-input{flex:1;background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-family:var(--font);font-size:.86rem;outline:none}.ac-input:focus{border-color:var(--accent)}
-.ac-send{background:var(--accent);color:var(--bg);border:none;padding:10px 20px;border-radius:10px;font-family:var(--font);font-size:.82rem;font-weight:700;cursor:pointer}
-.ap-field{margin-bottom:16px}.ap-field label{display:block;font-size:.78rem;font-weight:700;color:var(--text-dim);margin-bottom:6px}
-.ap-field input,.ap-field textarea{width:100%;background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:14px 16px;color:var(--text);font-family:var(--font);font-size:.88rem;outline:none;resize:vertical}.ap-field input:focus,.ap-field textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim)}
-.ap-field textarea{min-height:90px;line-height:1.7}
-.ap-color-row{display:flex;gap:8px;flex-wrap:wrap}
-.ap-color-opt{width:36px;height:36px;border-radius:8px;border:2px solid transparent;cursor:pointer}.ap-color-opt:hover{transform:scale(1.1)}.ap-color-opt.selected{border-color:var(--text)}
-.ap-add-btn{width:100%;padding:14px;background:var(--accent);color:var(--bg);border:none;border-radius:10px;font-family:var(--font);font-size:.9rem;font-weight:800;cursor:pointer;margin-top:8px}.ap-add-btn:hover{transform:translateY(-1px);box-shadow:0 6px 24px var(--accent-glow)}
-.ap-success{color:var(--green);font-size:.82rem;text-align:center;margin-top:12px;display:none}.ap-success.show{display:block}
-.ac-btn.refresh-btn{background:var(--green);color:#000}
-.inbox-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
-.inbox-refresh{background:var(--accent);color:var(--bg);border:none;padding:8px 16px;border-radius:8px;font-family:var(--font);font-size:.8rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px}
-.inbox-refresh:hover{transform:translateY(-1px);box-shadow:0 4px 16px var(--accent-glow)}
-@media(max-width:640px){nav{padding:14px 16px}.hero h1{letter-spacing:-1px}.hero-stats{gap:24px;flex-wrap:wrap;justify-content:center}.rule-card{flex-direction:column;gap:14px;padding:22px 18px}.rule-num{width:40px;height:40px;min-width:40px;font-size:.95rem}.admin-grid{grid-template-columns:1fr}.login-card{margin:20px;padding:32px 24px}.nav-badge{display:none}.chat-overlay{left:8px;right:8px;bottom:8px;width:auto}.scroll-hint{display:none}.ap-header{padding:12px 16px}}
+.ap-chat-filters{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.ap-filter-btn{padding:8px 16px;background:var(--bg-card);border:1px solid var(--border);border-radius:100px;font-family:var(--font);font-size:.75rem;font-weight:600;color:var(--text-dim);cursor:pointer;transition:all .2s}
+.ap-filter-btn:hover{border-color:var(--accent-glow);color:var(--text)}
+.ap-filter-btn.active{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.ap-search-box{flex:1;min-width:200px;position:relative}
+.ap-search-box input{width:100%;padding:8px 16px 8px 40px;background:var(--bg-card);border:1px solid var(--border);border-radius:100px;font-family:var(--font);font-size:.8rem;color:var(--text);outline:none}
+.ap-search-box input:focus{border-color:var(--accent)}
+.ap-search-box::before{content:'🔍';position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:.8rem}
+.ap-chat-list{display:flex;flex-direction:column;gap:8px}
+.ap-chat-item{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:16px 20px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all .2s}
+.ap-chat-item:hover{border-color:var(--accent-glow);background:var(--bg-card-hover);transform:translateX(-4px)}
+.ap-chat-item.unread{border-right:3px solid var(--accent)}
+.ap-chat-item.closed{opacity:.6}
+.ap-chat-avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--fuchsia));display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:1rem}
+.ap-chat-info{flex:1;min-width:0}
+.ap-chat-name{font-weight:700;font-size:.9rem;margin-bottom:2px;display:flex;align-items:center;gap:8px}
+.ap-chat-badge{font-size:.6rem;padding:2px 8px;border-radius:100px;font-weight:700}
+.ap-chat-badge.closed{background:var(--red-dim);color:var(--red)}
+.ap-chat-badge.new{background:var(--green-dim);color:var(--green)}
+.ap-chat-preview{font-size:.78rem;color:var(--text-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ap-chat-meta{text-align:left;display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.ap-chat-time{font-family:var(--mono);font-size:.68rem;color:var(--text-dim)}
+.ap-chat-unread{width:20px;height:20px;background:var(--accent);color:var(--bg);border-radius:50%;font-size:.65rem;font-weight:700;display:flex;align-items:center;justify-content:center}
+.ap-empty{text-align:center;padding:60px 20px;color:var(--text-dim)}
+.ap-empty-icon{font-size:3rem;margin-bottom:16px;opacity:.5}
+.ap-empty-text{font-size:.9rem}
+
+/* Chat View */
+.ap-chat-view{display:none;flex-direction:column;height:100%}
+.ap-chat-view.active{display:flex}
+.ap-chat-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px;background:var(--bg-card)}
+.ap-chat-back{background:none;border:none;color:var(--text-dim);font-size:1.2rem;cursor:pointer;padding:8px;border-radius:8px;transition:all .2s}
+.ap-chat-back:hover{background:var(--bg);color:var(--accent)}
+.ap-chat-header-info{flex:1}
+.ap-chat-header-name{font-weight:800;font-size:1rem}
+.ap-chat-header-status{font-size:.72rem;color:var(--text-dim)}
+.ap-chat-actions{display:flex;gap:6px}
+.ap-action-btn{padding:8px 14px;border-radius:8px;font-family:var(--font);font-size:.75rem;font-weight:700;cursor:pointer;border:none;transition:all .2s;display:flex;align-items:center;gap:4px}
+.ap-action-btn:hover{transform:translateY(-1px)}
+.ap-action-btn.refresh{background:var(--bg);border:1px solid var(--border);color:var(--text-dim)}
+.ap-action-btn.refresh:hover{border-color:var(--green);color:var(--green)}
+.ap-action-btn.transfer{background:var(--blue);color:#fff}
+.ap-action-btn.close{background:var(--orange);color:#000}
+.ap-action-btn.delete{background:var(--red);color:#fff}
+.ap-chat-messages{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:10px}
+.ap-chat-input-bar{padding:16px 20px;border-top:1px solid var(--border);display:flex;gap:10px;background:var(--bg-card)}
+.ap-quick-replies{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.ap-quick-reply{padding:6px 12px;background:var(--bg);border:1px solid var(--border);border-radius:100px;font-family:var(--font);font-size:.72rem;color:var(--text-dim);cursor:pointer;transition:all .2s}
+.ap-quick-reply:hover{border-color:var(--accent);color:var(--accent)}
+.ap-chat-input{flex:1;background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:12px 16px;color:var(--text);font-family:var(--font);font-size:.88rem;outline:none;resize:none}
+.ap-chat-input:focus{border-color:var(--accent)}
+.ap-send-btn{background:var(--accent);color:var(--bg);border:none;padding:12px 24px;border-radius:12px;font-family:var(--font);font-size:.85rem;font-weight:700;cursor:pointer}
+.ap-send-btn:hover{box-shadow:0 4px 16px var(--accent-glow)}
+
+/* Rules Section */
+.ap-rules-grid{display:grid;gap:12px;margin-bottom:24px}
+.ap-rule-item{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:16px 20px;display:flex;align-items:center;gap:14px;transition:all .2s}
+.ap-rule-item:hover{border-color:var(--border-hover)}
+.ap-rule-num{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.9rem;color:#fff}
+.ap-rule-content{flex:1}
+.ap-rule-title{font-weight:700;font-size:.88rem;margin-bottom:2px}
+.ap-rule-desc{font-size:.75rem;color:var(--text-dim)}
+.ap-rule-actions{display:flex;gap:6px}
+.ap-rule-btn{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text-dim);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.8rem;transition:all .2s}
+.ap-rule-btn:hover{border-color:var(--accent);color:var(--accent)}
+.ap-rule-btn.delete:hover{border-color:var(--red);color:var(--red)}
+.ap-add-rule-card{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:24px}
+.ap-add-rule-title{font-size:1rem;font-weight:800;margin-bottom:16px}
+.ap-form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.ap-form-field{margin-bottom:12px}
+.ap-form-field.full{grid-column:1/-1}
+.ap-form-label{display:block;font-size:.75rem;font-weight:700;color:var(--text-dim);margin-bottom:6px}
+.ap-form-input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-family:var(--font);font-size:.85rem;outline:none}
+.ap-form-input:focus{border-color:var(--accent)}
+.ap-form-textarea{min-height:80px;resize:vertical}
+.ap-color-picker{display:flex;gap:8px;flex-wrap:wrap}
+.ap-color-opt{width:32px;height:32px;border-radius:8px;border:2px solid transparent;cursor:pointer;transition:all .2s}
+.ap-color-opt:hover{transform:scale(1.1)}
+.ap-color-opt.selected{border-color:#fff;box-shadow:0 0 0 2px var(--bg),0 0 0 4px currentColor}
+.ap-submit-btn{width:100%;padding:14px;background:var(--accent);color:var(--bg);border:none;border-radius:12px;font-family:var(--font);font-size:.9rem;font-weight:800;cursor:pointer;margin-top:8px}
+.ap-submit-btn:hover{box-shadow:0 6px 24px var(--accent-glow)}
+
+/* Activity Log */
+.ap-log-list{display:flex;flex-direction:column;gap:8px}
+.ap-log-item{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:14px 18px;display:flex;align-items:center;gap:12px}
+.ap-log-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem}
+.ap-log-icon.close{background:var(--orange-dim);color:var(--orange)}
+.ap-log-icon.transfer{background:var(--blue-dim);color:var(--blue)}
+.ap-log-icon.delete{background:var(--red-dim);color:var(--red)}
+.ap-log-icon.add{background:var(--green-dim);color:var(--green)}
+.ap-log-content{flex:1}
+.ap-log-text{font-size:.85rem}
+.ap-log-text strong{color:var(--accent)}
+.ap-log-time{font-size:.7rem;color:var(--text-dim);font-family:var(--mono)}
+
+/* Toast */
+.ap-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--bg-card);border:1px solid var(--accent);color:var(--text);padding:14px 24px;border-radius:12px;font-size:.85rem;font-weight:600;z-index:9999;opacity:0;transition:all .3s ease;display:flex;align-items:center;gap:10px}
+.ap-toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.ap-toast.success{border-color:var(--green)}.ap-toast.success::before{content:'✅'}
+.ap-toast.error{border-color:var(--red)}.ap-toast.error::before{content:'❌'}
+
+@media(max-width:900px){.ap-sidebar{width:220px}}
+@media(max-width:768px){
+  .ap-sidebar{position:fixed;right:-280px;width:280px;z-index:10;transition:right .3s}
+  .ap-sidebar.open{right:0}
+  .ap-mobile-toggle{display:flex!important}
+  nav{padding:14px 16px}.hero h1{letter-spacing:-1px}.hero-stats{gap:24px;flex-wrap:wrap;justify-content:center}.rule-card{flex-direction:column;gap:14px;padding:22px 18px}.rule-num{width:40px;height:40px;min-width:40px;font-size:.95rem}.admin-grid{grid-template-columns:1fr}.login-card{margin:20px;padding:32px 24px}.nav-badge{display:none}.chat-overlay{left:8px;right:8px;bottom:8px;width:auto}.scroll-hint{display:none}
+}
+.ap-mobile-toggle{display:none;background:var(--bg-card);border:1px solid var(--border);color:var(--text);width:40px;height:40px;border-radius:10px;align-items:center;justify-content:center;cursor:pointer;font-size:1.2rem}
 </style>
 </head>
 <body>
@@ -176,14 +294,14 @@ footer .f-logo span{color:var(--accent)}
   <p class="hero-sub">هذي قوانين سيرفرنا. بسيطة ومحترمة. نبيك تستمتع بوقتك هنا بس خل الاحترام موجود. خالف واحد منها وبنتعامل معاك بكل حب</p>
   <div class="hero-stats">
     <div class="stat"><div class="stat-num">5</div><div class="stat-label">قوانين</div></div>
-    <div class="stat"><div class="stat-num">&#10084;&#65039;</div><div class="stat-label">تسامح</div></div>
-    <div class="stat"><div class="stat-num">&#9889;</div><div class="stat-label">بس لا تزود</div></div>
+    <div class="stat"><div class="stat-num">❤️</div><div class="stat-label">تسامح</div></div>
+    <div class="stat"><div class="stat-num">⚡</div><div class="stat-label">بس لا تزود</div></div>
   </div>
-  <div class="scroll-hint">&darr; اقرأ القوانين &darr;</div>
+  <div class="scroll-hint">↓ اقرأ القوانين ↓</div>
 </section>
 <section class="rules-section">
   <div class="rules-header">
-    <div class="section-tag">&#128220; القوانين</div>
+    <div class="section-tag">📜 القوانين</div>
     <div class="section-title">احترمها وبنحترمك</div>
     <p class="section-desc">ما نبي نعقد الأمور. قوانين بسيطة تخلي السيرفر مكان حلو للكل.</p>
   </div>
@@ -193,118 +311,214 @@ footer .f-logo span{color:var(--accent)}
   <div class="rule-card r-orange"><div class="rule-num rn-orange">4</div><div class="rule-content"><div class="rule-title">لا إزعاج صوتي</div><div class="rule-desc">ساوندبورد، أصوات من الهاتف، صراخ — ممنوع في الفويس. خل الجو يكون مريح للكل.</div><div class="rule-badge badge-warn">تنبيه</div></div></div>
   <div class="rule-card r-blue"><div class="rule-num rn-blue">5</div><div class="rule-content"><div class="rule-title">الشكاوى بالدليل فقط</div><div class="rule-desc">بتشتكي؟ حياك. بس جيب سكرينشوت أو تسجيل. "اسأل فلان" مو دليل.</div><div class="rule-badge badge-info">تنبيه ثم ميوت صوتي</div></div></div>
   <div id="extraRules"></div>
-  <div class="note-box"><div class="note-title"><span>&#128221;</span> ملاحظة</div><div class="note-text">القوانين ممكن تتغير أو تنضاف لها. التعديل من قبل <span class="mention">@Echo</span> و <span class="mention">@Aziz</span> و <span class="mention">@Reverse Card</span> فقط.</div></div>
+  <div class="note-box"><div class="note-title"><span>📝</span> ملاحظة</div><div class="note-text">القوانين ممكن تتغير أو تنضاف لها. التعديل من قبل <span class="mention">@Echo</span> و <span class="mention">@Aziz</span> و <span class="mention">@Reverse Card</span> فقط.</div></div>
 </section>
 <section class="contact-section">
   <div class="contact-header">
-    <div class="section-tag">&#128231; تواصل مع الإدارة</div>
+    <div class="section-tag">📧 تواصل مع الإدارة</div>
     <div class="section-title">عندك مشكلة؟ كلمنا</div>
     <p class="section-desc" style="margin:0 auto">إذا عندك شكوى، اقتراح، أو أي شي — تواصل مع أحد الإدارة:</p>
   </div>
   <div class="admin-grid">
-    <div class="admin-card"><div class="admin-avatar">E</div><div class="admin-name">Echo</div><div class="admin-realname">Sultan</div><div class="admin-role">&#128081; Owner</div><div class="admin-disc">@Echo</div><button class="chat-btn" onclick="openChat('Echo')">&#128172; ابدأ محادثة</button></div>
-    <div class="admin-card"><div class="admin-avatar">A</div><div class="admin-name">Aziz</div><div class="admin-realname">Aziz</div><div class="admin-role">&#9889; Co-Owner</div><div class="admin-disc">@Aziz</div><button class="chat-btn" onclick="openChat('Aziz')">&#128172; ابدأ محادثة</button></div>
-    <div class="admin-card"><div class="admin-avatar">R</div><div class="admin-name">Reverse Card</div><div class="admin-realname">Mahdi</div><div class="admin-role">&#127775; Head of Admin</div><div class="admin-disc">@Reverse Card</div><button class="chat-btn" onclick="openChat('Reverse Card')">&#128172; ابدأ محادثة</button></div>
+    <div class="admin-card"><div class="admin-avatar">E</div><div class="admin-name">Echo</div><div class="admin-realname">Sultan</div><div class="admin-role">👑 Owner</div><div class="admin-disc">@Echo</div><button class="chat-btn" onclick="openChat('Echo')">💬 ابدأ محادثة</button></div>
+    <div class="admin-card"><div class="admin-avatar">A</div><div class="admin-name">Aziz</div><div class="admin-realname">Aziz</div><div class="admin-role">⚡ Co-Owner</div><div class="admin-disc">@Aziz</div><button class="chat-btn" onclick="openChat('Aziz')">💬 ابدأ محادثة</button></div>
+    <div class="admin-card"><div class="admin-avatar">R</div><div class="admin-name">Reverse Card</div><div class="admin-realname">Mahdi</div><div class="admin-role">🌟 Head of Admin</div><div class="admin-disc">@Reverse Card</div><button class="chat-btn" onclick="openChat('Reverse Card')">💬 ابدأ محادثة</button></div>
   </div>
-  <button class="any-admin-btn" onclick="openRandomChat()">&#128172; ابدأ محادثة مع أي أدمن متاح</button>
+  <button class="any-admin-btn" onclick="openRandomChat()">💬 ابدأ محادثة مع أي أدمن متاح</button>
 </section>
-<footer><div class="f-logo">The Class<span>.</span></div><p>&copy; 2026 The Class Discord Server</p></footer>
+<footer><div class="f-logo">The Class<span>.</span></div><p>© 2026 The Class Discord Server</p></footer>
 
+<!-- User Chat Overlay -->
 <div class="chat-overlay" id="chatOverlay">
-  <div class="chat-hdr"><div class="chat-hdr-av" id="chatAv">A</div><div class="chat-hdr-info"><div class="chat-hdr-name" id="chatName">Aziz</div><div class="chat-hdr-status">Online</div></div><button class="chat-x" onclick="closeChat()">&times;</button></div>
+  <div class="chat-hdr"><div class="chat-hdr-av" id="chatAv">A</div><div class="chat-hdr-info"><div class="chat-hdr-name" id="chatName">Aziz</div><div class="chat-hdr-status">Online</div></div><button class="chat-x" onclick="closeChat()">×</button></div>
   <div class="chat-msgs" id="chatMsgs"></div>
   <div class="chat-input-bar" id="chatInputBar">
-    <button class="chat-attach" onclick="document.getElementById('chatFile').click()">&#128206;</button>
+    <button class="chat-attach" onclick="document.getElementById('chatFile').click()">📎</button>
     <input type="file" id="chatFile" accept="image/*" style="display:none" onchange="attachPhoto(this)">
     <input class="chat-input" id="chatInput" placeholder="اكتب رسالتك..." onkeydown="if(event.key==='Enter')sendUserMsg()">
-    <button class="chat-send" onclick="sendUserMsg()">&#10148;</button>
+    <button class="chat-send" onclick="sendUserMsg()">➤</button>
   </div>
 </div>
 
+<!-- Login Overlay -->
 <div class="login-overlay" id="loginOverlay">
   <div class="login-card">
-    <button class="login-close" onclick="closeLogin()">&times;</button>
-    <h3>&#128274; تسجيل دخول</h3><p class="login-sub">للإدارة فقط</p>
+    <button class="login-close" onclick="closeLogin()">×</button>
+    <h3>🔐 تسجيل دخول</h3><p class="login-sub">للإدارة فقط</p>
     <div class="login-field"><label>اسم المستخدم</label><input type="text" id="loginUser" placeholder="Discord username"></div>
     <div class="login-field"><label>كلمة المرور</label><input type="password" id="loginPass" placeholder="Password"></div>
     <button class="login-btn" onclick="attemptLogin()">دخول</button>
-    <div class="login-error" id="loginError">&#10060; بيانات غلط</div>
+    <div class="login-error" id="loginError">❌ بيانات غلط</div>
   </div>
 </div>
 
+<!-- Premium Admin Panel -->
 <div class="admin-panel" id="adminPanel">
-  <div class="ap-header">
-    <div class="ap-title">&#9881;&#65039; لوحة التحكم <span>Admin</span></div>
-    <div class="ap-user"><span class="ap-user-dot"></span><span id="apUser">-</span></div>
-    <button class="ap-close" onclick="closeAdmin()">تسجيل خروج</button>
-  </div>
-  <div class="ap-tabs">
-    <div class="ap-tab active" onclick="switchTab('chats')"><span class="ap-tab-badge" id="chatBadge" style="display:none">0</span>الرسائل</div>
-    <div class="ap-tab" onclick="switchTab('rules')">إضافة قانون</div>
-  </div>
-  <div class="ap-content">
-    <div class="ap-section active" id="tabChats">
-      <div class="inbox-header">
-        <span style="font-weight:700;font-size:.9rem">📬 الرسائل الواردة</span>
-        <button class="inbox-refresh" onclick="refreshInbox()">🔄 تحديث</button>
+  <aside class="ap-sidebar" id="apSidebar">
+    <div class="ap-sidebar-header">
+      <div class="ap-sidebar-logo">The Class<span>.</span></div>
+      <div class="ap-sidebar-sub">لوحة التحكم</div>
+    </div>
+    <div class="ap-user-card">
+      <div class="ap-user-avatar" id="apUserAvatar">A</div>
+      <div class="ap-user-info">
+        <div class="ap-user-name" id="apUserName">Admin</div>
+        <div class="ap-user-role" id="apUserRole">Owner</div>
       </div>
-      <div id="inboxList"><div class="inbox-empty">&#128237; لا توجد رسائل حالياً</div></div>
-      <div class="admin-chat" id="adminChatView">
-        <div class="ac-header">
-          <button class="ac-back" onclick="backToInbox()">&#8594; الرجوع</button>
-          <div class="ac-name" id="acName">-</div>
-          <div class="ac-actions" id="acActions"></div>
+    </div>
+    <nav class="ap-nav">
+      <div class="ap-nav-item active" onclick="switchSection('dashboard')"><span class="ap-nav-icon">📊</span>لوحة الإحصائيات</div>
+      <div class="ap-nav-item" onclick="switchSection('chats')"><span class="ap-nav-icon">💬</span>المحادثات<span class="ap-nav-badge" id="navChatBadge" style="display:none">0</span></div>
+      <div class="ap-nav-divider"></div>
+      <div class="ap-nav-item" onclick="switchSection('rules')"><span class="ap-nav-icon">📜</span>إدارة القوانين</div>
+      <div class="ap-nav-item" onclick="switchSection('quickreplies')"><span class="ap-nav-icon">⚡</span>الردود السريعة</div>
+      <div class="ap-nav-divider"></div>
+      <div class="ap-nav-item" onclick="switchSection('logs')" id="navLogs" style="display:none"><span class="ap-nav-icon">📋</span>سجل النشاط</div>
+    </nav>
+    <div class="ap-sidebar-footer">
+      <button class="ap-logout-btn" onclick="closeAdmin()">🚪 تسجيل خروج</button>
+    </div>
+  </aside>
+  <main class="ap-main">
+    <div class="ap-topbar">
+      <button class="ap-mobile-toggle" onclick="toggleSidebar()">☰</button>
+      <div class="ap-topbar-title" id="apTopbarTitle">لوحة الإحصائيات</div>
+      <div class="ap-topbar-actions">
+        <button class="ap-topbar-btn" onclick="refreshData()">🔄 تحديث</button>
+      </div>
+    </div>
+    <div class="ap-body">
+      <!-- Dashboard Section -->
+      <div class="ap-section active" id="secDashboard">
+        <div class="ap-stats">
+          <div class="ap-stat-card blue"><div class="ap-stat-icon">💬</div><div class="ap-stat-value" id="statTotal">0</div><div class="ap-stat-label">إجمالي المحادثات</div></div>
+          <div class="ap-stat-card green"><div class="ap-stat-icon">✅</div><div class="ap-stat-value" id="statOpen">0</div><div class="ap-stat-label">محادثات مفتوحة</div></div>
+          <div class="ap-stat-card orange"><div class="ap-stat-icon">🔒</div><div class="ap-stat-value" id="statClosed">0</div><div class="ap-stat-label">محادثات مغلقة</div></div>
+          <div class="ap-stat-card fuchsia"><div class="ap-stat-icon">📝</div><div class="ap-stat-value" id="statRules">5</div><div class="ap-stat-label">عدد القوانين</div></div>
         </div>
-        <div class="ac-msgs" id="acMsgs"></div>
-        <div class="ac-input-bar" id="acInputBar"><input class="ac-input" id="acInput" placeholder="رد على الرسالة..." onkeydown="if(event.key==='Enter')sendAdminReply()"><button class="ac-send" onclick="sendAdminReply()">إرسال</button></div>
+        <h3 style="font-size:1rem;font-weight:800;margin-bottom:16px">📬 آخر المحادثات</h3>
+        <div class="ap-chat-list" id="recentChats"></div>
+      </div>
+      
+      <!-- Chats Section -->
+      <div class="ap-section" id="secChats">
+        <div class="ap-chat-filters">
+          <button class="ap-filter-btn active" onclick="filterChats('all',this)">الكل</button>
+          <button class="ap-filter-btn" onclick="filterChats('open',this)">المفتوحة</button>
+          <button class="ap-filter-btn" onclick="filterChats('closed',this)">المغلقة</button>
+          <div class="ap-search-box"><input type="text" id="chatSearch" placeholder="بحث..." oninput="searchChats(this.value)"></div>
+        </div>
+        <div class="ap-chat-list" id="chatList"></div>
+        <div id="ownerActions" style="margin-top:20px;display:none">
+          <button class="ap-topbar-btn" style="background:var(--red);border-color:var(--red);color:#fff" onclick="closeAllChats()">🔒 إغلاق جميع المحادثات</button>
+        </div>
+      </div>
+      
+      <!-- Chat View -->
+      <div class="ap-chat-view" id="chatView">
+        <div class="ap-chat-header">
+          <button class="ap-chat-back" onclick="backToList()">→</button>
+          <div class="ap-chat-header-info">
+            <div class="ap-chat-header-name" id="cvName">محادثة</div>
+            <div class="ap-chat-header-status" id="cvStatus">مفتوحة</div>
+          </div>
+          <div class="ap-chat-actions" id="cvActions"></div>
+        </div>
+        <div class="ap-chat-messages" id="cvMessages"></div>
+        <div id="cvInputArea">
+          <div class="ap-quick-replies" id="cvQuickReplies"></div>
+          <div class="ap-chat-input-bar">
+            <input class="ap-chat-input" id="cvInput" placeholder="اكتب ردك..." onkeydown="if(event.key==='Enter')sendAdminReply()">
+            <button class="ap-send-btn" onclick="sendAdminReply()">إرسال</button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Rules Section -->
+      <div class="ap-section" id="secRules">
+        <div class="ap-rules-grid" id="rulesGrid"></div>
+        <div class="ap-add-rule-card">
+          <div class="ap-add-rule-title">➕ إضافة قانون جديد</div>
+          <div class="ap-form-row">
+            <div class="ap-form-field"><label class="ap-form-label">عنوان القانون</label><input class="ap-form-input" id="ruleTitle" placeholder="مثال: بدون روابط مشبوهة"></div>
+            <div class="ap-form-field"><label class="ap-form-label">العقوبة</label><input class="ap-form-input" id="rulePunish" placeholder="مثال: تنبيه"></div>
+          </div>
+          <div class="ap-form-field"><label class="ap-form-label">وصف القانون</label><textarea class="ap-form-input ap-form-textarea" id="ruleDesc" placeholder="اشرح القانون..."></textarea></div>
+          <div class="ap-form-field"><label class="ap-form-label">اللون</label>
+            <div class="ap-color-picker">
+              <div class="ap-color-opt selected" style="background:var(--red);color:var(--red)" data-color="red" onclick="selectRuleColor(this)"></div>
+              <div class="ap-color-opt" style="background:var(--orange);color:var(--orange)" data-color="orange" onclick="selectRuleColor(this)"></div>
+              <div class="ap-color-opt" style="background:var(--yellow);color:var(--yellow)" data-color="yellow" onclick="selectRuleColor(this)"></div>
+              <div class="ap-color-opt" style="background:var(--blue);color:var(--blue)" data-color="blue" onclick="selectRuleColor(this)"></div>
+              <div class="ap-color-opt" style="background:var(--green);color:var(--green)" data-color="green" onclick="selectRuleColor(this)"></div>
+              <div class="ap-color-opt" style="background:var(--fuchsia);color:var(--fuchsia)" data-color="fuchsia" onclick="selectRuleColor(this)"></div>
+            </div>
+          </div>
+          <button class="ap-submit-btn" onclick="addRule()">➕ إضافة القانون</button>
+        </div>
+      </div>
+      
+      <!-- Quick Replies Section -->
+      <div class="ap-section" id="secQuickreplies">
+        <p style="color:var(--text-dim);margin-bottom:20px">أضف ردود جاهزة تقدر تستخدمها بسرعة في المحادثات</p>
+        <div class="ap-rules-grid" id="quickRepliesGrid"></div>
+        <div class="ap-add-rule-card">
+          <div class="ap-add-rule-title">➕ إضافة رد سريع</div>
+          <div class="ap-form-field"><label class="ap-form-label">نص الرد</label><textarea class="ap-form-input ap-form-textarea" id="quickReplyText" placeholder="مثال: شكراً لتواصلك، راح نرد عليك قريب..."></textarea></div>
+          <button class="ap-submit-btn" onclick="addQuickReply()">➕ إضافة</button>
+        </div>
+      </div>
+      
+      <!-- Activity Log Section (Owner Only) -->
+      <div class="ap-section" id="secLogs">
+        <div class="ap-log-list" id="logList"></div>
       </div>
     </div>
-    <div class="ap-section" id="tabRules">
-      <h2 style="font-size:1.3rem;font-weight:900;margin-bottom:8px">إضافة قانون جديد</h2>
-      <p style="color:var(--text-dim);font-size:.85rem;margin-bottom:28px">اكتب القانون وبينضاف للصفحة.</p>
-      <div class="ap-field"><label>عنوان القانون</label><input type="text" id="newRuleTitle" placeholder="مثال: بدون روابط مشبوهة"></div>
-      <div class="ap-field"><label>وصف القانون</label><textarea id="newRuleDesc" placeholder="اشرح القانون..."></textarea></div>
-      <div class="ap-field"><label>اللون</label><div class="ap-color-row">
-        <div class="ap-color-opt selected" style="background:var(--red)" data-color="red" onclick="selectColor(this)"></div>
-        <div class="ap-color-opt" style="background:var(--orange)" data-color="orange" onclick="selectColor(this)"></div>
-        <div class="ap-color-opt" style="background:var(--yellow)" data-color="yellow" onclick="selectColor(this)"></div>
-        <div class="ap-color-opt" style="background:var(--fuchsia)" data-color="fuchsia" onclick="selectColor(this)"></div>
-        <div class="ap-color-opt" style="background:var(--blue)" data-color="blue" onclick="selectColor(this)"></div>
-        <div class="ap-color-opt" style="background:var(--green)" data-color="green" onclick="selectColor(this)"></div>
-      </div></div>
-      <div class="ap-field"><label>العقوبة</label><input type="text" id="newRulePunish" placeholder="مثال: تنبيه أول مرة"></div>
-      <button class="ap-add-btn" onclick="addRule()">&#10133; إضافة القانون</button>
-      <div class="ap-success" id="apSuccess">&#9989; تم إضافة القانون!</div>
-    </div>
-  </div>
+  </main>
 </div>
+
+<!-- Toast -->
+<div class="ap-toast" id="toast"></div>
 
 <script>
+// ===== CONFIG =====
 var JSONBIN_KEY='$2a$10$.fB0Huz/g0NiVanHR.F03.B.ZdHkJEiaVZsYdFRZwzJKuf4qwQaxq';
 var CHATS_BIN='69caf1e036566621a863145a';
 var RULES_BIN='69caf1d9aaba882197ab92e2';
 var ADMINS={'Aziz':'The_Class_admin@Aziz.TCA','Echo':'The_Class_admin@Echo.TCA','ReverseCard':'The_Class_admin@ReverseCard.TCA','Reverse Card':'The_Class_admin@ReverseCard.TCA'};
-var OWNERS=['Echo','Aziz']; // Can see closed chats and delete
+var OWNERS=['Echo','Aziz'];
+var ADMIN_ROLES={'Echo':'Owner','Aziz':'Co-Owner','Reverse Card':'Head of Admin'};
 var greetings={'Echo':'هلا والله! أنا Echo. شلون أقدر أساعدك؟','Aziz':'هلا! أنا Aziz. قول لي شنو تبي وأساعدك إن شاء الله.','Reverse Card':'أهلين! أنا Reverse Card. شنو عندك؟'};
 var adminNames=['Echo','Aziz','Reverse Card'];
-// Transfer hierarchy: who can transfer to whom
 var transferTargets={'Reverse Card':['Aziz','Echo'],'Aziz':['Echo'],'Echo':[]};
+var colorMap={red:{c:'r-red',n:'rn-red',b:'badge-ban'},orange:{c:'r-orange',n:'rn-orange',b:'badge-warn'},yellow:{c:'r-yellow',n:'rn-yellow',b:'badge-warn'},fuchsia:{c:'r-fuchsia',n:'rn-fuchsia',b:'badge-strict'},blue:{c:'r-blue',n:'rn-blue',b:'badge-info'},green:{c:'r-green',n:'rn-green',b:'badge-info'}};
+
+// ===== STATE =====
 var currentAdmin=null;
-var selectedColor='red';
-var chatTarget=null;
-var viewingChat=null;
 var convos={};
 var extraRulesData=[];
-var ruleCount=5;
-var colorMap={red:{c:'r-red',n:'rn-red',b:'badge-ban'},orange:{c:'r-orange',n:'rn-orange',b:'badge-warn'},yellow:{c:'r-yellow',n:'rn-yellow',b:'badge-warn'},fuchsia:{c:'r-fuchsia',n:'rn-fuchsia',b:'badge-strict'},blue:{c:'r-blue',n:'rn-blue',b:'badge-info'},green:{c:'r-green',n:'rn-green',b:'badge-info'}};
-var saving=false;
+var activityLog=[];
+var quickReplies=[];
+var chatTarget=null;
+var viewingChat=null;
+var currentFilter='all';
+var selectedRuleColor='red';
 var userPollInterval=null;
-var adminPollInterval=null;
 
+// ===== HELPERS =====
 function getTime(){var d=new Date();return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');}
+function getDate(){var d=new Date();return d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear()+' '+getTime();}
 function isOwner(name){return OWNERS.indexOf(name)!==-1;}
+function getVisitorId(){var id=localStorage.getItem('theclass_visitor_id');if(!id){id='user_'+Date.now()+'_'+Math.random().toString(36).substr(2,9);localStorage.setItem('theclass_visitor_id',id);}return id;}
+var visitorId=getVisitorId();
 
-// ===== JSONBIN HELPERS =====
+function showToast(msg,type){
+  var t=document.getElementById('toast');
+  t.textContent=msg;t.className='ap-toast '+(type||'success')+' show';
+  setTimeout(function(){t.classList.remove('show');},3000);
+}
+
+// ===== JSONBIN =====
 function loadBin(binId,callback){
   fetch('https://api.jsonbin.io/v3/b/'+binId+'/latest',{headers:{'X-Master-Key':JSONBIN_KEY}})
   .then(function(r){return r.json();})
@@ -312,96 +526,52 @@ function loadBin(binId,callback){
   .catch(function(){callback(null);});
 }
 function saveBin(binId,data,callback){
-  if(saving)return;
-  saving=true;
   fetch('https://api.jsonbin.io/v3/b/'+binId,{method:'PUT',headers:{'Content-Type':'application/json','X-Master-Key':JSONBIN_KEY},body:JSON.stringify(data)})
-  .then(function(){saving=false;if(callback)callback();})
-  .catch(function(){saving=false;});
+  .then(function(){if(callback)callback();})
+  .catch(function(){});
 }
-function saveChats(callback){saveBin(CHATS_BIN,{chats:convos},callback);}
-function saveRules(){saveBin(RULES_BIN,{rules:extraRulesData});}
+function saveChats(cb){saveBin(CHATS_BIN,{chats:convos,logs:activityLog},cb);}
+function saveRules(cb){saveBin(RULES_BIN,{rules:extraRulesData,quickReplies:quickReplies},cb);}
 
-// ===== LOAD DATA ON START =====
-loadBin(CHATS_BIN,function(data){
-  if(data&&data.chats){convos=data.chats;}
-});
-loadBin(RULES_BIN,function(data){
-  if(data&&data.rules&&data.rules.length>0){
-    extraRulesData=data.rules;
-    renderExtraRules();
-  }
-});
+function addLog(action,detail){
+  activityLog.unshift({action:action,detail:detail,admin:currentAdmin,time:getDate()});
+  if(activityLog.length>50)activityLog.pop();
+}
+
+// ===== LOAD DATA =====
+loadBin(CHATS_BIN,function(data){if(data){convos=data.chats||{};activityLog=data.logs||[];}});
+loadBin(RULES_BIN,function(data){if(data){extraRulesData=data.rules||[];quickReplies=data.quickReplies||[];renderExtraRules();}});
 
 function renderExtraRules(){
   var container=document.getElementById('extraRules');
   container.innerHTML='';
-  ruleCount=5;
   for(var i=0;i<extraRulesData.length;i++){
-    ruleCount++;
     var d=extraRulesData[i];
     var cl=colorMap[d.color]||colorMap.red;
     var card=document.createElement('div');
     card.className='rule-card '+cl.c+' visible';
-    card.innerHTML='<div class="rule-num '+cl.n+'">'+ruleCount+'</div><div class="rule-content"><div class="rule-title">'+d.title+'</div><div class="rule-desc">'+d.desc+'</div>'+(d.punish?'<div class="rule-badge '+cl.b+'">'+d.punish+'</div>':'')+'</div>';
+    card.innerHTML='<div class="rule-num '+cl.n+'">'+(6+i)+'</div><div class="rule-content"><div class="rule-title">'+d.title+'</div><div class="rule-desc">'+d.desc+'</div>'+(d.punish?'<div class="rule-badge '+cl.b+'">'+d.punish+'</div>':'')+'</div>';
     container.appendChild(card);
   }
 }
 
 // ===== USER CHAT =====
-// Generate unique visitor ID - persists in localStorage
-function getVisitorId(){
-  var id=localStorage.getItem('theclass_visitor_id');
-  if(!id){
-    id='user_'+Date.now()+'_'+Math.random().toString(36).substr(2,9);
-    localStorage.setItem('theclass_visitor_id',id);
-  }
-  return id;
-}
-var visitorId=getVisitorId();
-
 function openRandomChat(){openChat(adminNames[Math.floor(Math.random()*adminNames.length)]);}
-
 function openChat(name){
-  // Chat key is unique per visitor + admin
   var chatKey=visitorId+'_'+name;
   chatTarget=chatKey;
   document.getElementById('chatAv').textContent=name.charAt(0);
   document.getElementById('chatName').textContent=name;
   if(!convos[chatKey]){convos[chatKey]={messages:[{from:'admin',text:greetings[name],time:getTime()}],closed:false,admin:name};saveChats();}
-  // Migrate old format
-  if(Array.isArray(convos[chatKey])){
-    convos[chatKey]={messages:convos[chatKey],closed:false,admin:name};
-    saveChats();
-  }
+  if(Array.isArray(convos[chatKey])){convos[chatKey]={messages:convos[chatKey],closed:false,admin:name};saveChats();}
   renderUserChat();
   document.getElementById('chatOverlay').classList.add('active');
   document.getElementById('chatInput').focus();
   startUserPolling();
 }
-function closeChat(){
-  document.getElementById('chatOverlay').classList.remove('active');
-  stopUserPolling();
-}
-
-function startUserPolling(){
-  stopUserPolling();
-  userPollInterval=setInterval(function(){
-    loadBin(CHATS_BIN,function(data){
-      if(data&&data.chats){
-        var oldLen=convos[chatTarget]?convos[chatTarget].messages.length:0;
-        convos=data.chats;
-        // Migrate old format
-        if(convos[chatTarget]&&Array.isArray(convos[chatTarget])){
-          convos[chatTarget]={messages:convos[chatTarget],closed:false};
-        }
-        var newLen=convos[chatTarget]?convos[chatTarget].messages.length:0;
-        if(newLen!==oldLen){renderUserChat();}
-      }
-    });
-  },4000);
-}
+function closeChat(){document.getElementById('chatOverlay').classList.remove('active');stopUserPolling();}
+function startUserPolling(){stopUserPolling();userPollInterval=setInterval(function(){loadBin(CHATS_BIN,function(data){if(data&&data.chats){var oldLen=convos[chatTarget]?convos[chatTarget].messages.length:0;convos=data.chats;if(convos[chatTarget]&&Array.isArray(convos[chatTarget])){convos[chatTarget]={messages:convos[chatTarget],closed:false};}var newLen=convos[chatTarget]?convos[chatTarget].messages.length:0;if(newLen!==oldLen)renderUserChat();}});},4000);}
 function stopUserPolling(){if(userPollInterval){clearInterval(userPollInterval);userPollInterval=null;}}
-
 function renderUserChat(){
   var el=document.getElementById('chatMsgs');
   var inputBar=document.getElementById('chatInputBar');
@@ -409,345 +579,176 @@ function renderUserChat(){
   var chat=convos[chatTarget];
   if(!chat)return;
   var msgs=chat.messages||[];
-  var isClosed=chat.closed;
   for(var i=0;i<msgs.length;i++){
     var m=msgs[i];
     var div=document.createElement('div');
-    if(m.system){
-      div.className='chat-msg system';
-      div.innerHTML=m.text;
-    }else{
-      div.className='chat-msg '+(m.from==='admin'?'bot':'user');
-      var h='';
-      if(m.img)h+='<img src="'+m.img+'">';
-      if(m.text)h+=m.text;
-      h+='<div class="chat-msg-time">'+m.time+'</div>';
-      div.innerHTML=h;
-    }
+    if(m.system){div.className='chat-msg system';div.innerHTML=m.text;}
+    else{div.className='chat-msg '+(m.from==='admin'?'bot':'user');var h='';if(m.img)h+='<img src="'+m.img+'">';if(m.text)h+=m.text;h+='<div class="chat-msg-time">'+m.time+'</div>';div.innerHTML=h;}
     el.appendChild(div);
   }
-  // If closed, show notice
-  if(isClosed){
-    inputBar.style.display='none';
-    var notice=document.createElement('div');
-    notice.className='chat-closed-notice';
-    notice.innerHTML='تم إغلاق هذه المحادثة<br><button onclick="startNewChat()">بدء محادثة جديدة</button>';
-    el.appendChild(notice);
-  }else{
-    inputBar.style.display='';
-  }
+  if(chat.closed){inputBar.style.display='none';var notice=document.createElement('div');notice.className='chat-closed-notice';notice.innerHTML='تم إغلاق هذه المحادثة<br><button onclick="startNewChat()">بدء محادثة جديدة</button>';el.appendChild(notice);}
+  else{inputBar.style.display='';}
   el.scrollTop=el.scrollHeight;
 }
-
-function startNewChat(){
-  // Get admin name from current chat
-  var chat=convos[chatTarget];
-  var adminName=chat?chat.admin:'Echo';
-  // Create new chat key with visitor ID + admin + timestamp
-  var newKey=visitorId+'_'+adminName+'_'+Date.now();
-  convos[newKey]={messages:[{from:'admin',text:greetings[adminName],time:getTime()}],closed:false,admin:adminName};
-  chatTarget=newKey;
-  saveChats();
-  renderUserChat();
-}
-
-function sendUserMsg(){
-  var inp=document.getElementById('chatInput');
-  var t=inp.value.trim();
-  if(!t||!chatTarget)return;
-  var chat=convos[chatTarget];
-  if(!chat||chat.closed)return;
-  chat.messages.push({from:'user',text:t,time:getTime()});
-  inp.value='';
-  renderUserChat();
-  saveChats();
-}
-
-function attachPhoto(input){
-  var file=input.files[0];
-  if(!file)return;
-  var chat=convos[chatTarget];
-  if(!chat||chat.closed)return;
-  var reader=new FileReader();
-  reader.onload=function(e){
-    var img=new Image();
-    img.onload=function(){
-      var canvas=document.createElement('canvas');
-      var max=300;
-      var w=img.width,h=img.height;
-      if(w>max){h=h*(max/w);w=max;}
-      if(h>max){w=w*(max/h);h=max;}
-      canvas.width=w;canvas.height=h;
-      canvas.getContext('2d').drawImage(img,0,0,w,h);
-      var b64=canvas.toDataURL('image/jpeg',0.5);
-      chat.messages.push({from:'user',img:b64,time:getTime()});
-      renderUserChat();
-      saveChats();
-    };
-    img.src=e.target.result;
-  };
-  reader.readAsDataURL(file);
-  input.value='';
-}
+function startNewChat(){var chat=convos[chatTarget];var adminName=chat?chat.admin:'Echo';var newKey=visitorId+'_'+adminName+'_'+Date.now();convos[newKey]={messages:[{from:'admin',text:greetings[adminName],time:getTime()}],closed:false,admin:adminName};chatTarget=newKey;saveChats();renderUserChat();}
+function sendUserMsg(){var inp=document.getElementById('chatInput');var t=inp.value.trim();if(!t||!chatTarget)return;var chat=convos[chatTarget];if(!chat||chat.closed)return;chat.messages.push({from:'user',text:t,time:getTime()});inp.value='';renderUserChat();saveChats();}
+function attachPhoto(input){var file=input.files[0];if(!file)return;var chat=convos[chatTarget];if(!chat||chat.closed)return;var reader=new FileReader();reader.onload=function(e){var img=new Image();img.onload=function(){var canvas=document.createElement('canvas');var max=300;var w=img.width,h=img.height;if(w>max){h=h*(max/w);w=max;}if(h>max){w=w*(max/h);h=max;}canvas.width=w;canvas.height=h;canvas.getContext('2d').drawImage(img,0,0,w,h);var b64=canvas.toDataURL('image/jpeg',0.5);chat.messages.push({from:'user',img:b64,time:getTime()});renderUserChat();saveChats();};img.src=e.target.result;};reader.readAsDataURL(file);input.value='';}
 
 // ===== LOGIN =====
 function openLogin(){document.getElementById('loginOverlay').classList.add('active');document.getElementById('loginError').classList.remove('show');document.getElementById('loginUser').value='';document.getElementById('loginPass').value='';}
 function closeLogin(){document.getElementById('loginOverlay').classList.remove('active');}
-function attemptLogin(){
-  var u=document.getElementById('loginUser').value.trim();
-  var p=document.getElementById('loginPass').value;
-  if(ADMINS[u]&&ADMINS[u]===p){currentAdmin=u;closeLogin();openAdmin();}
-  else{document.getElementById('loginError').classList.add('show');}
-}
-document.addEventListener('keydown',function(e){
-  if(e.key==='Enter'&&document.getElementById('loginOverlay').classList.contains('active'))attemptLogin();
-  if(e.key==='Escape'){closeLogin();closeAdmin();closeChat();}
-});
+function attemptLogin(){var u=document.getElementById('loginUser').value.trim();var p=document.getElementById('loginPass').value;if(ADMINS[u]&&ADMINS[u]===p){currentAdmin=u;closeLogin();openAdmin();}else{document.getElementById('loginError').classList.add('show');}}
+document.addEventListener('keydown',function(e){if(e.key==='Enter'&&document.getElementById('loginOverlay').classList.contains('active'))attemptLogin();if(e.key==='Escape'){closeLogin();closeAdmin();closeChat();}});
 
 // ===== ADMIN PANEL =====
 function openAdmin(){
-  document.getElementById('apUser').textContent=currentAdmin;
+  document.getElementById('apUserAvatar').textContent=currentAdmin.charAt(0);
+  document.getElementById('apUserName').textContent=currentAdmin;
+  document.getElementById('apUserRole').textContent=ADMIN_ROLES[currentAdmin]||'Admin';
   document.getElementById('adminPanel').classList.add('active');
   document.body.style.overflow='hidden';
-  switchTab('chats');
+  if(isOwner(currentAdmin)){document.getElementById('navLogs').style.display='';document.getElementById('ownerActions').style.display='';}
+  else{document.getElementById('navLogs').style.display='none';document.getElementById('ownerActions').style.display='none';}
+  refreshData();
+  switchSection('dashboard');
+}
+function closeAdmin(){document.getElementById('adminPanel').classList.remove('active');document.body.style.overflow='';currentAdmin=null;viewingChat=null;}
+function toggleSidebar(){document.getElementById('apSidebar').classList.toggle('open');}
+
+function refreshData(){
   loadBin(CHATS_BIN,function(data){
-    console.log('Raw data from JSONBin:',data);
-    if(data&&data.chats){
-      convos=data.chats;
-      console.log('Convos loaded:',convos);
-      console.log('Keys:',Object.keys(convos));
-    }
-    updateInbox();
+    if(data){convos=data.chats||{};activityLog=data.logs||[];}
+    updateStats();
+    renderChatList();
+    renderRecentChats();
+    renderLogs();
   });
-  startAdminPolling();
-}
-function closeAdmin(){
-  document.getElementById('adminPanel').classList.remove('active');
-  document.body.style.overflow='';
-  currentAdmin=null;viewingChat=null;
-  stopAdminPolling();
-}
-
-function startAdminPolling(){
-  // Removed auto-polling - admin uses refresh button instead
-}
-function stopAdminPolling(){}
-
-function refreshInbox(){
-  var btn=document.querySelector('.inbox-refresh');
-  if(btn){btn.textContent='⏳ جاري التحديث...';btn.disabled=true;}
-  loadBin(CHATS_BIN,function(data){
-    console.log('Refreshed data:',data);
-    if(data&&data.chats){
-      convos=data.chats;
-    }
-    updateInbox();
-    if(btn){btn.textContent='🔄 تحديث';btn.disabled=false;}
+  loadBin(RULES_BIN,function(data){
+    if(data){extraRulesData=data.rules||[];quickReplies=data.quickReplies||[];renderExtraRules();renderRulesAdmin();renderQuickReplies();}
   });
+  showToast('تم التحديث','success');
 }
 
-function switchTab(tab){
-  var tabs=document.querySelectorAll('.ap-tab');
-  tabs[0].classList.toggle('active',tab==='chats');
-  tabs[1].classList.toggle('active',tab==='rules');
-  document.getElementById('tabChats').classList.toggle('active',tab==='chats');
-  document.getElementById('tabRules').classList.toggle('active',tab==='rules');
-  if(tab==='chats'){backToInbox();loadBin(CHATS_BIN,function(data){if(data&&data.chats){convos=data.chats;}updateInbox();});}
+function switchSection(sec){
+  var titles={'dashboard':'📊 لوحة الإحصائيات','chats':'💬 المحادثات','rules':'📜 إدارة القوانين','quickreplies':'⚡ الردود السريعة','logs':'📋 سجل النشاط'};
+  document.querySelectorAll('.ap-section').forEach(function(s){s.classList.remove('active');});
+  document.querySelectorAll('.ap-nav-item').forEach(function(n){n.classList.remove('active');});
+  document.getElementById('sec'+sec.charAt(0).toUpperCase()+sec.slice(1)).classList.add('active');
+  document.getElementById('apTopbarTitle').textContent=titles[sec]||'';
+  event.target.closest('.ap-nav-item').classList.add('active');
+  document.getElementById('chatView').classList.remove('active');
+  if(sec==='chats')renderChatList();
+  if(sec==='rules')renderRulesAdmin();
+  if(sec==='quickreplies')renderQuickReplies();
+  if(sec==='logs')renderLogs();
 }
 
-function updateInbox(){
-  var list=document.getElementById('inboxList');
+function updateStats(){
+  var total=0,open=0,closed=0;
   var keys=Object.keys(convos);
-  var badge=document.getElementById('chatBadge');
-  if(keys.length===0){list.innerHTML='<div class="inbox-empty">&#128237; لا توجد رسائل حالياً</div>';badge.style.display='none';return;}
-  
-  var validChats=[];
+  for(var i=0;i<keys.length;i++){
+    var chat=convos[keys[i]];
+    if(!chat)continue;
+    if(Array.isArray(chat))chat={messages:chat,closed:false};
+    var hasUser=false;
+    var msgs=chat.messages||[];
+    for(var j=0;j<msgs.length;j++){if(msgs[j]&&msgs[j].from==='user'){hasUser=true;break;}}
+    if(!hasUser)continue;
+    total++;
+    if(chat.closed)closed++;else open++;
+  }
+  document.getElementById('statTotal').textContent=total;
+  document.getElementById('statOpen').textContent=open;
+  document.getElementById('statClosed').textContent=closed;
+  document.getElementById('statRules').textContent=5+extraRulesData.length;
+  document.getElementById('navChatBadge').textContent=open;
+  document.getElementById('navChatBadge').style.display=open>0?'':'none';
+}
+
+function getValidChats(){
+  var keys=Object.keys(convos);
+  var valid=[];
   var amOwner=isOwner(currentAdmin);
-  
   for(var i=0;i<keys.length;i++){
     var k=keys[i];
     var chat=convos[k];
-    // Migrate old format (array of messages)
-    if(Array.isArray(chat)){
-      convos[k]={messages:chat,closed:false};
-      chat=convos[k];
-    }
-    // Handle if chat is null/undefined
     if(!chat)continue;
+    if(Array.isArray(chat)){convos[k]={messages:chat,closed:false};chat=convos[k];}
     var msgs=chat.messages||[];
-    // If msgs is empty, skip
     if(msgs.length===0)continue;
-    var isClosed=chat.closed||false;
-    // Check if has user messages
-    var hasUserMsg=false;
-    for(var j=0;j<msgs.length;j++){
-      if(msgs[j]&&msgs[j].from==='user'){hasUserMsg=true;break;}
-    }
-    if(!hasUserMsg)continue;
-    // Owners see all, others don't see closed
-    if(isClosed&&!amOwner)continue;
-    validChats.push(k);
+    var hasUser=false;
+    for(var j=0;j<msgs.length;j++){if(msgs[j]&&msgs[j].from==='user'){hasUser=true;break;}}
+    if(!hasUser)continue;
+    if(chat.closed&&!amOwner)continue;
+    valid.push({key:k,chat:chat,lastMsg:msgs[msgs.length-1]});
   }
-  
-  if(validChats.length===0){list.innerHTML='<div class="inbox-empty">&#128237; لا توجد رسائل حالياً</div>';badge.style.display='none';return;}
-  
-  badge.textContent=validChats.length;badge.style.display='inline';
+  return valid;
+}
+
+function renderChatList(){
+  var list=document.getElementById('chatList');
+  var chats=getValidChats();
+  if(currentFilter==='open')chats=chats.filter(function(c){return !c.chat.closed;});
+  if(currentFilter==='closed')chats=chats.filter(function(c){return c.chat.closed;});
+  var search=document.getElementById('chatSearch').value.toLowerCase();
+  if(search)chats=chats.filter(function(c){return c.key.toLowerCase().indexOf(search)!==-1;});
+  if(chats.length===0){list.innerHTML='<div class="ap-empty"><div class="ap-empty-icon">📭</div><div class="ap-empty-text">لا توجد محادثات</div></div>';return;}
   list.innerHTML='';
-  for(var i=0;i<validChats.length;i++){
-    var k=validChats[i];
-    var chat=convos[k];
-    if(!chat)continue;
-    var msgs=chat.messages||[];
-    if(msgs.length===0)continue;
-    var last=msgs[msgs.length-1];
-    var isClosed=chat.closed||false;
+  for(var i=0;i<chats.length;i++){
+    var c=chats[i];
     var div=document.createElement('div');
-    div.className='inbox-item'+(isClosed?' closed':'');
-    div.setAttribute('data-key',k);
-    div.onclick=function(){openAdminChat(this.getAttribute('data-key'));};
+    div.className='ap-chat-item'+(c.chat.closed?' closed':'');
+    div.setAttribute('data-key',c.key);
+    div.onclick=function(){openChatView(this.getAttribute('data-key'));};
     var badges='';
-    if(isClosed)badges+='<span class="inbox-badge closed-badge">مغلق</span>';
-    var previewText=last?(last.img?'📷 صورة':(last.text||'')):'';
-    var timeText=last?(last.time||''):'';
-    div.innerHTML='<div class="inbox-av">'+k.charAt(0).toUpperCase()+'</div><div class="inbox-info"><div class="inbox-name">'+badges+'محادثة - '+k+'</div><div class="inbox-preview">'+previewText+'</div></div><div style="text-align:left"><div class="inbox-time">'+timeText+'</div></div>';
+    if(c.chat.closed)badges='<span class="ap-chat-badge closed">مغلق</span>';
+    var preview=c.lastMsg?(c.lastMsg.img?'📷 صورة':(c.lastMsg.text||'')):'';
+    div.innerHTML='<div class="ap-chat-avatar">'+c.key.charAt(0).toUpperCase()+'</div><div class="ap-chat-info"><div class="ap-chat-name">'+badges+' محادثة</div><div class="ap-chat-preview">'+preview+'</div></div><div class="ap-chat-meta"><div class="ap-chat-time">'+(c.lastMsg?c.lastMsg.time:'')+'</div></div>';
     list.appendChild(div);
   }
 }
 
-function openAdminChat(key){
+function renderRecentChats(){
+  var list=document.getElementById('recentChats');
+  var chats=getValidChats().slice(0,5);
+  if(chats.length===0){list.innerHTML='<div class="ap-empty"><div class="ap-empty-icon">📭</div><div class="ap-empty-text">لا توجد محادثات حديثة</div></div>';return;}
+  list.innerHTML='';
+  for(var i=0;i<chats.length;i++){
+    var c=chats[i];
+    var div=document.createElement('div');
+    div.className='ap-chat-item';
+    div.setAttribute('data-key',c.key);
+    div.onclick=function(){switchSection('chats');setTimeout(function(){openChatView(this.getAttribute('data-key'));}.bind(this),100);};
+    var preview=c.lastMsg?(c.lastMsg.img?'📷 صورة':(c.lastMsg.text||'')):'';
+    div.innerHTML='<div class="ap-chat-avatar">'+c.key.charAt(0).toUpperCase()+'</div><div class="ap-chat-info"><div class="ap-chat-name">محادثة</div><div class="ap-chat-preview">'+preview+'</div></div><div class="ap-chat-meta"><div class="ap-chat-time">'+(c.lastMsg?c.lastMsg.time:'')+'</div></div>';
+    list.appendChild(div);
+  }
+}
+
+function filterChats(filter,btn){
+  currentFilter=filter;
+  document.querySelectorAll('.ap-filter-btn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  renderChatList();
+}
+function searchChats(val){renderChatList();}
+
+// ===== CHAT VIEW =====
+function openChatView(key){
   viewingChat=key;
   var chat=convos[key];
-  document.getElementById('acName').textContent='محادثة - '+key;
-  document.getElementById('inboxList').style.display='none';
-  document.getElementById('adminChatView').classList.add('active');
-  renderAdminChat();
-  renderAdminActions();
+  document.getElementById('cvName').textContent='محادثة - '+(chat.admin||'');
+  document.getElementById('cvStatus').textContent=chat.closed?'مغلقة':'مفتوحة';
+  document.getElementById('secChats').classList.remove('active');
+  document.getElementById('chatView').classList.add('active');
+  renderChatMessages();
+  renderChatActions();
+  renderQuickRepliesInChat();
 }
+function backToList(){viewingChat=null;document.getElementById('chatView').classList.remove('active');document.getElementById('secChats').classList.add('active');renderChatList();}
 
-function renderAdminActions(){
-  var actionsEl=document.getElementById('acActions');
-  var inputBar=document.getElementById('acInputBar');
-  actionsEl.innerHTML='';
-  var chat=convos[viewingChat];
-  if(!chat)return;
-  var isClosed=chat.closed;
-  var amOwner=isOwner(currentAdmin);
-  
-  // Refresh button always visible
-  var refreshBtn=document.createElement('button');
-  refreshBtn.className='ac-btn refresh-btn';
-  refreshBtn.textContent='🔄';
-  refreshBtn.onclick=refreshCurrentChat;
-  actionsEl.appendChild(refreshBtn);
-  
-  if(isClosed){
-    inputBar.style.display='none';
-    // Owners can delete
-    if(amOwner){
-      var delBtn=document.createElement('button');
-      delBtn.className='ac-btn delete-btn';
-      delBtn.textContent='🗑️ حذف';
-      delBtn.onclick=deleteChat;
-      actionsEl.appendChild(delBtn);
-    }
-  }else{
-    inputBar.style.display='';
-    // Close button
-    var closeBtn=document.createElement('button');
-    closeBtn.className='ac-btn close-btn';
-    closeBtn.textContent='إغلاق';
-    closeBtn.onclick=closeChatAdmin;
-    actionsEl.appendChild(closeBtn);
-    // Transfer button
-    var targets=transferTargets[currentAdmin]||[];
-    if(targets.length>0){
-      var transBtn=document.createElement('button');
-      transBtn.className='ac-btn transfer-btn';
-      transBtn.textContent='تحويل';
-      transBtn.onclick=showTransferOptions;
-      actionsEl.appendChild(transBtn);
-    }
-    // Owners can delete
-    if(amOwner){
-      var delBtn=document.createElement('button');
-      delBtn.className='ac-btn delete-btn';
-      delBtn.textContent='🗑️ حذف';
-      delBtn.onclick=deleteChat;
-      actionsEl.appendChild(delBtn);
-    }
-  }
-}
-
-function refreshCurrentChat(){
-  loadBin(CHATS_BIN,function(data){
-    if(data&&data.chats){
-      convos=data.chats;
-      renderAdminChat();
-    }
-  });
-}
-
-function closeChatAdmin(){
-  var chat=convos[viewingChat];
-  if(!chat)return;
-  chat.closed=true;
-  chat.messages.push({system:true,text:'تم إغلاق المحادثة بواسطة '+currentAdmin,time:getTime()});
-  saveChats(function(){
-    renderAdminChat();
-    renderAdminActions();
-  });
-}
-
-function showTransferOptions(){
-  var targets=transferTargets[currentAdmin]||[];
-  if(targets.length===0)return;
-  var choice=prompt('تحويل إلى:\n'+targets.map(function(t,i){return (i+1)+'. '+t;}).join('\n')+'\n\nأدخل الرقم:');
-  if(!choice)return;
-  var idx=parseInt(choice)-1;
-  if(idx>=0&&idx<targets.length){
-    transferChatTo(targets[idx]);
-  }
-}
-
-function transferChatTo(newAdmin){
-  var chat=convos[viewingChat];
-  if(!chat)return;
-  var oldAdmin=chat.admin||currentAdmin;
-  // Add system message
-  chat.messages.push({system:true,text:'تم تحويل المحادثة من '+oldAdmin+' إلى '+newAdmin,time:getTime()});
-  // Update admin field - keep same key so user can still access
-  chat.admin=newAdmin;
-  saveChats(function(){
-    renderAdminChat();
-    renderAdminActions();
-  });
-}
-
-function deleteChat(){
-  if(!confirm('هل أنت متأكد؟ سيتم حذف المحادثة نهائياً ولا يمكن استرجاعها.'))return;
-  var keyToDelete=viewingChat;
-  delete convos[keyToDelete];
-  viewingChat=null;
-  // Force save by bypassing the saving flag
-  saving=false;
-  fetch('https://api.jsonbin.io/v3/b/'+CHATS_BIN,{method:'PUT',headers:{'Content-Type':'application/json','X-Master-Key':JSONBIN_KEY},body:JSON.stringify({chats:convos})})
-  .then(function(){
-    backToInbox();
-  })
-  .catch(function(){
-    alert('حدث خطأ في الحذف');
-  });
-}
-
-function backToInbox(){
-  viewingChat=null;
-  document.getElementById('inboxList').style.display='';
-  document.getElementById('adminChatView').classList.remove('active');
-  updateInbox();
-}
-
-function renderAdminChat(){
-  var el=document.getElementById('acMsgs');
+function renderChatMessages(){
+  var el=document.getElementById('cvMessages');
   el.innerHTML='';
   var chat=convos[viewingChat];
   if(!chat)return;
@@ -755,54 +756,161 @@ function renderAdminChat(){
   for(var i=0;i<msgs.length;i++){
     var m=msgs[i];
     var div=document.createElement('div');
-    if(m.system){
-      div.className='chat-msg system';
-      div.innerHTML=m.text;
-    }else{
-      div.className='chat-msg '+(m.from==='user'?'bot':'user');
-      var h='';
-      if(m.img)h+='<img src="'+m.img+'" style="max-width:200px;border-radius:8px;margin-bottom:4px">';
-      if(m.text)h+=m.text;
-      h+='<div class="chat-msg-time">'+(m.time||'')+'</div>';
-      div.innerHTML=h;
-    }
+    if(m.system){div.className='chat-msg system';div.innerHTML=m.text;}
+    else{div.className='chat-msg '+(m.from==='user'?'bot':'user');var h='';if(m.img)h+='<img src="'+m.img+'" style="max-width:200px">';if(m.text)h+=m.text;h+='<div class="chat-msg-time">'+(m.time||'')+'</div>';div.innerHTML=h;}
     el.appendChild(div);
   }
   el.scrollTop=el.scrollHeight;
-  renderAdminActions();
+  document.getElementById('cvInputArea').style.display=chat.closed?'none':'';
 }
 
+function renderChatActions(){
+  var el=document.getElementById('cvActions');
+  el.innerHTML='';
+  var chat=convos[viewingChat];
+  if(!chat)return;
+  var amOwner=isOwner(currentAdmin);
+  // Refresh
+  var ref=document.createElement('button');ref.className='ap-action-btn refresh';ref.innerHTML='🔄';ref.onclick=function(){loadBin(CHATS_BIN,function(data){if(data&&data.chats){convos=data.chats;renderChatMessages();}});};el.appendChild(ref);
+  if(!chat.closed){
+    // Transfer
+    var targets=transferTargets[currentAdmin]||[];
+    if(targets.length>0){var tr=document.createElement('button');tr.className='ap-action-btn transfer';tr.innerHTML='↗️ تحويل';tr.onclick=showTransfer;el.appendChild(tr);}
+    // Close
+    var cl=document.createElement('button');cl.className='ap-action-btn close';cl.innerHTML='🔒 إغلاق';cl.onclick=closeChatAdmin;el.appendChild(cl);
+  }
+  if(amOwner){var del=document.createElement('button');del.className='ap-action-btn delete';del.innerHTML='🗑️ حذف';del.onclick=deleteChat;el.appendChild(del);}
+}
+
+function renderQuickRepliesInChat(){
+  var el=document.getElementById('cvQuickReplies');
+  el.innerHTML='';
+  for(var i=0;i<quickReplies.length;i++){
+    var btn=document.createElement('button');
+    btn.className='ap-quick-reply';
+    btn.textContent=quickReplies[i].substring(0,20)+(quickReplies[i].length>20?'...':'');
+    btn.setAttribute('data-text',quickReplies[i]);
+    btn.onclick=function(){document.getElementById('cvInput').value=this.getAttribute('data-text');};
+    el.appendChild(btn);
+  }
+}
+
+function showTransfer(){
+  var targets=transferTargets[currentAdmin]||[];
+  var choice=prompt('تحويل إلى:\n'+targets.map(function(t,i){return (i+1)+'. '+t;}).join('\n')+'\n\nأدخل الرقم:');
+  if(!choice)return;
+  var idx=parseInt(choice)-1;
+  if(idx>=0&&idx<targets.length)transferChat(targets[idx]);
+}
+function transferChat(newAdmin){
+  var chat=convos[viewingChat];
+  if(!chat)return;
+  var oldAdmin=chat.admin||currentAdmin;
+  chat.messages.push({system:true,text:'تم تحويل المحادثة من '+oldAdmin+' إلى '+newAdmin,time:getTime()});
+  chat.admin=newAdmin;
+  addLog('transfer','تحويل محادثة من '+oldAdmin+' إلى '+newAdmin);
+  saveChats(function(){renderChatMessages();renderChatActions();showToast('تم التحويل','success');});
+}
+function closeChatAdmin(){
+  var chat=convos[viewingChat];
+  if(!chat)return;
+  chat.closed=true;
+  chat.messages.push({system:true,text:'تم إغلاق المحادثة بواسطة '+currentAdmin,time:getTime()});
+  addLog('close','إغلاق محادثة');
+  saveChats(function(){renderChatMessages();renderChatActions();showToast('تم الإغلاق','success');});
+}
+function deleteChat(){
+  if(!confirm('هل أنت متأكد؟ سيتم الحذف نهائياً'))return;
+  var key=viewingChat;
+  delete convos[key];
+  addLog('delete','حذف محادثة');
+  fetch('https://api.jsonbin.io/v3/b/'+CHATS_BIN,{method:'PUT',headers:{'Content-Type':'application/json','X-Master-Key':JSONBIN_KEY},body:JSON.stringify({chats:convos,logs:activityLog})})
+  .then(function(){viewingChat=null;backToList();updateStats();showToast('تم الحذف','success');});
+}
+function closeAllChats(){
+  if(!confirm('إغلاق جميع المحادثات؟'))return;
+  var keys=Object.keys(convos);
+  for(var i=0;i<keys.length;i++){var chat=convos[keys[i]];if(chat&&!chat.closed){chat.closed=true;chat.messages.push({system:true,text:'تم إغلاق المحادثة بواسطة '+currentAdmin,time:getTime()});}}
+  addLog('close','إغلاق جميع المحادثات');
+  saveChats(function(){renderChatList();updateStats();showToast('تم إغلاق الكل','success');});
+}
 function sendAdminReply(){
-  var inp=document.getElementById('acInput');
+  var inp=document.getElementById('cvInput');
   var t=inp.value.trim();
   if(!t||!viewingChat)return;
   var chat=convos[viewingChat];
   if(!chat||chat.closed)return;
   chat.messages.push({from:'admin',text:t,time:getTime()});
   inp.value='';
-  renderAdminChat();
+  renderChatMessages();
   saveChats();
 }
 
-// ===== ADD RULE =====
-function selectColor(el){
-  var opts=document.querySelectorAll('.ap-color-opt');
-  for(var i=0;i<opts.length;i++){opts[i].classList.remove('selected');}
-  el.classList.add('selected');
-  selectedColor=el.dataset.color;
+// ===== RULES =====
+function renderRulesAdmin(){
+  var grid=document.getElementById('rulesGrid');
+  grid.innerHTML='';
+  for(var i=0;i<extraRulesData.length;i++){
+    var r=extraRulesData[i];
+    var cl=colorMap[r.color]||colorMap.red;
+    var div=document.createElement('div');
+    div.className='ap-rule-item';
+    div.innerHTML='<div class="ap-rule-num" style="background:var(--'+r.color+')">'+(6+i)+'</div><div class="ap-rule-content"><div class="ap-rule-title">'+r.title+'</div><div class="ap-rule-desc">'+r.desc+'</div></div><div class="ap-rule-actions"><button class="ap-rule-btn delete" data-idx="'+i+'" onclick="deleteRule('+i+')">🗑️</button></div>';
+    grid.appendChild(div);
+  }
 }
+function selectRuleColor(el){document.querySelectorAll('.ap-color-opt').forEach(function(o){o.classList.remove('selected');});el.classList.add('selected');selectedRuleColor=el.dataset.color;}
 function addRule(){
-  var title=document.getElementById('newRuleTitle').value.trim();
-  var desc=document.getElementById('newRuleDesc').value.trim();
-  var punish=document.getElementById('newRulePunish').value.trim();
-  if(!title||!desc)return;
-  extraRulesData.push({title:title,desc:desc,punish:punish,color:selectedColor,addedBy:currentAdmin});
-  renderExtraRules();
-  saveRules();
-  document.getElementById('newRuleTitle').value='';
-  document.getElementById('newRuleDesc').value='';
-  document.getElementById('newRulePunish').value='';
-  var s=document.getElementById('apSuccess');s.classList.add('show');setTimeout(function(){s.classList.remove('show');},2500);
+  var title=document.getElementById('ruleTitle').value.trim();
+  var desc=document.getElementById('ruleDesc').value.trim();
+  var punish=document.getElementById('rulePunish').value.trim();
+  if(!title||!desc){showToast('أدخل العنوان والوصف','error');return;}
+  extraRulesData.push({title:title,desc:desc,punish:punish,color:selectedRuleColor,addedBy:currentAdmin});
+  addLog('add','إضافة قانون: '+title);
+  saveRules(function(){renderRulesAdmin();renderExtraRules();document.getElementById('ruleTitle').value='';document.getElementById('ruleDesc').value='';document.getElementById('rulePunish').value='';showToast('تم إضافة القانون','success');});
+  saveChats();
+}
+function deleteRule(idx){
+  if(!confirm('حذف هذا القانون؟'))return;
+  var title=extraRulesData[idx].title;
+  extraRulesData.splice(idx,1);
+  addLog('delete','حذف قانون: '+title);
+  saveRules(function(){renderRulesAdmin();renderExtraRules();showToast('تم الحذف','success');});
+  saveChats();
+}
+
+// ===== QUICK REPLIES =====
+function renderQuickReplies(){
+  var grid=document.getElementById('quickRepliesGrid');
+  grid.innerHTML='';
+  for(var i=0;i<quickReplies.length;i++){
+    var div=document.createElement('div');
+    div.className='ap-rule-item';
+    div.innerHTML='<div class="ap-rule-content"><div class="ap-rule-desc">'+quickReplies[i]+'</div></div><div class="ap-rule-actions"><button class="ap-rule-btn delete" onclick="deleteQuickReply('+i+')">🗑️</button></div>';
+    grid.appendChild(div);
+  }
+}
+function addQuickReply(){
+  var text=document.getElementById('quickReplyText').value.trim();
+  if(!text){showToast('أدخل نص الرد','error');return;}
+  quickReplies.push(text);
+  saveRules(function(){renderQuickReplies();document.getElementById('quickReplyText').value='';showToast('تم الإضافة','success');});
+}
+function deleteQuickReply(idx){quickReplies.splice(idx,1);saveRules(function(){renderQuickReplies();showToast('تم الحذف','success');});}
+
+// ===== ACTIVITY LOG =====
+function renderLogs(){
+  var list=document.getElementById('logList');
+  if(activityLog.length===0){list.innerHTML='<div class="ap-empty"><div class="ap-empty-icon">📋</div><div class="ap-empty-text">لا يوجد نشاط</div></div>';return;}
+  list.innerHTML='';
+  var icons={close:'close',transfer:'transfer',delete:'delete',add:'add'};
+  for(var i=0;i<activityLog.length;i++){
+    var log=activityLog[i];
+    var div=document.createElement('div');
+    div.className='ap-log-item';
+    div.innerHTML='<div class="ap-log-icon '+icons[log.action]+'">'+{close:'🔒',transfer:'↗️',delete:'🗑️',add:'➕'}[log.action]+'</div><div class="ap-log-content"><div class="ap-log-text"><strong>'+log.admin+'</strong> '+log.detail+'</div><div class="ap-log-time">'+log.time+'</div></div>';
+    list.appendChild(div);
+  }
 }
 
 // ===== CURSOR =====
@@ -811,8 +919,7 @@ if(window.innerWidth>768){document.addEventListener('mousemove',function(e){blob
 
 // ===== SCROLL REVEAL =====
 var obs=new IntersectionObserver(function(entries){for(var i=0;i<entries.length;i++){if(entries[i].isIntersecting)entries[i].target.classList.add('visible');}},{threshold:.1,rootMargin:'0px 0px -40px 0px'});
-var revEls=document.querySelectorAll('.rule-card,.note-box');
-for(var i=0;i<revEls.length;i++){obs.observe(revEls[i]);}
+document.querySelectorAll('.rule-card,.note-box').forEach(function(el){obs.observe(el);});
 </script>
 </body>
 </html>
