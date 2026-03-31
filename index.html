@@ -144,11 +144,11 @@ footer .f-logo span{color:var(--accent)}
 .login-error{color:var(--red);font-size:.78rem;text-align:center;margin-top:12px;display:none}.login-error.show{display:block}
 
 /* ====== PREMIUM ADMIN PANEL ====== */
-.admin-panel{position:fixed;inset:0;z-index:5000;background:linear-gradient(135deg,#0a0a0f 0%,#12121a 50%,#0a0a0f 100%);opacity:0;visibility:hidden;transition:opacity .35s,visibility .35s;overflow:hidden;display:flex}
+.admin-panel{position:fixed;inset:0;z-index:5000;background:linear-gradient(135deg,#0a0a0f 0%,#12121a 50%,#0a0a0f 100%);opacity:0;visibility:hidden;transition:opacity .35s,visibility .35s;overflow:hidden;display:flex;flex-direction:row-reverse}
 .admin-panel.active{opacity:1;visibility:visible}
 
 /* Sidebar */
-.ap-sidebar{width:260px;background:linear-gradient(180deg,#111118 0%,#0d0d12 100%);border-left:1px solid var(--border);display:flex;flex-direction:column;height:100%;position:relative}
+.ap-sidebar{width:260px;min-width:260px;background:linear-gradient(180deg,#111118 0%,#0d0d12 100%);border-left:1px solid var(--border);display:flex;flex-direction:column;height:100%;position:relative;flex-shrink:0}
 .ap-sidebar::before{content:'';position:absolute;top:0;left:0;right:0;height:150px;background:linear-gradient(180deg,var(--accent-dim) 0%,transparent 100%);opacity:0.3;pointer-events:none}
 .ap-sidebar-header{padding:24px 20px;border-bottom:1px solid var(--border);position:relative;z-index:1}
 .ap-sidebar-logo{font-size:1.3rem;font-weight:900;margin-bottom:4px;background:linear-gradient(90deg,var(--accent),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}.ap-sidebar-logo span{color:var(--accent)}
@@ -779,8 +779,8 @@ function openChat(name){
 function showNamePrompt(adminName){
   var overlay=document.createElement('div');
   overlay.id='namePromptOverlay';
-  overlay.style.cssText='position:fixed;inset:0;z-index:6000;background:rgba(0,0,0,0.9);display:flex;align-items:center;justify-content:center;';
-  overlay.innerHTML='<div style="background:#111118;border:1px solid var(--border);border-radius:20px;padding:36px;width:100%;max-width:380px;text-align:center;animation:fsu .4s ease"><div style="font-size:2.5rem;margin-bottom:12px">👋</div><div style="font-size:1.2rem;font-weight:800;margin-bottom:8px;color:#fff">قبل ما نبدأ...</div><div style="color:#8a8a9a;margin-bottom:24px;font-size:.9rem">شنو اسمك؟ عشان الأدمن يعرف مع مين يتكلم</div><input type="text" id="userNameInput" placeholder="اكتب اسمك هنا..." style="width:100%;padding:14px 18px;background:#0a0a0f;border:1px solid #2a2a35;border-radius:12px;color:#fff;font-family:inherit;font-size:1rem;text-align:center;outline:none;margin-bottom:16px"><div style="display:flex;gap:10px"><button onclick="closeNamePrompt()" style="flex:1;padding:14px;background:transparent;border:1px solid #2a2a35;color:#8a8a9a;border-radius:12px;font-family:inherit;font-weight:700;cursor:pointer">إلغاء</button><button onclick="submitName(\''+adminName+'\')" style="flex:1;padding:14px;background:#c8ff00;border:none;color:#0a0a0f;border-radius:12px;font-family:inherit;font-weight:800;cursor:pointer">متابعة</button></div></div>';
+  overlay.style.cssText='position:fixed;inset:0;z-index:6000;background:rgba(0,0,0,0.95);display:flex;align-items:center;justify-content:center;padding:20px;';
+  overlay.innerHTML='<div style="background:#111118;border:1px solid #2a2a35;border-radius:20px;padding:32px;width:100%;max-width:400px;text-align:center;animation:fsu .4s ease"><div style="font-size:2.5rem;margin-bottom:12px">👋</div><div style="font-size:1.2rem;font-weight:800;margin-bottom:8px;color:#fff">قبل ما نبدأ...</div><div style="color:#8a8a9a;margin-bottom:20px;font-size:.85rem;line-height:1.6">أدخل يوزرنيم الديسكورد حقك<br>عشان نعرف مين أنت</div><input type="text" id="userNameInput" placeholder="@username" style="width:100%;padding:14px 18px;background:#0a0a0f;border:1px solid #2a2a35;border-radius:12px;color:#fff;font-family:inherit;font-size:1rem;text-align:center;outline:none;margin-bottom:12px;direction:ltr"><div style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:10px;padding:12px;margin-bottom:20px"><div style="color:#ef4444;font-size:.75rem;line-height:1.7">⚠️ محاولة انتحال شخصية = بان دائم<br>كل المحادثات محفوظة ومراقبة</div></div><div style="display:flex;gap:10px"><button onclick="closeNamePrompt()" style="flex:1;padding:14px;background:transparent;border:1px solid #2a2a35;color:#8a8a9a;border-radius:12px;font-family:inherit;font-weight:700;cursor:pointer">إلغاء</button><button onclick="submitName(\''+adminName+'\')" style="flex:1;padding:14px;background:#c8ff00;border:none;color:#0a0a0f;border-radius:12px;font-family:inherit;font-weight:800;cursor:pointer">متابعة</button></div></div>';
   document.body.appendChild(overlay);
   document.getElementById('userNameInput').focus();
   document.getElementById('userNameInput').addEventListener('keydown',function(e){if(e.key==='Enter')submitName(adminName);});
@@ -789,7 +789,8 @@ function closeNamePrompt(){var el=document.getElementById('namePromptOverlay');i
 function submitName(adminName){
   var inp=document.getElementById('userNameInput');
   var name=inp.value.trim();
-  if(!name||name.length<2){inp.style.borderColor='#ef4444';return;}
+  // Must be at least 2 chars
+  if(!name||name.length<2){inp.style.borderColor='#ef4444';inp.placeholder='أدخل يوزرنيم صحيح!';return;}
   userName=name;
   localStorage.setItem('theclass_user_name',name);
   closeNamePrompt();
@@ -1330,7 +1331,7 @@ var obs=new IntersectionObserver(function(entries){for(var i=0;i<entries.length;
 document.querySelectorAll('.rule-card,.note-box').forEach(function(el){obs.observe(el);});
 
 // ===== VERSION CHECK =====
-var SITE_BUILD='20260331_003';
+var SITE_BUILD='20260331_004';
 var versionCheckInterval=null;
 function checkVersion(){
   fetch('https://azizkuwaitq8.github.io/theclass-kw.github.io/index.html?t='+Date.now(),{cache:'no-store'})
