@@ -394,6 +394,73 @@ footer .f-logo{font-weight:900;font-size:1.15rem;color:var(--text);margin-bottom
   .scroll-hint{display:none}
   .section{padding:60px 20px 100px}
 }
+
+/* ===== NAV LINKS ===== */
+.nav-links{display:flex;align-items:center;gap:4px}
+.nav-link{padding:10px 18px;border-radius:100px;font-size:0.82rem;font-weight:700;color:var(--text-dim);cursor:pointer;transition:all 0.3s var(--ease);text-decoration:none;border:1px solid transparent;white-space:nowrap}
+.nav-link:hover,.nav-link.active{color:var(--accent);background:var(--accent-dim);border-color:var(--accent-glow)}
+.menu-btn{display:none;background:var(--bg-elevated);border:1px solid var(--border);color:var(--text);width:42px;height:42px;border-radius:50%;align-items:center;justify-content:center;cursor:pointer;font-size:1.1rem;transition:all 0.3s var(--ease);flex-shrink:0}
+.menu-btn:hover{border-color:var(--accent);color:var(--accent)}
+.mobile-menu{display:none;position:fixed;top:77px;left:0;right:0;background:rgba(10,10,15,0.97);border-bottom:1px solid var(--border);padding:16px 20px;z-index:998;flex-direction:column;gap:8px;backdrop-filter:blur(24px)}
+[data-theme="light"] .mobile-menu{background:rgba(248,249,250,0.97)}
+.mobile-menu.open{display:flex}
+.mobile-menu .nav-link{padding:14px 20px;border-radius:var(--radius-sm);font-size:0.95rem}
+@media(max-width:900px){.nav-links{display:none}.menu-btn{display:flex}}
+
+/* ===== BACK TO TOP ===== */
+.back-top{position:fixed;bottom:32px;right:32px;width:52px;height:52px;background:var(--accent);color:#000;border:none;border-radius:50%;font-size:1.5rem;font-weight:900;cursor:pointer;box-shadow:0 8px 24px var(--accent-glow);opacity:0;transform:translateY(20px);transition:all 0.4s var(--ease);z-index:500;display:flex;align-items:center;justify-content:center;line-height:1}
+.back-top.visible{opacity:1;transform:translateY(0)}
+.back-top:hover{transform:translateY(-4px) scale(1.08);box-shadow:0 12px 32px var(--accent-glow)}
+
+/* ===== RULE FILTER ===== */
+.rule-filter{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:32px;justify-content:center}
+.rf-btn{padding:10px 22px;border-radius:100px;font-family:var(--font);font-size:0.8rem;font-weight:700;cursor:pointer;border:1px solid var(--border);background:var(--bg-card);color:var(--text-dim);transition:all 0.3s var(--ease)}
+.rf-btn:hover{border-color:var(--border-hover);color:var(--text);transform:translateY(-2px)}
+.rf-btn.active{background:var(--accent);color:#000;border-color:var(--accent);box-shadow:0 4px 16px var(--accent-glow)}
+
+/* ===== CHAT FILTER TABS ===== */
+.chat-tabs{display:flex;gap:10px;margin-bottom:24px}
+.chat-tab{padding:12px 24px;border-radius:100px;font-family:var(--font);font-size:0.82rem;font-weight:700;cursor:pointer;border:1px solid var(--border);background:var(--bg-card);color:var(--text-dim);transition:all 0.3s var(--ease)}
+.chat-tab:hover{border-color:var(--border-hover);color:var(--text)}
+.chat-tab.active{background:var(--accent-dim);color:var(--accent);border-color:var(--accent)}
+.unread-badge{background:var(--red);color:#fff;font-size:0.68rem;padding:3px 10px;border-radius:100px;font-weight:700;margin-right:auto;animation:blink 1.5s infinite}
+
+/* ===== TYPING INDICATOR ===== */
+.typing-indicator{display:none;padding:10px 22px;align-items:center;gap:10px;font-size:0.8rem;color:var(--text-dim);background:var(--bg-elevated);border-top:1px solid var(--border)}
+.typing-indicator.visible{display:flex}
+.typing-dots{display:flex;gap:5px;align-items:center}
+.typing-dots span{width:7px;height:7px;background:var(--text-dim);border-radius:50%;animation:typingBounce 1.2s ease-in-out infinite}
+.typing-dots span:nth-child(2){animation-delay:0.2s}
+.typing-dots span:nth-child(3){animation-delay:0.4s}
+@keyframes typingBounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-8px)}}
+
+/* ===== CUSTOM DIALOG ===== */
+.cdialog-overlay{position:fixed;inset:0;z-index:9500;background:rgba(0,0,0,0.88);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;visibility:hidden;transition:all 0.3s var(--ease)}
+.cdialog-overlay.active{opacity:1;visibility:visible}
+.cdialog{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:44px 40px;max-width:420px;width:100%;text-align:center;box-shadow:var(--shadow-lg);transform:scale(0.9) translateY(20px);transition:transform 0.3s var(--ease)}
+.cdialog-overlay.active .cdialog{transform:scale(1) translateY(0)}
+.cdialog-icon{font-size:3.5rem;margin-bottom:18px}
+.cdialog-title{font-size:1.25rem;font-weight:900;margin-bottom:12px}
+.cdialog-msg{color:var(--text-dim);font-size:0.92rem;line-height:1.9;margin-bottom:28px}
+.cdialog-select{width:100%;padding:16px 20px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:var(--font);font-size:0.95rem;outline:none;margin-bottom:24px;cursor:pointer;transition:border-color 0.3s var(--ease);display:none}
+.cdialog-select:focus{border-color:var(--accent)}
+.cdialog-actions{display:flex;gap:14px}
+.cdialog-btn{flex:1;padding:17px;border-radius:var(--radius-sm);font-family:var(--font);font-size:0.95rem;font-weight:800;cursor:pointer;transition:all 0.3s var(--ease);border:1px solid var(--border)}
+.cdialog-btn.cancel{background:transparent;color:var(--text-dim)}.cdialog-btn.cancel:hover{border-color:var(--text);color:var(--text)}
+.cdialog-btn.confirm{background:var(--accent);color:#000;border-color:var(--accent)}.cdialog-btn.confirm:hover{box-shadow:0 8px 24px var(--accent-glow)}
+.cdialog-btn.danger{background:var(--red);color:#fff;border-color:var(--red)}.cdialog-btn.danger:hover{box-shadow:0 8px 24px rgba(255,71,87,0.4)}
+
+/* ===== LOGIN ERROR ===== */
+.login-error{color:var(--red);font-size:0.83rem;margin-bottom:16px;display:none;background:var(--red-dim);padding:13px 18px;border-radius:var(--radius-sm);border:1px solid rgba(255,71,87,0.35);text-align:center}
+
+/* ===== ADMIN SEARCH ===== */
+.ap-search{width:100%;padding:14px 20px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:var(--font);font-size:0.9rem;outline:none;margin-bottom:20px;transition:border-color 0.3s var(--ease)}
+.ap-search:focus{border-color:var(--accent)}
+
+/* ===== EMPTY STATE ===== */
+.empty-state{text-align:center;padding:60px 20px;color:var(--text-dim)}
+.empty-state-icon{font-size:3rem;margin-bottom:16px}
+.empty-state p{font-size:0.95rem}
 </style>
 </head>
 <body class="loading">
@@ -415,7 +482,14 @@ footer .f-logo{font-weight:900;font-size:1.15rem;color:var(--text);margin-bottom
 <!-- Nav -->
 <nav>
   <div class="logo">The Class<span>.</span></div>
+  <div class="nav-links" id="navLinks">
+    <a class="nav-link" data-section="rulesSection" onclick="scrollToSection('rulesSection')">📜 القوانين</a>
+    <a class="nav-link" data-section="eventsSection" onclick="scrollToSection('eventsSection')">🎉 الفعاليات</a>
+    <a class="nav-link" data-section="contactSection" onclick="scrollToSection('contactSection')">💬 تواصل</a>
+    <a class="nav-link" data-section="faqSection" onclick="scrollToSection('faqSection')">❓ FAQ</a>
+  </div>
   <div class="nav-right">
+    <button class="menu-btn" id="menuBtn" onclick="toggleMobileMenu()" title="القائمة">☰</button>
     <button class="theme-toggle" onclick="toggleTheme()" title="تغيير المظهر">🌙</button>
     <div class="nav-badge">Discord Server</div>
     <button class="admin-btn" onclick="openLogin()">
@@ -424,6 +498,14 @@ footer .f-logo{font-weight:900;font-size:1.15rem;color:var(--text);margin-bottom
     </button>
   </div>
 </nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <a class="nav-link" onclick="scrollToSection('rulesSection');closeMobileMenu()">📜 القوانين</a>
+  <a class="nav-link" onclick="scrollToSection('eventsSection');closeMobileMenu()">🎉 الفعاليات</a>
+  <a class="nav-link" onclick="scrollToSection('contactSection');closeMobileMenu()">💬 تواصل</a>
+  <a class="nav-link" onclick="scrollToSection('faqSection');closeMobileMenu()">❓ FAQ</a>
+</div>
 
 <!-- Hero -->
 <section class="hero">
@@ -457,6 +539,13 @@ footer .f-logo{font-weight:900;font-size:1.15rem;color:var(--text);margin-bottom
   
   <div class="rule-card r-blue"><div class="rule-num rn-blue">5</div><div class="rule-content"><div class="rule-title">اسمع كلام الإدارة</div><div class="rule-desc">قرارات الأدمن نهائية. لو عندك مشكلة، افتح تذكرة.</div><div class="rule-badge badge-info">إلزامي</div></div></div>
   
+  <div class="rule-filter" id="ruleFilter">
+    <button class="rf-btn active" onclick="filterRules('all',this)">الكل</button>
+    <button class="rf-btn" onclick="filterRules('ban',this)">🔴 بان</button>
+    <button class="rf-btn" onclick="filterRules('warn',this)">🟠 إنذار</button>
+    <button class="rf-btn" onclick="filterRules('info',this)">🔵 تنبيه</button>
+    <button class="rf-btn" onclick="filterRules('strict',this)">🩷 صارم</button>
+  </div>
   <div id="extraRules"></div>
 </section>
 
@@ -536,8 +625,12 @@ footer .f-logo{font-weight:900;font-size:1.15rem;color:var(--text);margin-bottom
     <button class="chat-close" onclick="closeChat()">×</button>
   </div>
   <div class="chat-body" id="chatBody"></div>
+  <div class="typing-indicator" id="typingIndicator">
+    <span id="typingName">Admin</span> يكتب
+    <div class="typing-dots"><span></span><span></span><span></span></div>
+  </div>
   <div class="chat-footer" id="chatFooter">
-    <input type="text" id="chatInput" placeholder="اكتب رسالتك..." onkeydown="if(event.key==='Enter')sendUserMsg()">
+    <input type="text" id="chatInput" placeholder="اكتب رسالتك..." oninput="onUserTyping()" onkeydown="if(event.key==='Enter')sendUserMsg()">
     <button onclick="sendUserMsg()">📤</button>
   </div>
 </div>
@@ -548,6 +641,7 @@ footer .f-logo{font-weight:900;font-size:1.15rem;color:var(--text);margin-bottom
   <div class="login-card">
     <h2>🔐 Admin Login</h2>
     <p>أدخل كلمة المرور للدخول</p>
+    <div class="login-error" id="loginError">كلمة المرور غلط! حاول مرة ثانية</div>
     <input type="password" id="loginPass" placeholder="Password" onkeydown="if(event.key==='Enter')doLogin()">
     <button onclick="doLogin()">دخول</button>
   </div>
@@ -565,12 +659,12 @@ footer .f-logo{font-weight:900;font-size:1.15rem;color:var(--text);margin-bottom
       </div>
     </div>
     <div class="ap-nav">
-      <div class="ap-nav-item active" onclick="showSection('dashboard')"><span class="ap-nav-icon">📊</span><span>Dashboard</span></div>
-      <div class="ap-nav-item" onclick="showSection('chats')"><span class="ap-nav-icon">💬</span><span>Chats</span><span class="ap-nav-badge" id="chatBadge">0</span></div>
-      <div class="ap-nav-item" onclick="showSection('rules')"><span class="ap-nav-icon">📜</span><span>Rules</span></div>
-      <div class="ap-nav-item" onclick="showSection('events')"><span class="ap-nav-icon">🎉</span><span>Events</span></div>
-      <div class="ap-nav-item" onclick="showSection('replies')"><span class="ap-nav-icon">⚡</span><span>Quick Replies</span></div>
-      <div class="ap-nav-item" onclick="showSection('logs')" id="logsNav"><span class="ap-nav-icon">📋</span><span>Logs</span></div>
+      <div class="ap-nav-item active" data-sec="dashboard" onclick="showSection('dashboard')"><span class="ap-nav-icon">📊</span><span>Dashboard</span></div>
+      <div class="ap-nav-item" data-sec="chats" onclick="showSection('chats')"><span class="ap-nav-icon">💬</span><span>Chats</span><span class="ap-nav-badge" id="chatBadge">0</span></div>
+      <div class="ap-nav-item" data-sec="rules" onclick="showSection('rules')"><span class="ap-nav-icon">📜</span><span>Rules</span></div>
+      <div class="ap-nav-item" data-sec="events" onclick="showSection('events')"><span class="ap-nav-icon">🎉</span><span>Events</span></div>
+      <div class="ap-nav-item" data-sec="replies" onclick="showSection('replies')"><span class="ap-nav-icon">⚡</span><span>Quick Replies</span></div>
+      <div class="ap-nav-item" data-sec="logs" onclick="showSection('logs')" id="logsNav"><span class="ap-nav-icon">📋</span><span>Logs</span></div>
       <div class="ap-nav-divider"></div>
     </div>
     <button class="ap-logout" onclick="logout()">🚪 خروج</button>
@@ -594,6 +688,12 @@ footer .f-logo{font-weight:900;font-size:1.15rem;color:var(--text);margin-bottom
       </div>
       <!-- Chats -->
       <div class="ap-section" id="sec-chats">
+        <div class="chat-tabs">
+          <button class="chat-tab active" onclick="setFilter('all',this)">الكل</button>
+          <button class="chat-tab" onclick="setFilter('open',this)">🟢 مفتوح</button>
+          <button class="chat-tab" onclick="setFilter('closed',this)">🔴 مغلق</button>
+        </div>
+        <input type="text" class="ap-search" id="chatSearch" placeholder="🔍 بحث بالاسم..." oninput="renderChatList()">
         <div class="ap-chat-list" id="chatList"></div>
         <div class="ap-cv" id="chatView">
           <div class="ap-cv-header">
@@ -669,6 +769,20 @@ footer .f-logo{font-weight:900;font-size:1.15rem;color:var(--text);margin-bottom
         <div class="ap-logs" id="logsList"></div>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- Back to Top -->
+<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="للأعلى">↑</button>
+
+<!-- Custom Dialog -->
+<div class="cdialog-overlay" id="cdialogOverlay">
+  <div class="cdialog">
+    <div class="cdialog-icon" id="cdialogIcon">⚠️</div>
+    <div class="cdialog-title" id="cdialogTitle">تأكيد</div>
+    <div class="cdialog-msg" id="cdialogMsg"></div>
+    <select class="cdialog-select" id="cdialogSelect"></select>
+    <div class="cdialog-actions" id="cdialogActions"></div>
   </div>
 </div>
 
@@ -936,7 +1050,11 @@ function closeLogin(){document.getElementById('loginOverlay').classList.remove('
 function doLogin(){
   var pass=document.getElementById('loginPass').value;
   for(var name in ADMINS){if(ADMINS[name]===pass){currentAdmin=name;closeLogin();openAdminPanel();return;}}
-  alert('كلمة المرور غلط!');
+  var err=document.getElementById('loginError');
+  err.style.display='block';
+  document.getElementById('loginPass').value='';
+  document.getElementById('loginPass').focus();
+  setTimeout(function(){err.style.display='none';},3500);
 }
 
 function openAdminPanel(){
@@ -958,7 +1076,8 @@ function refreshData(){loadAllChats(function(){loadRules(function(){loadLogs(fun
 
 function showSection(id){
   document.querySelectorAll('.ap-nav-item').forEach(function(n){n.classList.remove('active');});
-  event.target.closest('.ap-nav-item').classList.add('active');
+  var item=document.querySelector('.ap-nav-item[data-sec="'+id+'"]');
+  if(item)item.classList.add('active');
   document.querySelectorAll('.ap-section').forEach(function(s){s.classList.remove('active');});
   document.getElementById('sec-'+id).classList.add('active');
   var titles={dashboard:'Dashboard',chats:'المحادثات',rules:'القوانين',events:'الفعاليات',replies:'الردود السريعة',logs:'سجل النشاط'};
@@ -993,17 +1112,22 @@ function updateStats(){
 function renderChatList(){
   var list=document.getElementById('chatList');
   list.innerHTML='';
+  var searchEl=document.getElementById('chatSearch');
+  var searchTerm=searchEl?searchEl.value.trim().toLowerCase():'';
   var keys=Object.keys(convos).filter(function(k){return convos[k].admin===currentAdmin;});
   if(currentFilter==='open')keys=keys.filter(function(k){return !convos[k].closed;});
   if(currentFilter==='closed')keys=keys.filter(function(k){return convos[k].closed;});
+  if(searchTerm)keys=keys.filter(function(k){var n=(convos[k].userName||'').toLowerCase();return n.indexOf(searchTerm)!==-1;});
+  if(keys.length===0){list.innerHTML='<div class="empty-state"><div class="empty-state-icon">💬</div><p>لا توجد محادثات</p></div>';return;}
   keys.forEach(function(k){
     var c=convos[k];
     var name=c.userName||'مستخدم';
     var last=c.messages.length?c.messages[c.messages.length-1]:{text:'',time:''};
+    var hasUnread=!c.closed&&last.from==='user';
     var div=document.createElement('div');
     div.className='ap-chat-item'+(c.closed?' closed':'');
     div.onclick=function(){openChatView(k);};
-    div.innerHTML='<div class="ap-chat-av">'+name.charAt(0).toUpperCase()+'</div><div class="ap-chat-info"><div class="ap-chat-name">'+name+'</div><div class="ap-chat-preview">'+(last.text||'').substring(0,40)+'</div></div><div class="ap-chat-meta"><div class="ap-chat-time">'+last.time+'</div><div class="ap-chat-status '+(c.closed?'closed':'open')+'">'+(c.closed?'مغلق':'مفتوح')+'</div></div>';
+    div.innerHTML='<div class="ap-chat-av">'+name.charAt(0).toUpperCase()+'</div><div class="ap-chat-info"><div class="ap-chat-name">'+name+(hasUnread?'<span class="unread-badge">جديد</span>':'')+'</div><div class="ap-chat-preview">'+(last.text||'').substring(0,40)+'</div></div><div class="ap-chat-meta"><div class="ap-chat-time">'+last.time+'</div><div class="ap-chat-status '+(c.closed?'closed':'open')+'">'+(c.closed?'مغلق':'مفتوح')+'</div></div>';
     list.appendChild(div);
   });
 }
@@ -1039,17 +1163,6 @@ function renderChatMessages(){
   body.scrollTop=body.scrollHeight;
 }
 
-function renderQRBar(){
-  var bar=document.getElementById('qrBar');
-  bar.innerHTML='';
-  quickReplies.forEach(function(r){
-    var btn=document.createElement('button');
-    btn.className='ap-qr-btn';
-    btn.textContent=r.substring(0,20)+'...';
-    btn.onclick=function(){document.getElementById('cvInput').value=r;};
-    bar.appendChild(btn);
-  });
-}
 
 function sendAdminReply(){
   var inp=document.getElementById('cvInput');
@@ -1076,31 +1189,33 @@ function transferChat(){
   if(!viewingChat)return;
   var targets=transferTargets[currentAdmin];
   if(!targets||targets.length===0)return;
-  var target=prompt('تحويل إلى:\n'+targets.join('\n'));
-  if(!target||targets.indexOf(target)===-1)return;
-  var chat=convos[viewingChat];
-  var oldKey=viewingChat;
-  var newKey=visitorId+'_'+target;
-  chat.admin=target;
-  chat.messages.push({system:true,text:'تم تحويل المحادثة من '+currentAdmin+' إلى '+target,time:getTime()});
-  delete convos[oldKey];
-  convos[newKey]=chat;
-  saveChat(newKey,chat);
-  fetch(SUPABASE_URL+'/rest/v1/chats?id=eq.'+encodeURIComponent(oldKey),{method:'DELETE',headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}});
-  addLog('transfer','تحويل محادثة إلى '+target);
-  showToast('تم التحويل','success');
-  backToList();
+  showDialog({icon:'🔄',title:'تحويل المحادثة',msg:'اختر الأدمن اللي تحول له المحادثة:',options:targets,confirmText:'تحويل',onConfirm:function(target){
+    var chat=convos[viewingChat];
+    var oldKey=viewingChat;
+    var newKey=visitorId+'_'+target;
+    chat.admin=target;
+    chat.messages.push({system:true,text:'تم تحويل المحادثة من '+currentAdmin+' إلى '+target,time:getTime()});
+    delete convos[oldKey];
+    convos[newKey]=chat;
+    saveChat(newKey,chat);
+    fetch(SUPABASE_URL+'/rest/v1/chats?id=eq.'+encodeURIComponent(oldKey),{method:'DELETE',headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}});
+    addLog('transfer','تحويل محادثة إلى '+target);
+    showToast('تم التحويل ✅','success');
+    backToList();
+  }});
 }
 
 function deleteChat(){
   if(!viewingChat||!isOwner(currentAdmin))return;
-  if(!confirm('حذف هذه المحادثة نهائياً؟'))return;
-  var chat=convos[viewingChat];
-  delete convos[viewingChat];
-  fetch(SUPABASE_URL+'/rest/v1/chats?id=eq.'+encodeURIComponent(viewingChat),{method:'DELETE',headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}});
-  addLog('delete','حذف محادثة: '+(chat.userName||'مستخدم'));
-  showToast('تم الحذف','success');
-  backToList();
+  showDialog({icon:'🗑️',title:'حذف المحادثة',msg:'حذف هذه المحادثة نهائياً؟ لا يمكن التراجع.',type:'danger',confirmText:'حذف نهائي',onConfirm:function(){
+    var key=viewingChat;
+    var chat=convos[key];
+    delete convos[key];
+    fetch(SUPABASE_URL+'/rest/v1/chats?id=eq.'+encodeURIComponent(key),{method:'DELETE',headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}});
+    addLog('delete','حذف محادثة: '+(chat.userName||'مستخدم'));
+    showToast('تم الحذف','success');
+    backToList();
+  }});
 }
 
 // ===== RULES ADMIN =====
@@ -1143,7 +1258,7 @@ function addRule(){
   saveRules(function(){renderRulesAdmin();renderExtraRules();document.getElementById('ruleTitle').value='';document.getElementById('ruleDesc').value='';document.getElementById('rulePunish').value='';showToast('تم الحفظ','success');});
 }
 
-function deleteRule(idx){if(!confirm('حذف هذا القانون؟'))return;var title=extraRulesData[idx].title;extraRulesData.splice(idx,1);addLog('delete','حذف قانون: '+title);saveRules(function(){renderRulesAdmin();renderExtraRules();showToast('تم الحذف','success');});}
+function deleteRule(idx){var title=extraRulesData[idx].title;showDialog({icon:'🗑️',title:'حذف القانون',msg:'حذف "'+title+'" نهائياً؟',type:'danger',confirmText:'حذف',onConfirm:function(){extraRulesData.splice(idx,1);addLog('delete','حذف قانون: '+title);saveRules(function(){renderRulesAdmin();renderExtraRules();showToast('تم الحذف','success');});}});}
 
 // ===== EVENTS ADMIN =====
 function renderEventsAdmin(){
@@ -1181,7 +1296,7 @@ function addEvent(){
   saveRules(function(){renderEventsAdmin();renderPublicEvents();document.getElementById('eventTitle').value='';document.getElementById('eventDesc').value='';document.getElementById('eventDate').value='';document.getElementById('eventPrize').value='';showToast('تم الحفظ','success');});
 }
 
-function deleteEvent(idx){if(!confirm('حذف هذه الفعالية؟'))return;eventsData.splice(idx,1);saveRules(function(){renderEventsAdmin();renderPublicEvents();showToast('تم الحذف','success');});}
+function deleteEvent(idx){var title=eventsData[idx].title;showDialog({icon:'🗑️',title:'حذف الفعالية',msg:'حذف "'+title+'" نهائياً؟',type:'danger',confirmText:'حذف',onConfirm:function(){eventsData.splice(idx,1);saveRules(function(){renderEventsAdmin();renderPublicEvents();showToast('تم الحذف','success');});}});}
 
 // ===== QUICK REPLIES =====
 function renderQuickReplies(){
@@ -1210,6 +1325,159 @@ function renderLogs(){
     div.className='ap-log';
     div.innerHTML='<div class="ap-log-icon '+iconClass+'">'+icon+'</div><div class="ap-log-content"><div class="ap-log-text"><strong>'+l.admin+'</strong> - '+l.detail+'</div><div class="ap-log-time">'+new Date(l.created_at).toLocaleString('ar')+'</div></div>';
     list.appendChild(div);
+  });
+}
+
+// ===== CUSTOM DIALOG =====
+function showDialog(opts){
+  document.getElementById('cdialogIcon').textContent=opts.icon||'⚠️';
+  document.getElementById('cdialogTitle').textContent=opts.title||'تأكيد';
+  document.getElementById('cdialogMsg').textContent=opts.msg||'';
+  var sel=document.getElementById('cdialogSelect');
+  var actions=document.getElementById('cdialogActions');
+  if(opts.options&&opts.options.length){
+    sel.style.display='block';
+    sel.innerHTML='';
+    opts.options.forEach(function(o){var opt=document.createElement('option');opt.value=o;opt.textContent=o;sel.appendChild(opt);});
+  }else{sel.style.display='none';}
+  actions.innerHTML='';
+  var cancelBtn=document.createElement('button');
+  cancelBtn.className='cdialog-btn cancel';
+  cancelBtn.textContent='إلغاء';
+  cancelBtn.onclick=closeDialog;
+  var confirmBtn=document.createElement('button');
+  confirmBtn.className='cdialog-btn '+(opts.type==='danger'?'danger':'confirm');
+  confirmBtn.textContent=opts.confirmText||'تأكيد';
+  confirmBtn.onclick=function(){
+    var val=opts.options?sel.value:true;
+    closeDialog();
+    if(opts.onConfirm)opts.onConfirm(val);
+  };
+  actions.appendChild(cancelBtn);
+  actions.appendChild(confirmBtn);
+  document.getElementById('cdialogOverlay').classList.add('active');
+}
+function closeDialog(){document.getElementById('cdialogOverlay').classList.remove('active');}
+
+// ===== MOBILE MENU =====
+function toggleMobileMenu(){
+  var menu=document.getElementById('mobileMenu');
+  var btn=document.getElementById('menuBtn');
+  var open=menu.classList.toggle('open');
+  btn.textContent=open?'✕':'☰';
+}
+function closeMobileMenu(){
+  document.getElementById('mobileMenu').classList.remove('open');
+  document.getElementById('menuBtn').textContent='☰';
+}
+
+// ===== SCROLL TO SECTION =====
+function scrollToSection(id){
+  var el=document.getElementById(id);
+  if(el)el.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// ===== BACK TO TOP =====
+window.addEventListener('scroll',function(){
+  var btn=document.getElementById('backTop');
+  if(btn)btn.classList.toggle('visible',window.scrollY>400);
+});
+
+// ===== SCROLLSPY =====
+(function(){
+  var sections=['rulesSection','eventsSection','contactSection','faqSection'];
+  window.addEventListener('scroll',function(){
+    var scrollY=window.scrollY+120;
+    var active=null;
+    sections.forEach(function(id){
+      var el=document.getElementById(id);
+      if(el&&el.offsetTop<=scrollY)active=id;
+    });
+    document.querySelectorAll('.nav-link[data-section]').forEach(function(l){
+      l.classList.toggle('active',l.dataset.section===active);
+    });
+  });
+})();
+
+// ===== RULE FILTER =====
+function filterRules(type,btn){
+  document.querySelectorAll('.rf-btn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  var badgeMap={ban:'badge-ban',warn:'badge-warn',info:'badge-info',strict:'badge-strict'};
+  document.querySelectorAll('#extraRules .rule-card').forEach(function(card){
+    if(type==='all'){card.style.display='';return;}
+    var badge=card.querySelector('.rule-badge');
+    if(badge&&badge.classList.contains(badgeMap[type])){card.style.display='';}
+    else{card.style.display='none';}
+  });
+}
+
+// ===== ADMIN CHAT FILTER TABS =====
+function setFilter(f,btn){
+  currentFilter=f;
+  document.querySelectorAll('.chat-tab').forEach(function(t){t.classList.remove('active');});
+  btn.classList.add('active');
+  renderChatList();
+}
+
+// ===== TYPING INDICATOR (user side) =====
+var userTypingTimer=null;
+function onUserTyping(){
+  if(!chatTarget||!convos[chatTarget])return;
+  var chat=convos[chatTarget];
+  if(!chat.typing)chat.typing={};
+  chat.typing.user=Date.now();
+  clearTimeout(userTypingTimer);
+  userTypingTimer=setTimeout(function(){
+    if(chat.typing)delete chat.typing.user;
+  },2500);
+}
+
+// ===== TYPING INDICATOR (admin side) =====
+var adminTypingTimer=null;
+document.addEventListener('DOMContentLoaded',function(){
+  var cvInput=document.getElementById('cvInput');
+  if(cvInput){
+    cvInput.addEventListener('input',function(){
+      if(!viewingChat||!convos[viewingChat])return;
+      var chat=convos[viewingChat];
+      if(!chat.typing)chat.typing={};
+      chat.typing.admin=Date.now();
+      clearTimeout(adminTypingTimer);
+      adminTypingTimer=setTimeout(function(){
+        if(chat.typing)delete chat.typing.admin;
+        if(viewingChat)saveChat(viewingChat,convos[viewingChat]);
+      },2500);
+    });
+  }
+});
+
+// ===== ESC KEY HANDLER =====
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){
+    closeDialog();
+    var nameOverlay=document.getElementById('namePromptOverlay');
+    if(nameOverlay)nameOverlay.remove();
+    closeLogin();
+    closeMobileMenu();
+  }
+});
+
+// ===== QUICK REPLY TOOLTIP =====
+function renderQRBar(){
+  var bar=document.getElementById('qrBar');
+  bar.innerHTML='';
+  quickReplies.forEach(function(r){
+    var btn=document.createElement('button');
+    btn.className='ap-qr-btn';
+    btn.title=r;
+    btn.textContent=r.length>22?r.substring(0,22)+'…':r;
+    btn.onclick=function(){
+      var inp=document.getElementById('cvInput');
+      inp.value=r;
+      inp.focus();
+    };
+    bar.appendChild(btn);
   });
 }
 
