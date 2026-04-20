@@ -1091,7 +1091,7 @@ body{
       <p class="hero-desc">مرحباً بك في سيرفر The Class على Discord. اقرأ القوانين بعناية قبل المشاركة.</p>
       <div class="hero-stats">
         <div class="hero-stat">
-          <div class="hero-stat-value" id="heroRuleCount">5</div>
+          <div class="hero-stat-value" id="heroRuleCount">0</div>
           <div class="hero-stat-label">قانون</div>
         </div>
         <div class="hero-stat">
@@ -1112,50 +1112,7 @@ body{
           <h2 class="section-title">📜 قوانين السيرفر</h2>
           <p class="section-subtitle">اتبع هذه القوانين للحفاظ على بيئة إيجابية للجميع</p>
         </div>
-        <div class="rules-grid" id="rulesGrid">
-          <!-- Base rules -->
-          <div class="rule-card red-card visible">
-            <div class="rule-num red-num">1</div>
-            <div class="rule-content">
-              <div class="rule-title">احترام الجميع</div>
-              <div class="rule-desc">يجب احترام جميع الأعضاء والمشرفين. الإهانات والتنمر ممنوعة منعاً باتاً.</div>
-              <span class="rule-badge red-badge">⛔ بان دائم</span>
-            </div>
-          </div>
-          <div class="rule-card red-card visible">
-            <div class="rule-num red-num">2</div>
-            <div class="rule-content">
-              <div class="rule-title">ممنوع المحتوى غير اللائق</div>
-              <div class="rule-desc">أي محتوى غير لائق أو مخالف سيؤدي للحظر الفوري.</div>
-              <span class="rule-badge red-badge">⛔ بان دائم</span>
-            </div>
-          </div>
-          <div class="rule-card orange-card visible">
-            <div class="rule-num orange-num">3</div>
-            <div class="rule-content">
-              <div class="rule-title">ممنوع السبام</div>
-              <div class="rule-desc">لا ترسل رسائل متكررة أو روابط إعلانية بدون إذن.</div>
-              <span class="rule-badge orange-badge">⚠️ تحذير + ميوت</span>
-            </div>
-          </div>
-          <div class="rule-card yellow-card visible">
-            <div class="rule-num yellow-num">4</div>
-            <div class="rule-content">
-              <div class="rule-title">استخدم القنوات الصحيحة</div>
-              <div class="rule-desc">كل قناة لها غرض محدد. احترم ذلك.</div>
-              <span class="rule-badge yellow-badge">📝 تنبيه</span>
-            </div>
-          </div>
-          <div class="rule-card blue-card visible">
-            <div class="rule-num blue-num">5</div>
-            <div class="rule-content">
-              <div class="rule-title">أطع أوامر المشرفين</div>
-              <div class="rule-desc">قرارات المشرفين نهائية. إذا كان لديك اعتراض، تواصل معنا بأدب.</div>
-              <span class="rule-badge blue-badge">ℹ️ معلومة</span>
-            </div>
-          </div>
-        </div>
-        <div id="extraRules"></div>
+        <div class="rules-grid" id="rulesGrid"></div>
       </div>
     </section>
 
@@ -1299,7 +1256,7 @@ body{
       <div class="ap-stats">
         <div class="ap-stat"><div class="ap-stat-value" id="statOpen">0</div><div class="ap-stat-label">تذاكر مفتوحة</div></div>
         <div class="ap-stat"><div class="ap-stat-value" id="statClosed">0</div><div class="ap-stat-label">تذاكر مغلقة</div></div>
-        <div class="ap-stat"><div class="ap-stat-value" id="statRules">5</div><div class="ap-stat-label">قوانين</div></div>
+        <div class="ap-stat"><div class="ap-stat-value" id="statRules">0</div><div class="ap-stat-label">قوانين</div></div>
         <div class="ap-stat"><div class="ap-stat-value" id="statEvents">0</div><div class="ap-stat-label">فعاليات</div></div>
       </div>
       <div style="display:flex;gap:12px;flex-wrap:wrap">
@@ -1656,7 +1613,7 @@ function loadRulesFromDB(){
 loadRulesFromDB();
 
 function renderExtraRules(){
-  var container=document.getElementById('extraRules');
+  var container=document.getElementById('rulesGrid');
   container.innerHTML='';
   var colorOrder={red:0,orange:1,yellow:2,fuchsia:3,blue:4,green:5};
   var sorted=extraRulesData.slice().sort(function(a,b){
@@ -1669,11 +1626,11 @@ function renderExtraRules(){
     var cl=colorMap[clr]||colorMap.red;
     var card=document.createElement('div');
     card.className='rule-card '+cl.c+' visible';
-    card.innerHTML='<div class="rule-num '+cl.n+'">'+(6+i)+'</div><div class="rule-content"><div class="rule-title">'+d.title+'</div><div class="rule-desc">'+d.desc+'</div>'+(d.punish?'<div class="rule-badge '+cl.b+'">'+d.punish+'</div>':'')+'</div>';
+    card.innerHTML='<div class="rule-num '+cl.n+'">'+(i+1)+'</div><div class="rule-content"><div class="rule-title">'+d.title+'</div><div class="rule-desc">'+d.desc+'</div>'+(d.punish?'<div class="rule-badge '+cl.b+'">'+d.punish+'</div>':'')+'</div>';
     container.appendChild(card);
   }
   var heroCount=document.getElementById('heroRuleCount');
-  if(heroCount)heroCount.textContent=5+extraRulesData.length;
+  if(heroCount)heroCount.textContent=extraRulesData.length;
 }
 
 function renderPublicEvents(){
@@ -1906,7 +1863,7 @@ function updateStats(){
   for(var k in convos){if(convos[k].closed)closed++;else open++;}
   document.getElementById('statOpen').textContent=open;
   document.getElementById('statClosed').textContent=closed;
-  document.getElementById('statRules').textContent=5+extraRulesData.length;
+  document.getElementById('statRules').textContent=extraRulesData.length;
   document.getElementById('statEvents').textContent=eventsData.length;
 }
 
@@ -2242,6 +2199,13 @@ setInterval(checkVersion,15000);
 // ===== INIT =====
 initTheme();
 runLoading();
+
+// Auto-refresh public site rules every 10 seconds
+setInterval(function(){
+  if(document.getElementById('publicSite').style.display !== 'none'){
+    loadRulesFromDB();
+  }
+},10000);
 </script>
 </body>
 </html>
