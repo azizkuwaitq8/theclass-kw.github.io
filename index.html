@@ -83,48 +83,6 @@ body{
   transition:background var(--transition-normal),color var(--transition-normal);
 }
 
-/* ===== LOADING SCREEN ===== */
-.loading-screen{
-  position:fixed;
-  inset:0;
-  background:var(--bg-primary);
-  z-index:10000;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:32px;
-  transition:opacity 0.5s ease,visibility 0.5s ease;
-}
-.loading-screen.hidden{opacity:0;visibility:hidden;pointer-events:none}
-.loading-logo{
-  font-family:'Space Grotesk',sans-serif;
-  font-size:3rem;
-  font-weight:700;
-  color:var(--text-primary);
-  letter-spacing:-2px;
-}
-.loading-logo span{color:var(--accent)}
-.loading-bar-container{
-  width:200px;
-  height:4px;
-  background:var(--bg-card);
-  border-radius:4px;
-  overflow:hidden;
-}
-.loading-bar{
-  height:100%;
-  width:0%;
-  background:linear-gradient(90deg,var(--accent),#9fff00);
-  border-radius:4px;
-  transition:width 0.1s linear;
-}
-.loading-text{
-  font-size:0.85rem;
-  color:var(--text-dim);
-  letter-spacing:1px;
-}
-
 /* ===== LOCKDOWN ===== */
 .lockdown-overlay{
   position:fixed;inset:0;
@@ -159,8 +117,8 @@ body{
 ::-webkit-scrollbar-thumb:hover{background:var(--text-dim)}
 
 /* ===== MAIN CONTENT ===== */
-.main-content{opacity:0;transform:translateY(20px);transition:opacity 0.6s ease,transform 0.6s ease}
-.main-content.visible{opacity:1;transform:translateY(0)}
+.main-content{opacity:1}
+.main-content.visible{opacity:1}
 
 /* ===== THEME TOGGLE ===== */
 .theme-toggle{
@@ -1037,14 +995,6 @@ body{
 <body>
 
 <!-- Loading Screen -->
-<div class="loading-screen" id="loadingScreen">
-  <div class="loading-logo">The Class<span>.</span></div>
-  <div class="loading-bar-container">
-    <div class="loading-bar" id="loadingBar"></div>
-  </div>
-  <div class="loading-text">جاري التحميل...</div>
-</div>
-
 <!-- Lockdown Overlay -->
 <div class="lockdown-overlay" id="lockdownOverlay">
   <div class="lockdown-icon">🔒</div>
@@ -1496,21 +1446,9 @@ function toggleTheme(){
 }
 document.getElementById('themeToggle').onclick=toggleTheme;
 
-// ===== LOADING =====
-function runLoading(){
-  var bar=document.getElementById('loadingBar');
-  var progress=0;
-  var interval=setInterval(function(){
-    progress+=2;
-    bar.style.width=progress+'%';
-    if(progress>=100){
-      clearInterval(interval);
-      setTimeout(function(){
-        document.getElementById('loadingScreen').classList.add('hidden');
-        document.getElementById('mainContent').classList.add('visible');
-      },300);
-    }
-  },100);
+// ===== SHOW CONTENT =====
+function showContent(){
+  document.getElementById('mainContent').classList.add('visible');
 }
 
 // ===== ANTI-DEVTOOLS =====
@@ -2198,7 +2136,7 @@ setInterval(checkVersion,15000);
 
 // ===== INIT =====
 initTheme();
-runLoading();
+showContent();
 
 // Auto-refresh public site rules every 10 seconds
 setInterval(function(){
