@@ -1472,8 +1472,12 @@ function supaFetch(table,method,body,query,upsert){
   var headers={'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=representation'};
   if(upsert)headers['Prefer']='resolution=merge-duplicates,return=representation';
   return fetch(url,{method:method,headers:headers,body:body?JSON.stringify(body):undefined}).then(function(r){
-    return r.json();
-  }).catch(function(e){console.log('Fetch error:',e);return null;});
+    if(!r.ok){console.error(method+' '+table+' failed:',r.status,r.statusText);}
+    return r.text().then(function(t){
+      if(!t)return [];
+      try{return JSON.parse(t);}catch(e){console.error('JSON parse error:',e,t);return null;}
+    });
+  }).catch(function(e){console.error('Fetch error ['+table+']:',e);return null;});
 }
 
 function loadChat(chatId,cb){
@@ -1484,16 +1488,24 @@ function loadChat(chatId,cb){
 }
 
 function saveChat(chatId,chatData,cb){
-  saving=true;
-  var url=SUPABASE_URL+'/rest/v1/chats?id=eq.'+encodeURIComponent(chatId);
+  var url=SUPABASE_URL+'/rest/v1/chats';
   fetch(url,{
-    method:'PATCH',
-    headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=representation'},
-    body:JSON.stringify({data:chatData,updated_at:new Date().toISOString()})
-  }).then(function(r){return r.json();}).then(function(data){
-    if(!data||data.length===0){
-      supaFetch('chats','POST',{id:chatId,data:chatData}).then(function(){saving=false;if(cb)cb();});
-    }else{saving=false;if(cb)cb();}
+    method:'POST',
+    headers:{
+      'apikey':SUPABASE_KEY,
+      'Authorization':'Bearer '+SUPABASE_KEY,
+      'Content-Type':'application/json',
+      'Prefer':'resolution=merge-duplicates,return=representation'
+    },
+    body:JSON.stringify({id:chatId,data:chatData,updated_at:new Date().toISOString()})
+  }).then(function(r){
+    if(!r.ok)console.error('saveChat failed:',r.status);
+    return r.json();
+  }).then(function(data){
+    if(cb)cb(data);
+  }).catch(function(e){
+    console.error('saveChat error:',e);
+    if(cb)cb(null);
   });
 }
 
@@ -1501,7 +1513,12 @@ function loadAllChats(cb){
   supaFetch('chats','GET',null,'?order=updated_at.desc').then(function(data){
     if(data&&Array.isArray(data)){
       convos={};
-      for(var i=0;i<data.length;i++){convos[data[i].id]=data[i].data;}
+      for(var i=0;i<data.length;i++){
+        if(data[i].id&&data[i].data)convos[data[i].id]=data[i].data;
+      }
+      console.log('Loaded '+Object.keys(convos).length+' chats');
+    }else{
+      console.error('loadAllChats: invalid data',data);
     }
     if(cb)cb();
   });
@@ -1614,11 +1631,15 @@ function openChat(name){
   loadChat(chatTarget,function(data){
     if(!data){
       convos[chatTarget]={admin:name,user:userName,reason:userReason,messages:[{system:true,text:'تم فتح التذكرة بواسطة '+userName+' (السبب: '+userReason+')',time:getTime()}],closed:false,created:getDate()};
-      saveChat(chatTarget,convos[chatTarget]);
+      saveChat(chatTarget,convos[chatTarget],function(result){
+        if(result)showToast('تم فتح التذكرة','success');
+        else showToast('فشل الحفظ - حاول مجدداً','error');
+        renderUserChat();
+      });
     }else{
       convos[chatTarget]=data;
+      renderUserChat();
     }
-    renderUserChat();
     startUserPoll();
   });
 }
@@ -1807,20 +1828,27 @@ function updateStats(){
 
 function renderChatList(){
   var list=document.getElementById('chatList');
+  if(!list)return;
   list.innerHTML='';
   var keys=Object.keys(convos);
+  var shown=0;
   for(var i=0;i<keys.length;i++){
     var k=keys[i];
     var c=convos[k];
+    if(!c)continue;
     if(currentFilter==='open'&&c.closed)continue;
     if(currentFilter==='closed'&&!c.closed)continue;
     var item=document.createElement('div');
     item.className='ap-chat-item'+(c.closed?' closed':'');
-    item.innerHTML='<div class="ap-chat-info"><h4>'+c.user+'</h4><p>'+c.admin+' • '+c.reason+'</p></div><span class="ap-chat-status '+(c.closed?'closed':'open')+'">'+(c.closed?'مغلقة':'مفتوحة')+'</span>';
+    var user=c.user||'مجهول';
+    var admin=c.admin||'-';
+    var reason=c.reason||'-';
+    item.innerHTML='<div class="ap-chat-info"><h4>'+user+'</h4><p>'+admin+' • '+reason+'</p></div><span class="ap-chat-status '+(c.closed?'closed':'open')+'">'+(c.closed?'مغلقة':'مفتوحة')+'</span>';
     item.onclick=(function(key){return function(){viewChat(key);};})(k);
     list.appendChild(item);
+    shown++;
   }
-  if(keys.length===0)list.innerHTML='<p style="color:var(--text-dim);text-align:center;padding:20px">لا توجد محادثات</p>';
+  if(shown===0)list.innerHTML='<p style="color:var(--text-dim);text-align:center;padding:20px">لا توجد محادثات</p>';
 }
 
 function viewChat(chatId){
